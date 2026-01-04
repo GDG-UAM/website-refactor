@@ -5,7 +5,7 @@ WORKDIR /app
 # Stage 2: Installer
 FROM base AS installer
 # Copy root config files
-COPY package.json bun.lockb turbo.json ./
+COPY package.json bun.lock turbo.json ./
 # Copy app-specific package files to resolve workspaces
 COPY apps/frontend/package.json ./apps/frontend/
 COPY apps/backend/package.json ./apps/backend/
