@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+echo "Running full monorepo build check..."
+
+# Runs build for all apps. Turbo will run them in parallel.
+bun x turbo run build || {
+  echo "❌ Build failed in one or more packages. Push aborted."
+  exit 1
+}
+
+echo "✅ All builds passed. Proceeding with push."

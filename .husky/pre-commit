@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+echo "🔍 Running Monorepo Health Checks..."
+
+# 1. Check Types (Turbo will run tsc in parallel for both apps)
+bun x turbo run type-check || {
+  echo "❌ Type check failed. Fix TypeScript errors before committing."
+  exit 1
+}
+
+# 2. Lint Staged (Formats only the files you changed)
+bun x lint-staged || {
+  echo "❌ Linting failed."
+  exit 1
+}
+
+echo "✅ Ready to commit!"
