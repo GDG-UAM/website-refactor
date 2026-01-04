@@ -1,5 +1,4 @@
 import { treaty } from "@elysiajs/eden";
-import { headers } from "next/headers";
 import type { App } from "backend";
 
 const getCookie = (name: string) => {
@@ -44,6 +43,7 @@ export const api = treaty<App>(getBaseUrl(), {
 
 // Server-side API instance that forwards user headers
 export const getServerApi = async () => {
+  const { headers } = await import("next/headers");
   const headersList = await headers();
 
   // Headers to forward from the user's request
