@@ -1,7 +1,8 @@
-import { api } from "#/lib/eden";
+import { getServerApi } from "#/lib/eden";
 
 export default async function HomePage() {
-  // Simple GET request using Eden Treaty
+  // Use server API to forward user headers
+  const api = await getServerApi();
   const { data, error } = await api.test.post();
 
   // Debug info - shows what URLs are being used

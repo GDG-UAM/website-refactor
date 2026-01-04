@@ -66,6 +66,7 @@ jobs:
                   build-args: |
                       NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
                       INTERNAL_BACKEND_URL=${{ secrets.INTERNAL_BACKEND_URL }}
+                      INTERNAL_API_SECRET=${{ secrets.INTERNAL_API_SECRET }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
 

@@ -11,7 +11,17 @@ export const csrfPlugin = new Elysia({ name: "csrf" })
       // 2. Skip validation for the CSRF initialization route itself
       if (new URL(request.url).pathname === "/api/csrf") return;
 
-      // 3. Validate Header vs Cookie
+      // 3. Skip CSRF validation for internal server-to-server calls
+      // Validate shared secret for trusted internal requests
+      const internalSecret = headers["x-internal-secret"];
+      if (
+        internalSecret &&
+        internalSecret === process.env.INTERNAL_API_SECRET
+      ) {
+        return;
+      }
+
+      // 4. Validate Header vs Cookie for browser requests
       const headerToken = headers["x-xsrf-token"];
 
       if (!headerToken || !xsrfToken.value || headerToken !== xsrfToken.value) {
