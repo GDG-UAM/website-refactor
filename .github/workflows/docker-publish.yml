@@ -21,10 +21,10 @@ jobs:
             matrix:
                 include:
                     - app_name: frontend
-                      context: ./apps/frontend
+                      dockerfile: ./apps/frontend/Dockerfile
                       image_name: ${{ github.repository }}/frontend
                     - app_name: backend
-                      context: ./apps/backend
+                      dockerfile: ./apps/backend/Dockerfile
                       image_name: ${{ github.repository }}/backend
 
         steps:
@@ -54,20 +54,17 @@ jobs:
                   images: ${{ env.REGISTRY }}/${{ matrix.image_name }}
 
             - name: Build and push Docker image
-              id: build-and-push
               uses: docker/build-push-action@v5
               with:
-                  context: ${{ matrix.context }}
-                  # Path to Dockerfile relative to the context
-                  file: ${{ matrix.context }}/Dockerfile
+                  context: .
+                  file: ${{ matrix.dockerfile }}
                   push: ${{ github.event_name != 'pull_request' }}
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
-                  cache-from: type=gha
-                  cache-to: type=gha,mode=max
-                  # If Next.js needs backend URL during build:
                   build-args: |
                       NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+                  cache-from: type=gha
+                  cache-to: type=gha,mode=max
 
             - name: Sign the published Docker image
               if: ${{ github.event_name != 'pull_request' }}
