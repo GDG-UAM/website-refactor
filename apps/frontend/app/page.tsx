@@ -2,8 +2,10 @@ import { getServerApi } from "#/lib/eden";
 
 export default async function HomePage() {
   // Use server API to forward user headers
-  const api = await getServerApi();
-  const { data, error } = await api.test.post();
+  // const api = await getServerApi();
+  // const { data, error } = await api.test.post();
+  const data = { success: true }; // Fake data
+  const error = null;
 
   // Debug info - shows what URLs are being used
   const debugInfo = {
@@ -16,9 +18,7 @@ export default async function HomePage() {
   return (
     <main className="flex flex-col items-center justify-center min-h-screen p-8">
       <h1 className="text-4xl font-bold">Backend says:</h1>
-      <p className="mt-4 p-4 bg-gray-100 rounded-lg text-xl">
-        {data?.success ? "Success" : `Failure: ${error?.value}`}
-      </p>
+      {/* <p className="mt-4 p-4 bg-gray-100 rounded-lg text-xl">{data?.success ? "Success" : `Failure: ${error?.value}`}</p> */}
 
       <div className="mt-8 p-6 bg-blue-50 rounded-lg w-full max-w-2xl">
         <h2 className="text-2xl font-semibold mb-4">
