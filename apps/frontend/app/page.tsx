@@ -1,11 +1,11 @@
-import { getServerApi } from "#/lib/eden";
+import { serverApi } from "#/lib/eden-server";
+import { ClientApiTest } from "#/components/ClientApiTest";
 
 export default async function HomePage() {
   // Use server API to forward user headers
-  // const api = await getServerApi();
-  // const { data, error } = await api.test.post();
-  const data = { success: true }; // Fake data
-  const error = null;
+  const response = await serverApi.test.post();
+  const data = response.data as { success: boolean } | undefined;
+  const error = response.error;
 
   // Debug info - shows what URLs are being used
   const debugInfo = {
@@ -16,9 +16,25 @@ export default async function HomePage() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen p-8">
-      <h1 className="text-4xl font-bold">Backend says:</h1>
-      {/* <p className="mt-4 p-4 bg-gray-100 rounded-lg text-xl">{data?.success ? "Success" : `Failure: ${error?.value}`}</p> */}
+    <main className="flex flex-col items-center justify-center min-h-screen p-8 text-black">
+      <h1 className="text-4xl font-bold mb-8">API Testing</h1>
+
+      <div className="p-6 bg-purple-50 rounded-lg w-full max-w-2xl mb-4">
+        <h2 className="text-2xl font-semibold mb-4">
+          🔧 Server-side API Call (POST /test)
+        </h2>
+        <div className="p-4 bg-white rounded-lg">
+          {data?.success ? (
+            <p className="text-green-600 text-lg font-semibold">✓ Success</p>
+          ) : (
+            <p className="text-red-600">
+              ✗ Failure: {error ? JSON.stringify(error.value) : "Unknown error"}
+            </p>
+          )}
+        </div>
+      </div>
+
+      <ClientApiTest />
 
       <div className="mt-8 p-6 bg-blue-50 rounded-lg w-full max-w-2xl">
         <h2 className="text-2xl font-semibold mb-4">
