@@ -1,6 +1,6 @@
 {
     "$schema": "https://turbo.build/schema.json",
-    "globalPassThroughEnv": ["PORT", "BACKEND_PORT", "NODE_ENV"],
+    "globalPassThroughEnv": ["PORT", "BACKEND_PORT", "NODE_ENV", "INTERNAL_BACKEND_URL", "NEXT_PUBLIC_BACKEND_URL"],
     "tasks": {
         "type-check": {
             "cache": true,
@@ -10,7 +10,7 @@
         "build": {
             "dependsOn": ["^build"],
             "outputs": [".next/**", "dist/**"],
-            "env": ["NEXT_PUBLIC_BACKEND_URL"]
+            "env": ["NEXT_PUBLIC_BACKEND_URL", "INTERNAL_BACKEND_URL"]
         }
     }
 }
