@@ -6,7 +6,11 @@
             "cache": true,
             "dependsOn": ["^type-check"]
         },
-        "dev": { "cache": false, "persistent": true },
+        "dev": {
+            "cache": false,
+            "persistent": true,
+            "env": ["PORT", "BACKEND_PORT", "NEXT_PUBLIC_BACKEND_URL", "INTERNAL_BACKEND_URL", "INTERNAL_API_SECRET"]
+        },
         "build": {
             "dependsOn": ["^build"],
             "outputs": [".next/**", "dist/**"],

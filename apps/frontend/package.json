@@ -3,21 +3,30 @@
     "version": "0.1.0",
     "private": true,
     "scripts": {
-        "dev": "next dev",
+        "dev": "next dev -p 3001",
         "build": "next build",
         "start": "next start",
-        "type-check": "tsc --noEmit"
+        "type-check": "tsc --noEmit",
+        "paraglide:compile": "paraglide-js compile --project ./.inlang --outdir ./src/paraglide"
     },
     "imports": {
         "#/*": "./src/*"
     },
     "dependencies": {
         "@elysiajs/eden": "latest",
+        "@emotion/react": "^11.14.0",
+        "@emotion/styled": "^11.14.1",
+        "@heroui/button": "^2.2.29",
+        "@inlang/paraglide-js": "^2.7.1",
+        "@inlang/paraglide-next": "^0.8.1",
+        "@mui/material": "^7.3.6",
         "backend": "workspace:*",
+        "better-auth": "^1.4.10",
         "next": "16.1.1",
         "postcss": "^8.5.6",
         "react": "19.2.3",
-        "react-dom": "19.2.3"
+        "react-dom": "19.2.3",
+        "styled-components": "^6.1.19"
     },
     "devDependencies": {
         "@tailwindcss/postcss": "^4.1.18",

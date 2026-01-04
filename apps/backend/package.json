@@ -7,8 +7,12 @@
         "lint": "eslint ."
     },
     "dependencies": {
+        "@casl/ability": "^6.7.5",
         "@elysiajs/cors": "^1.4.1",
-        "elysia": "latest"
+        "better-auth": "^1.4.10",
+        "elysia": "latest",
+        "mongodb": "^7.0.0",
+        "mongoose": "^9.1.1"
     },
     "devDependencies": {
         "@eslint/js": "^9.39.2",

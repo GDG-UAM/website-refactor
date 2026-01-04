@@ -1,0 +1,12 @@
+{
+    "$schema": "https://inlang.com/schema/inlang-message-format",
+    "index": {
+        "hero": {
+            "university": "Universidad Autónoma de Madrid",
+            "description": "Comunidad oficial universitaria donde conectamos, aprendemos y creamos con tecnologías de Google.",
+            "joinChapter": "Unirme al capítulo",
+            "learnMore": "¿Qué es un GDG?",
+            "scroll": "Desliza para saber más"
+        }
+    }
+}
