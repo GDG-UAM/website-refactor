@@ -54,7 +54,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                         <AITranslationProvider sourceLang={locale}>
                             <ButtonProvider>
                                 <Navbar />
-                                {children}
+                                <main>{children}</main>
                                 <Footer />
                             </ButtonProvider>
                         </AITranslationProvider>

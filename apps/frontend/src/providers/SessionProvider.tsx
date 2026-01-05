@@ -36,7 +36,7 @@ export function useSession() {
     const { data: clientSession, isPending, error } = useBetterAuthSession();
 
     // Use client session if available (after hydration), otherwise use SSR session
-    const session = clientSession ?? context.initialSession;
+    const session = isPending && context.initialSession ? context.initialSession : clientSession;
 
     return {
         data: session,

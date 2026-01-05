@@ -7,7 +7,7 @@
         "build": "bun run paraglide:compile && next build",
         "start": "next start",
         "type-check": "tsc --noEmit",
-        "paraglide:compile": "paraglide-js compile --project ./.inlang --outdir ./src/paraglide"
+        "paraglide:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide"
     },
     "imports": {
         "#/*": "./src/*"

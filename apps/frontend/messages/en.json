@@ -4,6 +4,13 @@
         "title": "GDG on Campus UAM",
         "description": "Student-lead association from Universidad Autónoma de Madrid"
     },
+    "notFound": {
+        "title": "404",
+        "message": "Page not found."
+    },
+    "loading": {
+        "text": "Loading..."
+    },
     "buttons": {
         "tooltip": {
             "keepPressed": "Press and hold to confirm"
@@ -245,6 +252,23 @@
             "joinChapter": "Join this chapter",
             "learnMore": "What is a GDG?",
             "scroll": "Scroll to learn more"
+        }
+    },
+    "auth": {
+        "pageTitle": "Authentication",
+        "pageDescription": "Sign in to access exclusive events, resources, and connect with the community.",
+        "login": {
+            "title": "Welcome to GDGoC UAM",
+            "subtitle": "Sign in to access exclusive events, resources, and connect with the community.",
+            "googleButton": "Continue with Google",
+            "signingIn": "Signing in..."
+        },
+        "logout": {
+            "title": "Sign Out",
+            "subtitle": "Are you sure you want to sign out of your account?",
+            "signOutButton": "Sign Out",
+            "cancelButton": "Cancel",
+            "loading": "Loading..."
         }
     }
 }
