@@ -1,9 +1,22 @@
 import { Elysia, Context } from "elysia";
 import { cors } from "@elysiajs/cors";
+import { swagger } from "@elysiajs/swagger";
 import { csrfPlugin } from "./plugins/csrf";
 import { permissionsPlugin } from "./plugins/permissions";
 import { auth } from "./lib/auth";
-import { checkPermission } from "./lib/permissions";
+import { adminRoutes, settingsRoutes } from "./routes";
+import db from "./lib/db";
+import { initializeSuperadmin } from "./lib/superadmin";
+
+// Initialize database and superadmin on startup
+db.connect()
+    .then(async () => {
+        console.log("[Server] Database connected");
+        await initializeSuperadmin();
+    })
+    .catch((err) => {
+        console.error("[Server] Failed to initialize:", err);
+    });
 
 const betterAuthView = (context: Context) => {
     const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
@@ -20,87 +33,63 @@ const app = new Elysia({ prefix: "/api" })
         cors({
             origin: process.env.FRONTEND_URL || "http://localhost:3001",
             credentials: true,
-            allowedHeaders: ["Content-Type", "Authorization", "x-xsrf-token", "x-better-auth", "x-internal-secret", "x-organization-id"]
+            allowedHeaders: ["Content-Type", "Authorization", "x-xsrf-token", "x-better-auth", "x-internal-secret"]
+        })
+    )
+    .use(
+        swagger({
+            path: "/docs",
+            documentation: {
+                info: {
+                    title: "GDG UAM API",
+                    version: "1.0.0",
+                    description: "GDG UAM API"
+                }
+            },
+            version: "1.0.0",
+            autoDarkMode: false,
+            scalarConfig: {
+                darkMode: false,
+                forceDarkModeState: "light",
+                hideDarkModeToggle: true,
+                layout: "modern",
+                telemetry: false,
+                searchHotKey: "f",
+                theme: "bluePlanet",
+                showDeveloperTools: "never",
+                hiddenClients: {
+                    http: false,
+                    javascript: false,
+                    node: false,
+                    powershell: false,
+                    shell: false,
+                    c: true,
+                    clojure: true,
+                    csharp: true,
+                    go: true,
+                    java: true,
+                    kotlin: true,
+                    objc: true,
+                    ocaml: true,
+                    php: true,
+                    python: true,
+                    r: true,
+                    ruby: true,
+                    swift: true,
+                    // @ts-expect-error definition error, but works properly
+                    fsharp: true,
+                    rust: true,
+                    dart: true
+                },
+                customCss: "div:has(> a.open-api-client-button) { display: none !important; }"
+            }
         })
     )
     .all("/auth/*", betterAuthView)
     .use(csrfPlugin)
-    // .derive(async ({ request }) => {
-    //     // Better Auth can parse the session from the request
-    //     const session = await auth.api.getSession({
-    //         headers: request.headers
-    //     });
-
-    //     return {
-    //         user: session?.user ?? null,
-    //         session: session?.session ?? null
-    //     };
-    // })
     .use(permissionsPlugin)
-    .get("/me", ({ user, set }) => {
-        if (!user) {
-            set.status = 401;
-            return { error: "Not logged in" };
-        }
-        return { user };
-    })
-    .get("/organizations", async ({ user, set, request }) => {
-        if (!user) {
-            set.status = 401;
-            return { error: "Not logged in" };
-        }
-
-        const orgs = await auth.api.listOrganizations({
-            headers: request.headers
-        });
-
-        return { organizations: orgs };
-    })
-    // Example protected route using CASL permissions
-    .post("/posts", ({ user, ability, set, body }) => {
-        if (!user) {
-            set.status = 401;
-            return { error: "Not logged in" };
-        }
-
-        try {
-            // Check if user can create posts
-            checkPermission(ability, "create", "Post");
-
-            // Your logic to create a post
-            return {
-                success: true,
-                message: "Post created",
-                post: body
-            };
-        } catch (error: unknown) {
-            set.status = 403;
-            return { error: (error as Error).message };
-        }
-    })
-    .get("/posts/:id", ({ params, ability, set }) => {
-        try {
-            // Check if user can read posts
-            checkPermission(ability, "read", "Post");
-
-            // Your logic to fetch the post
-            return {
-                success: true,
-                post: { id: params.id, title: "Example Post" }
-            };
-        } catch (error: unknown) {
-            set.status = 403;
-            return { error: (error as Error).message };
-        }
-    })
-    .post("/", () => "Hello Elysia")
-    .post("/test", () => ({ success: true }));
-
-// The way the server is run makes this redundant
-// app.listen({
-//     port: Number(process.env.BACKEND_PORT) || 3000,
-//     hostname: "0.0.0.0"
-// });
+    .use(adminRoutes)
+    .use(settingsRoutes);
 
 export type App = typeof app;
 export default app;

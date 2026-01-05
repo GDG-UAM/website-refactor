@@ -6,9 +6,11 @@ import { ButtonProvider } from "#/components/Buttons";
 import { AITranslationProvider } from "#/components/ai/translation/AITranslationProvider";
 import StyledComponentsRegistry from "#/lib/registry";
 import * as m from "#/paraglide/messages";
-import Footer from "#/components/pages/index/layout/Footer";
-import Navbar from "#/components/pages/index/layout/Navbar";
+import Footer from "#/components/pages/layout/Footer";
+import Navbar from "#/components/pages/layout/Navbar";
 import { SessionProvider } from "#/providers/SessionProvider";
+import { PermissionProvider } from "#/providers/PermissionsProvider";
+import { SettingsProvider } from "#/providers/SettingsProvider";
 import { getServerSession } from "#/lib/auth-server";
 
 const openSans = Open_Sans({
@@ -51,13 +53,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <body>
                 <StyledComponentsRegistry>
                     <SessionProvider initialSession={session}>
-                        <AITranslationProvider sourceLang={locale}>
-                            <ButtonProvider>
-                                <Navbar />
-                                <main>{children}</main>
-                                <Footer />
-                            </ButtonProvider>
-                        </AITranslationProvider>
+                        <PermissionProvider>
+                            <SettingsProvider>
+                                <AITranslationProvider sourceLang={locale}>
+                                    <ButtonProvider>
+                                        <Navbar />
+                                        <main>{children}</main>
+                                        <Footer />
+                                    </ButtonProvider>
+                                </AITranslationProvider>
+                            </SettingsProvider>
+                        </PermissionProvider>
                     </SessionProvider>
                 </StyledComponentsRegistry>
             </body>

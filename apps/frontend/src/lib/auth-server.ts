@@ -1,3 +1,4 @@
+import { auth } from "backend/src/lib/auth";
 import { headers } from "next/headers";
 
 const baseURL = process.env.INTERNAL_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
@@ -23,7 +24,7 @@ export async function getServerSession() {
             return { data: null, error: null };
         }
 
-        const session = await response.json();
+        const session = (await response.json()) as typeof auth.$Infer.Session;
         return { data: session, error: null };
     } catch (error) {
         console.error("Failed to fetch server session:", error);

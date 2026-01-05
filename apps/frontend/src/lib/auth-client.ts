@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/react";
-import { organizationClient } from "better-auth/client/plugins";
+import type { auth } from "backend/src/lib/auth";
 
 // Use internal URL for server-side, public URL for client-side
 const isServer = typeof window === "undefined";
@@ -12,7 +12,12 @@ const baseURL = `${backendURL}/api/auth`;
 
 export const authClient = createAuthClient({
     baseURL,
-    plugins: [organizationClient()]
+    plugins: []
 });
 
-export const { signIn, signUp, signOut, useSession, useActiveOrganization } = authClient;
+// Export typed hooks with inferred user type
+export const { signIn, signUp, signOut } = authClient;
+
+export const useSession = authClient.useSession as () => ReturnType<typeof authClient.useSession> & {
+    data: typeof auth.$Infer.Session | null;
+};

@@ -1,6 +1,15 @@
 {
     "$schema": "https://turbo.build/schema.json",
-    "globalPassThroughEnv": ["PORT", "BACKEND_PORT", "NODE_ENV", "INTERNAL_BACKEND_URL", "NEXT_PUBLIC_BACKEND_URL", "INTERNAL_API_SECRET"],
+    "globalPassThroughEnv": [
+        "PORT",
+        "BACKEND_PORT",
+        "NODE_ENV",
+        "INTERNAL_BACKEND_URL",
+        "NEXT_PUBLIC_BACKEND_URL",
+        "INTERNAL_API_SECRET",
+        "MONGODB_URI",
+        "PERMISSION_COMPILATION_MODE"
+    ],
     "tasks": {
         "type-check": {
             "cache": true,
@@ -14,7 +23,12 @@
         "build": {
             "dependsOn": ["^build"],
             "outputs": [".next/**", "dist/**"],
-            "env": ["NEXT_PUBLIC_BACKEND_URL", "INTERNAL_BACKEND_URL", "INTERNAL_API_SECRET"]
+            "env": ["NEXT_PUBLIC_BACKEND_URL", "INTERNAL_BACKEND_URL", "INTERNAL_API_SECRET", "MONGODB_URI"]
+        },
+        "build:permissions": {
+            "cache": false,
+            "dependsOn": [],
+            "env": ["MONGODB_URI"]
         }
     }
 }

@@ -1,75 +1,68 @@
-import { AbilityBuilder, createMongoAbility, MongoAbility } from "@casl/ability";
+import { AbilityBuilder } from "@gdg-uam/permissions";
+import type { AppAbility, Actions, Subjects } from "@gdg-uam/permissions";
+import type { SerializablePermission } from "../repositories/types";
+import { checkPermission as checkPermissionUtil } from "@gdg-uam/permissions";
+import db from "./db";
 
-// Define your actions
-type Actions = "create" | "read" | "update" | "delete" | "manage";
+/**
+ * Define abilities for a user
+ * Combines role-based and fine-grained permissions (from session)
+ */
+export const defineAbilitiesFor = async (
+    user: { id: string; roles?: string[] },
+    context: Record<string, unknown> = {},
+    sessionPermissions: SerializablePermission[] = []
+): Promise<AppAbility> => {
+    const builder = new AbilityBuilder();
 
-// Define your subjects (resources)
-type Subjects = "Post" | "User" | "Organization" | "all";
-
-export type AppAbility = MongoAbility<[Actions, Subjects]>;
-
-// Define roles and their permissions
-export const defineAbilitiesFor = (user: any, activeOrganization?: any): AppAbility => {
-    const { can, cannot, build } = new AbilityBuilder<AppAbility>(createMongoAbility);
-
-    if (!user) {
-        // Anonymous users - no permissions
-        return build();
+    // Anonymous users have no permissions
+    if (!user || !user.id) {
+        return builder.build();
     }
 
-    // Every authenticated user can read their own profile
-    can("read", "User", { id: user.id });
-    can("update", "User", { id: user.id });
+    // 1. Base permissions (every authenticated user)
+    // Users can read and update their own profile
+    builder.can("read", "User");
+    builder.can("update", "User");
 
-    // Organization-based permissions
-    if (activeOrganization) {
-        const userRole = activeOrganization.role; // From Better Auth organization membership
+    // 2. Global role-based permissions
+    // Check if user has global admin role (from Better Auth extended schema)
+    if (user.roles?.includes("admin")) {
+        // Global admins can manage everything
+        builder.can("manage", "all");
+        return builder.build();
+    }
 
-        switch (userRole) {
-            case "owner":
-                // Owners have full control of their organization
-                can("manage", "Organization", { id: activeOrganization.id });
-                can("manage", "Post", { organizationId: activeOrganization.id });
-                can("manage", "User", { organizationId: activeOrganization.id });
-                break;
+    // 3. Fine-grained permissions from session (pre-loaded, no DB query!)
+    if (sessionPermissions.length > 0) {
+        // Build context for permission evaluation
+        const permissionContext = {
+            user,
+            ...context
+        };
 
-            case "admin":
-                // Admins can manage most things except organization settings
-                can("read", "Organization", { id: activeOrganization.id });
-                can("update", "Organization", { id: activeOrganization.id });
-                can("manage", "Post", { organizationId: activeOrganization.id });
-                can(["read", "update"], "User", {
-                    organizationId: activeOrganization.id
-                });
-                break;
+        // Build ability from session permissions (no database query)
+        const { permissionRepository } = db.getRepositories();
+        const dbAbility = permissionRepository.buildAbilityFromPermissions(sessionPermissions, permissionContext);
 
-            case "member":
-                // Members have limited permissions
-                can("read", "Organization", { id: activeOrganization.id });
-                can("read", "Post", { organizationId: activeOrganization.id });
-                can("create", "Post", {
-                    organizationId: activeOrganization.id,
-                    authorId: user.id
-                });
-                can(["update", "delete"], "Post", {
-                    organizationId: activeOrganization.id,
-                    authorId: user.id
-                });
-                break;
-
-            default:
-                // Default minimal permissions
-                can("read", "Organization", { id: activeOrganization.id });
-                break;
+        // Merge session permissions with role-based permissions
+        // Session permissions take precedence (especially deny rules)
+        const dbRules = dbAbility.getRules();
+        for (const rule of dbRules) {
+            if (rule.inverted) {
+                builder.cannot(rule.action, rule.subject, rule.conditions);
+            } else {
+                builder.can(rule.action, rule.subject, rule.conditions);
+            }
         }
     }
 
-    return build();
+    return builder.build();
 };
 
-// Helper to check permissions
-export const checkPermission = (ability: AppAbility, action: Actions, subject: Subjects, field?: any) => {
-    if (!ability.can(action, subject, field)) {
-        throw new Error(`Forbidden: Cannot ${action} ${subject}`);
-    }
+/**
+ * Helper function to check permission and throw error if denied
+ */
+export const checkPermission = (ability: AppAbility, action: Actions, subject: Subjects, field?: string): void => {
+    checkPermissionUtil(ability, action, subject, field);
 };

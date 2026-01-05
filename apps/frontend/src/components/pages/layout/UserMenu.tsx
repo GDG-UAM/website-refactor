@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "#/providers/SessionProvider";
+import { useHasAdminPermissions } from "#/providers/PermissionsProvider";
 import * as m from "#/paraglide/messages";
 import {
     AvatarButton,
@@ -19,10 +20,8 @@ export default function UserMenu() {
     const { data: session, isPending } = useSession();
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
-    // const role = session?.user?.role;
-    // const isPrivileged = role === "admin" || role === "team";
+    const hasAdminPermissions = useHasAdminPermissions();
     // const { participating } = useGiveawaysParticipation({ revalidateOnFocus: false });
-    const isPrivileged = false; // TODO: implement role check with Better Auth
 
     useEffect(() => {
         function handleClick(e: MouseEvent) {
@@ -35,16 +34,14 @@ export default function UserMenu() {
 
     // Hook handles fetching/caching; we only show the menu item when authenticated and participating
 
-    if (isPending) {
-        return <LoginButton onClick={() => {}} disabled iconSize={18} />;
-    }
-
+    // Show login button if no session (whether pending or not)
     if (!session?.user) {
         return (
             <LoginButton
                 onClick={() => {
                     signIn.social({ provider: "google", callbackURL: "/" });
                 }}
+                disabled={isPending}
                 iconSize={18}
             />
         );
@@ -59,7 +56,7 @@ export default function UserMenu() {
                 <img src={avatarSrc} alt={session.user.name || "User"} width={34} height={34} style={{ borderRadius: "50%" }} />
             </AvatarButton>
             <Menu role="menu" aria-label={m["navbar.myProfile"]()} $open={open}>
-                {isPrivileged && (
+                {hasAdminPermissions && (
                     <MenuItem role="none">
                         <Link role="menuitem" href="/admin" onClick={() => setOpen(false)}>
                             <IconSlot>
@@ -71,7 +68,7 @@ export default function UserMenu() {
                         </Link>
                     </MenuItem>
                 )}
-                {isPrivileged && <Divider />}
+                {hasAdminPermissions && <Divider />}
                 <MenuItem role="none">
                     <Link role="menuitem" href={`/user/${session.user.id}`} onClick={() => setOpen(false)}>
                         <IconSlot>

@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
-import { setLocale, getLocale, locales as availableLanguageTags, locales } from "#/paraglide/runtime";
+import { setLocale, getLocale, locales as availableLanguageTags } from "#/paraglide/runtime";
 import * as m from "#/paraglide/messages";
 import { useSession } from "#/providers/SessionProvider";
 import { useAITranslation } from "#/components/ai/translation/AITranslationProvider";
@@ -23,8 +23,8 @@ import {
 
 // Simple chevron down icon component
 const ChevronDown = () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
+    <svg stroke="currentColor" fill="currentColor" strokeWidth="0" viewBox="0 0 512 512" height="18" width="18" xmlns="http://www.w3.org/2000/svg">
+        <path fill="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="48" d="m112 184 144 144 144-144"></path>
     </svg>
 );
 
@@ -418,9 +418,7 @@ function LanguageSwitcher({ onCloseMobileNav }: Props) {
                 ) : (
                     <FlagImg src={flagUrl} alt={`${displayLocale} flag`} />
                 )}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M7 10l5 5 5-5z" />
-                </svg>
+                <ChevronDown />
             </LangButton>
             <LangMenu role="menu" aria-label={m["navbar.lang.switchLanguage"]()} $open={langOpen}>
                 {manualLocales.map((code: string) => (

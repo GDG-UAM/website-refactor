@@ -11,6 +11,12 @@
     "loading": {
         "text": "Loading..."
     },
+    "dateFormats": {
+        "shortDate": "{day} {month} {year}",
+        "fullDate": "{day} {month} {year}",
+        "shortDateTime": "{day} {month} {year}, {time}",
+        "fullDateTime": "{day} {month} {year}, {time}"
+    },
     "buttons": {
         "tooltip": {
             "keepPressed": "Press and hold to confirm"
@@ -252,6 +258,25 @@
             "joinChapter": "Join this chapter",
             "learnMore": "What is a GDG?",
             "scroll": "Scroll to learn more"
+        },
+        "events": {
+            "eyebrow": "Google Developer Groups on Campus · UAM",
+            "nextEvents": "Upcoming events",
+            "mainCopy": "Learn, create, and share with the community. Here we highlight some nearby events; you can see the full list on the [link] page.",
+            "copyBullets": {
+                "0": "Technical talks, hands-on workshops, and networking.",
+                "1": "In-person and online formats depending on the activity.",
+                "2": "Open to everyone, join us!"
+            },
+            "seeAll": "See all events",
+            "nextEvent": "Next",
+            "pastEvent": "Past",
+            "join": "Join",
+            "moreInfo": "More info",
+            "timeline": "Event timeline",
+            "youAreHere": "You are here",
+            "timelineSR": "Hover over or focus on a point to see details. The card rotates automatically.",
+            "mainCopy_events": "Events"
         }
     },
     "auth": {
