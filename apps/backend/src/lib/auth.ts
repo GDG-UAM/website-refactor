@@ -5,6 +5,7 @@ import { client } from "./db";
 
 export const auth = betterAuth({
     database: mongodbAdapter(client.db()),
+    baseURL: process.env.FRONTEND_URL || "http://localhost:3000",
     socialProviders: {
         google: {
             clientId: process.env.GOOGLE_CLIENT_ID || "",
