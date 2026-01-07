@@ -74,9 +74,8 @@ export const auth = betterAuth({
                 input: false
             },
             customTags: {
-                type: "json",
+                type: "string[]",
                 required: false,
-                defaultValue: [],
                 input: false
             },
             // Privacy
@@ -141,23 +140,23 @@ export const auth = betterAuth({
                 input: false
             },
             // Games
-            scoreboardNickname: {
-                type: "string",
-                required: false,
-                input: false
-            },
-            anonymousOnScoreboard: {
-                type: "boolean",
-                required: false,
-                defaultValue: false,
-                input: false
-            },
-            showRankings: {
-                type: "boolean",
-                required: false,
-                defaultValue: true,
-                input: false
-            },
+            // scoreboardNickname: {
+            //     type: "string",
+            //     required: false,
+            //     input: false
+            // },
+            // anonymousOnScoreboard: {
+            //     type: "boolean",
+            //     required: false,
+            //     defaultValue: false,
+            //     input: false
+            // },
+            // showRankings: {
+            //     type: "boolean",
+            //     required: false,
+            //     defaultValue: true,
+            //     input: false
+            // },
             // Notifications
             emailMentions: {
                 type: "boolean",

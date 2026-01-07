@@ -8,3 +8,7 @@ export { canUser, cannotUser, checkPermission, evaluateConditions, getNestedValu
 
 // Export parser
 export { parsePattern, matchesPattern, expandPattern, validatePattern } from "./parser";
+
+// Export base permissions
+export { applyBasePermissions, hasGlobalAdminRole, applyGlobalAdminPermissions, applyUserPermissions } from "./base-permissions";
+export type { PermissionUser } from "./base-permissions";

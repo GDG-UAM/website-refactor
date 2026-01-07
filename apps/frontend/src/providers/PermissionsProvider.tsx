@@ -2,18 +2,28 @@
 
 import { createContext, useContext, useMemo, ReactNode } from "react";
 import { useSession } from "#/providers/SessionProvider";
-import type { AppAbility, Actions, Subjects } from "@gdg-uam/permissions";
-import { AbilityBuilder, canUser, cannotUser } from "@gdg-uam/permissions";
+import type { AppAbility, Actions, Subjects, PermissionUser } from "@gdg-uam/permissions";
+import {
+    AbilityBuilder,
+    canUser,
+    cannotUser,
+    applyBasePermissions,
+    hasGlobalAdminRole,
+    applyGlobalAdminPermissions,
+    applyUserPermissions
+} from "@gdg-uam/permissions";
+
+type Permission = {
+    resource: string;
+    actions: Actions[];
+    effect: "allow" | "deny";
+    conditions?: Record<string, unknown>;
+    priority: number;
+};
 
 interface PermissionContextType {
     ability: AppAbility;
-    permissions: Array<{
-        resource: string;
-        actions: Actions[];
-        effect: "allow" | "deny";
-        conditions?: Record<string, unknown>;
-        priority: number;
-    }>;
+    permissions: Permission[];
     can: (action: Actions, subject: Subjects, field?: string) => boolean;
     cannot: (action: Actions, subject: Subjects, field?: string) => boolean;
     loading: boolean;
@@ -40,55 +50,32 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
             return { ability: builder.build(), permissions: [] };
         }
 
-        const user = session.user as {
-            roles?: string;
-            permissions?: Array<{
-                resource: string;
-                actions: Actions[];
-                effect: "allow" | "deny";
-                conditions?: Record<string, unknown>;
-                priority: number;
-            }>;
+        const sessionUser = session.user as {
+            id: string;
+            role?: string;
+            permissions?: Permission[];
+        };
+
+        // Build permission user object
+        const permUser: PermissionUser = {
+            id: sessionUser.id,
+            role: sessionUser.role,
+            permissions: sessionUser.permissions
         };
 
         // Base permissions for authenticated users
-        builder.can("read", "User");
-        builder.can("update", "User");
+        applyBasePermissions(builder, permUser.id);
 
         // Check for global admin role
-        const roles = user.roles ? user.roles.split(",").map((r: string) => r.trim()) : [];
-        if (roles.includes("admin")) {
-            builder.can("manage", "all");
-            return { ability: builder.build(), permissions: [] };
+        if (hasGlobalAdminRole(permUser)) {
+            applyGlobalAdminPermissions(builder);
+            return { ability: builder.build(), permissions: permUser.permissions || [] };
         }
 
-        // Parse permissions from user object (stored as JSON object)
-        let userPermissions: Array<{
-            resource: string;
-            actions: Actions[];
-            effect: "allow" | "deny";
-            conditions?: Record<string, unknown>;
-            priority: number;
-        }> = [];
+        // Apply user-specific permissions
+        applyUserPermissions(builder, permUser, {});
 
-        try {
-            if (user.permissions && Array.isArray(user.permissions) && user.permissions.length > 0) {
-                userPermissions = user.permissions;
-            }
-        } catch (error) {
-            console.error("Failed to load permissions from user object:", error);
-        }
-
-        // Build ability from user's fine-grained permissions
-        const sorted = [...userPermissions].sort((a, b) => b.priority - a.priority);
-        for (const perm of sorted) {
-            const method = perm.effect === "deny" ? builder.cannot.bind(builder) : builder.can.bind(builder);
-            for (const action of perm.actions) {
-                method(action, perm.resource, perm.conditions);
-            }
-        }
-
-        return { ability: builder.build(), permissions: userPermissions };
+        return { ability: builder.build(), permissions: permUser.permissions || [] };
     }, [session]);
 
     const value: PermissionContextType = {

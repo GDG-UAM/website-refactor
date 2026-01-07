@@ -263,11 +263,11 @@
             "eyebrow": "Google Developer Groups on Campus · UAM",
             "nextEvents": "Upcoming events",
             "mainCopy": "Learn, create, and share with the community. Here we highlight some nearby events; you can see the full list on the [link] page.",
-            "copyBullets": {
-                "0": "Technical talks, hands-on workshops, and networking.",
-                "1": "In-person and online formats depending on the activity.",
-                "2": "Open to everyone, join us!"
-            },
+            "copyBullets": [
+                "Technical talks, hands-on workshops, and networking.",
+                "In-person and online formats depending on the activity.",
+                "Open to everyone, join us!"
+            ],
             "seeAll": "See all events",
             "nextEvent": "Next",
             "pastEvent": "Past",
@@ -295,5 +295,115 @@
             "cancelButton": "Cancel",
             "loading": "Loading..."
         }
+    },
+    "about": {
+        "pageTitle": "About Us",
+        "pageDescription": "Learn more about GDG on Campus UAM, our mission, vision, history, and the team behind the community. Join us in our journey to connect and empower students through technology.",
+        "title": "About Us",
+        "subtitle": "[google] Developer Group on Campus - [uni]",
+        "subtitle_google": "Google",
+        "subtitle_uni": "Autonomous University of Madrid",
+        "intro": "We are a university community passionate about technology. Here we connect, learn, and grow together, exploring Google tools and solving real challenges. If you love technology, this is your place.",
+        "missionTitle": "Our Mission",
+        "whatWeDoTitle": "What We Do",
+        "mission": [
+            {
+                "title": "Connect with the professional world",
+                "text": "We bring the professional world closer to students with talks, workshops, and spaces to make contacts that boost your career."
+            },
+            {
+                "title": "Make programming fun",
+                "text": "We create an environment where learning to program is entertaining and collaborative, full of challenges and creativity."
+            },
+            {
+                "title": "Stay up to date",
+                "text": "We discover the latest trends in technology together and share that curiosity for what's new."
+            },
+            {
+                "title": "Improve campus life",
+                "text": "We apply our skills to make campus more connected, modern, and useful for everyone."
+            }
+        ],
+        "whatWeDo": [
+            {
+                "title": "Talks with Speakers (Google Developer Expert)",
+                "description": "Listen to experts and professionals who share ideas and experiences from the tech world."
+            },
+            {
+                "title": "Hackathons",
+                "description": "Marathons where we create tech solutions as a team and put our creativity to the test."
+            },
+            {
+                "title": "Events",
+                "description": "Meetups to connect, share, and grow as a community."
+            },
+            {
+                "title": "Workshops",
+                "description": "Learn by doing: hands-on workshops on AI, Machine Learning, and more."
+            }
+        ],
+        "visionTitle": "Our Vision",
+        "vision": "We want technology to be accessible to everyone at the university. We aim to be the place where ideas and projects are born that improve daily life.",
+        "historyTitle": "Where do we come from? The history of GDG",
+        "history": "Google Developer Groups (GDG) are communities of developers around the world interested in Google technologies. The initiative focuses on learning, connection, and professional growth. Each GDG group is a local meeting point where developers share knowledge, build successful products, and network.",
+        "disclaimer": " is an independent group. Our activities and opinions expressed in this group should not be linked in any way to Google, the corporation.",
+        "connectTitle": "Connect with us!",
+        "connect": "If you are interested in technology and want to be part of an active community, join us! Follow us on social media and participate in our events to learn, grow, and build with us.",
+        "teamTitle": "Our Team",
+        "organizersTitle": "GDG Organizers",
+        "membersTitle": "Team Members",
+        "organizerRoleLabel": "GDG Organizer",
+        "memberRoleLabel": "Team Member"
+    },
+    "contact": {
+        "pageTitle": "Contact Us",
+        "pageDescription": "Use this form to reach out to the GDG on Campus UAM team. Choose 'Personal' for general questions or meetup feedback, or 'Sponsor' if your organization wants to support or collaborate with us.",
+        "title": "Contact us",
+        "intro": "Use this form to reach out to the GDG on Campus UAM team. Choose 'Personal' for general questions or meetup feedback, or 'Sponsor' if your organization wants to support or collaborate with us.",
+        "personal": "Personal",
+        "sponsor": "Sponsor",
+        "formTitlePersonal": "Write to us directly",
+        "formTitleSponsor": "Sponsor contact",
+        "fullName": "Full Name",
+        "namePlaceholder": "Your name",
+        "email": "Email",
+        "emailPlaceholder": "you@example.com",
+        "message": "Message",
+        "organization": "Organization",
+        "organizationPlaceholder": "Your organization",
+        "contactName": "Contact name",
+        "contactEmail": "Contact email",
+        "website": "Website",
+        "websitePlaceholder": "https://your-site.com",
+        "required": "Required",
+        "validEmail": "Enter a valid email",
+        "send": "Send",
+        "sent": "Sent",
+        "faq": {
+            "title": "Frequently asked questions",
+            "items": [
+                {
+                    "q": "Do I need prior experience to attend?",
+                    "a": "No. Our events are open to all levels unless otherwise stated in the description, and we encourage beginners to join in."
+                },
+                {
+                    "q": "Can I give a talk?",
+                    "a": "We'd love that! Send us your idea with a title, a short summary (3-5 lines), estimated duration, and any relevant links. We'll provide feedback and help you prepare."
+                },
+                {
+                    "q": "What does sponsorship involve?",
+                    "a": "It can be financial support or in-kind contributions (venues, food, swag, mentors…). In return, we offer brand visibility and access to talent. Tell us your goals and we'll suggest a good fit."
+                },
+                {
+                    "q": "How can I become a volunteer?",
+                    "a": "Reach out through the form on this page. We'll set up an interview to get to know you better and see how you might fit into the team."
+                }
+            ]
+        }
+    },
+    "userProfile": {
+        "pageTitle": "Profile",
+        "pageDescription": " ",
+        "private": "Private"
     }
 }

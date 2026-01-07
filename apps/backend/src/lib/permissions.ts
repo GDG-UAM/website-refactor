@@ -1,8 +1,7 @@
-import { AbilityBuilder } from "@gdg-uam/permissions";
-import type { AppAbility, Actions, Subjects } from "@gdg-uam/permissions";
+import { AbilityBuilder, applyBasePermissions, hasGlobalAdminRole, applyGlobalAdminPermissions, applyUserPermissions } from "@gdg-uam/permissions";
+import type { AppAbility, Actions, Subjects, PermissionUser } from "@gdg-uam/permissions";
 import type { SerializablePermission } from "../repositories/types";
 import { checkPermission as checkPermissionUtil } from "@gdg-uam/permissions";
-import db from "./db";
 
 /**
  * Define abilities for a user
@@ -20,42 +19,30 @@ export const defineAbilitiesFor = async (
         return builder.build();
     }
 
+    // Build permission user object
+    const permUser: PermissionUser = {
+        id: user.id,
+        roles: user.roles,
+        permissions: sessionPermissions.map((p) => ({
+            resource: p.resource,
+            actions: p.actions,
+            effect: p.effect,
+            conditions: p.conditions,
+            priority: p.priority
+        }))
+    };
+
     // 1. Base permissions (every authenticated user)
-    // Users can read and update their own profile
-    builder.can("read", "User");
-    builder.can("update", "User");
+    applyBasePermissions(builder, user.id);
 
     // 2. Global role-based permissions
-    // Check if user has global admin role (from Better Auth extended schema)
-    if (user.roles?.includes("admin")) {
-        // Global admins can manage everything
-        builder.can("manage", "all");
+    if (hasGlobalAdminRole(permUser)) {
+        applyGlobalAdminPermissions(builder);
         return builder.build();
     }
 
-    // 3. Fine-grained permissions from session (pre-loaded, no DB query!)
-    if (sessionPermissions.length > 0) {
-        // Build context for permission evaluation
-        const permissionContext = {
-            user,
-            ...context
-        };
-
-        // Build ability from session permissions (no database query)
-        const { permissionRepository } = db.getRepositories();
-        const dbAbility = permissionRepository.buildAbilityFromPermissions(sessionPermissions, permissionContext);
-
-        // Merge session permissions with role-based permissions
-        // Session permissions take precedence (especially deny rules)
-        const dbRules = dbAbility.getRules();
-        for (const rule of dbRules) {
-            if (rule.inverted) {
-                builder.cannot(rule.action, rule.subject, rule.conditions);
-            } else {
-                builder.can(rule.action, rule.subject, rule.conditions);
-            }
-        }
-    }
+    // 3. Fine-grained permissions from session
+    applyUserPermissions(builder, permUser, context);
 
     return builder.build();
 };

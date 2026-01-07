@@ -34,11 +34,11 @@ interface UserSettings {
         dietary?: string;
         tshirtSize?: "XS" | "S" | "M" | "L" | "XL" | "XXL";
     };
-    games: {
-        scoreboardNickname?: string;
-        anonymousOnScoreboard: boolean;
-        showRankings: boolean;
-    };
+    // games: {
+    //     scoreboardNickname?: string;
+    //     anonymousOnScoreboard: boolean;
+    //     showRankings: boolean;
+    // };
     notifications: {
         emailMentions: boolean;
         weeklyNewsletter: boolean;
@@ -83,10 +83,10 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     allowAnonUsage: true
                 },
                 events: {},
-                games: {
-                    anonymousOnScoreboard: false,
-                    showRankings: true
-                },
+                // games: {
+                //     anonymousOnScoreboard: false,
+                //     showRankings: true
+                // },
                 notifications: {
                     emailMentions: true,
                     weeklyNewsletter: false,
@@ -131,11 +131,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 dietary: user.dietary ?? undefined,
                 tshirtSize: (user.tshirtSize ?? undefined) as "XS" | "S" | "M" | "L" | "XL" | "XXL" | undefined
             },
-            games: {
-                scoreboardNickname: user.scoreboardNickname ?? undefined,
-                anonymousOnScoreboard: user.anonymousOnScoreboard ?? false,
-                showRankings: user.showRankings ?? true
-            },
+            // games: {
+            //     scoreboardNickname: user.scoreboardNickname ?? undefined,
+            //     anonymousOnScoreboard: user.anonymousOnScoreboard ?? false,
+            //     showRankings: user.showRankings ?? true
+            // },
             notifications: {
                 emailMentions: user.emailMentions ?? true,
                 weeklyNewsletter: user.weeklyNewsletter ?? false,
@@ -157,7 +157,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             }
 
             // Call the backend API to update settings
-            const response = await api.settings({ category }).patch(data);
+            const response = await api.settings.patch(data);
 
             if (response.error) {
                 throw new Error(`Failed to update settings: ${response.error}`);

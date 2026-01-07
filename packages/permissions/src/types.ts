@@ -79,18 +79,35 @@ export class Ability {
 
         // Check subject match
         const subjects = Array.isArray(rule.subject) ? rule.subject : [rule.subject];
-        const subjectMatches = subjects.includes(subject) || subjects.includes("all");
-
-        if (!subjectMatches) {
-            return false;
+        
+        // First check for exact matches or "all"
+        if (subjects.includes(subject) || subjects.includes("all")) {
+            // Check field match
+            if (field && rule.fields && rule.fields.length > 0) {
+                return rule.fields.includes(field);
+            }
+            return true;
         }
 
-        // Check field match
-        if (field && rule.fields && rule.fields.length > 0) {
-            return rule.fields.includes(field);
+        // Check for wildcard pattern matching (e.g., users.* matches users.123)
+        for (const ruleSubject of subjects) {
+            if (ruleSubject.includes("*") || ruleSubject.includes("{")) {
+                // Import pattern matching at runtime
+                const { parsePattern, matchesPattern } = require("./parser");
+                const pattern = parsePattern(ruleSubject);
+                const targetPath = subject.split(".");
+                
+                if (matchesPattern(pattern.segments, targetPath)) {
+                    // Check field match
+                    if (field && rule.fields && rule.fields.length > 0) {
+                        return rule.fields.includes(field);
+                    }
+                    return true;
+                }
+            }
         }
 
-        return true;
+        return false;
     }
 
     getRules(): PermissionRule[] {

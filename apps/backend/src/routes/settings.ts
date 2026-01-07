@@ -11,14 +11,14 @@ function userToSettingsDTO(user: User) {
             firstDayOfWeek: (user.firstDayOfWeek || "monday") as "monday" | "sunday"
         },
         profile: {
-            displayName: user.displayName,
-            shortBio: user.shortBio,
-            github: user.github,
-            linkedin: user.linkedin,
-            x: user.x,
-            instagram: user.instagram,
-            website: user.website,
-            customTags: user.customTags
+            displayName: user.displayName ?? undefined,
+            shortBio: user.shortBio ?? undefined,
+            github: user.github ?? undefined,
+            linkedin: user.linkedin ?? undefined,
+            x: user.x ?? undefined,
+            instagram: user.instagram ?? undefined,
+            website: user.website ?? undefined,
+            customTags: user.customTags ?? undefined
         },
         privacy: {
             showAttendance: user.showAttendance ?? false,
@@ -31,14 +31,14 @@ function userToSettingsDTO(user: User) {
             allowAnonUsage: user.allowAnonUsage ?? true
         },
         events: {
-            dietary: user.dietary,
+            dietary: user.dietary ?? undefined,
             tshirtSize: user.tshirtSize as "XS" | "S" | "M" | "L" | "XL" | "XXL" | undefined
         },
-        games: {
-            scoreboardNickname: user.scoreboardNickname,
-            anonymousOnScoreboard: user.anonymousOnScoreboard ?? false,
-            showRankings: user.showRankings ?? true
-        },
+        // games: {
+        //     scoreboardNickname: user.scoreboardNickname ?? undefined,
+        //     anonymousOnScoreboard: user.anonymousOnScoreboard ?? false,
+        //     showRankings: user.showRankings ?? true
+        // },
         notifications: {
             emailMentions: user.emailMentions ?? true,
             weeklyNewsletter: user.weeklyNewsletter ?? false,
@@ -53,100 +53,184 @@ function userToSettingsDTO(user: User) {
     };
 }
 
+const UserSettingsSchema = t.Object({
+    general: t.Object({
+        timeFormat: t.Union([t.Literal("24h"), t.Literal("12h")], {
+            default: "24h"
+        }),
+        firstDayOfWeek: t.Union([t.Literal("monday"), t.Literal("sunday")], {
+            default: "monday"
+        })
+    }),
+
+    profile: t.Object({
+        displayName: t.Optional(t.String()),
+        shortBio: t.Optional(t.String()),
+        github: t.Optional(t.String()),
+        linkedin: t.Optional(t.String()),
+        x: t.Optional(t.String()),
+        instagram: t.Optional(t.String()),
+        website: t.Optional(t.String()),
+        customTags: t.Optional(t.Array(t.String()))
+    }),
+
+    privacy: t.Object({
+        showAttendance: t.Boolean({ default: false }),
+        showResults: t.Boolean({ default: false }),
+        allowTagInstagram: t.Boolean({ default: true }),
+        allowTagLinkedIn: t.Boolean({ default: true }),
+        allowMentionBlog: t.Boolean({ default: true }),
+        showProfilePublicly: t.Boolean({ default: true }),
+        photoConsent: t.Boolean({ default: true }),
+        allowAnonUsage: t.Boolean({ default: true })
+    }),
+
+    events: t.Object({
+        dietary: t.Optional(t.String()),
+        tshirtSize: t.Optional(t.Union([t.Literal("XS"), t.Literal("S"), t.Literal("M"), t.Literal("L"), t.Literal("XL"), t.Literal("XXL")]))
+    }),
+
+    // games: t.Object({
+    //     scoreboardNickname: t.Optional(t.String()),
+    //     anonymousOnScoreboard: t.Boolean({ default: false }),
+    //     showRankings: t.Boolean({ default: true })
+    // }),
+
+    notifications: t.Object({
+        emailMentions: t.Boolean({ default: true }),
+        weeklyNewsletter: t.Boolean({ default: false }),
+        urgentAlerts: t.Boolean({ default: true })
+    }),
+
+    accessibility: t.Object({
+        highContrast: t.Boolean({ default: false }),
+        reducedMotion: t.Boolean({ default: false }),
+        dyslexicFont: t.Boolean({ default: false }),
+        daltonismMode: t.Union([t.Literal("none"), t.Literal("deuteranopia"), t.Literal("protanopia"), t.Literal("tritanopia")], { default: "none" })
+    })
+});
+
+const UserSettingsFlatSchema = t.Object({
+    timeFormat: t.Union([t.Literal("24h"), t.Literal("12h")], {
+        default: "24h"
+    }),
+    firstDayOfWeek: t.Union([t.Literal("monday"), t.Literal("sunday")], {
+        default: "monday"
+    }),
+
+    displayName: t.Optional(t.String()),
+    shortBio: t.Optional(t.String()),
+    github: t.Optional(t.String()),
+    linkedin: t.Optional(t.String()),
+    x: t.Optional(t.String()),
+    instagram: t.Optional(t.String()),
+    website: t.Optional(t.String()),
+    customTags: t.Optional(t.Array(t.String())),
+
+    showAttendance: t.Boolean({ default: false }),
+    showResults: t.Boolean({ default: false }),
+    allowTagInstagram: t.Boolean({ default: true }),
+    allowTagLinkedIn: t.Boolean({ default: true }),
+    allowMentionBlog: t.Boolean({ default: true }),
+    showProfilePublicly: t.Boolean({ default: true }),
+    photoConsent: t.Boolean({ default: true }),
+    allowAnonUsage: t.Boolean({ default: true }),
+
+    dietary: t.Optional(t.String()),
+    tshirtSize: t.Optional(t.Union([t.Literal("XS"), t.Literal("S"), t.Literal("M"), t.Literal("L"), t.Literal("XL"), t.Literal("XXL")])),
+
+    // scoreboardNickname: t.Optional(t.String()),
+    // anonymousOnScoreboard: t.Boolean({ default: false }),
+    // showRankings: t.Boolean({ default: true }),
+
+    emailMentions: t.Boolean({ default: true }),
+    weeklyNewsletter: t.Boolean({ default: false }),
+    urgentAlerts: t.Boolean({ default: true }),
+
+    highContrast: t.Boolean({ default: false }),
+    reducedMotion: t.Boolean({ default: false }),
+    dyslexicFont: t.Boolean({ default: false }),
+    daltonismMode: t.Union([t.Literal("none"), t.Literal("deuteranopia"), t.Literal("protanopia"), t.Literal("tritanopia")], { default: "none" })
+});
+
 export const settingsRoutes = new Elysia({ prefix: "/settings" })
     .use(permissionsPlugin)
     // GET /settings - Get all user settings
-    .get("/", async ({ user, set }) => {
-        if (!user) {
-            set.status = 401;
-            return { error: "Not logged in" };
-        }
-
-        const { userRepository } = db.getRepositories();
-        const userDoc = await userRepository.findById(user.id);
-
-        if (!userDoc) {
-            set.status = 404;
-            return { error: "User not found" };
-        }
-
-        return userToSettingsDTO(userDoc);
-    })
-
-    // PATCH /settings/:category - Update a specific category
-    .patch(
-        "/:category",
-        async ({ user, set, params, body }) => {
+    .get(
+        "/",
+        async ({ user, set }) => {
             if (!user) {
                 set.status = 401;
                 return { error: "Not logged in" };
             }
 
-            const { category } = params;
-            // const validCategories = ["general", "profile", "privacy", "events", "games", "notifications", "accessibility"];
-            const validCategories = ["general", "profile", "privacy", "events", "notifications", "accessibility"];
+            const { userRepository } = db.getRepositories();
+            const userDoc = await userRepository.findById(user.id);
 
-            if (!validCategories.includes(category)) {
-                set.status = 400;
-                return { error: "Invalid category" };
+            if (!userDoc) {
+                set.status = 404;
+                return { error: "User not found" };
             }
 
+            return userToSettingsDTO(userDoc);
+        },
+        {
+            response: {
+                200: UserSettingsSchema,
+                401: t.Object({ error: t.String() }),
+                404: t.Object({ error: t.String() })
+            }
+        }
+    )
+
+    // PATCH /settings/:category - Update a specific category
+    .patch(
+        "/",
+        async ({ user, set, body }) => {
+            if (!user) {
+                set.status = 401;
+                return { error: "Not logged in" };
+            }
             // Map nested category data to flat user fields
             const updateFields: Record<string, unknown> = {};
 
-            switch (category) {
-                case "general":
-                    if (body.timeFormat) updateFields.timeFormat = body.timeFormat;
-                    if (body.firstDayOfWeek) updateFields.firstDayOfWeek = body.firstDayOfWeek;
-                    break;
+            if (body.timeFormat) updateFields.timeFormat = body.timeFormat;
+            if (body.firstDayOfWeek) updateFields.firstDayOfWeek = body.firstDayOfWeek;
 
-                case "profile":
-                    if (body.displayName !== undefined) updateFields.displayName = body.displayName;
-                    if (body.shortBio !== undefined) updateFields.shortBio = body.shortBio;
-                    if (body.github !== undefined) updateFields.github = body.github;
-                    if (body.linkedin !== undefined) updateFields.linkedin = body.linkedin;
-                    if (body.x !== undefined) updateFields.x = body.x;
-                    if (body.instagram !== undefined) updateFields.instagram = body.instagram;
-                    if (body.website !== undefined) updateFields.website = body.website;
-                    if (body.customTags !== undefined) updateFields.customTags = body.customTags;
-                    break;
+            if (body.displayName !== undefined) updateFields.displayName = body.displayName;
+            if (body.shortBio !== undefined) updateFields.shortBio = body.shortBio;
+            if (body.github !== undefined) updateFields.github = body.github;
+            if (body.linkedin !== undefined) updateFields.linkedin = body.linkedin;
+            if (body.x !== undefined) updateFields.x = body.x;
+            if (body.instagram !== undefined) updateFields.instagram = body.instagram;
+            if (body.website !== undefined) updateFields.website = body.website;
+            if (body.customTags !== undefined) updateFields.customTags = body.customTags;
 
-                case "privacy":
-                    if (body.showAttendance !== undefined) updateFields.showAttendance = body.showAttendance;
-                    if (body.showResults !== undefined) updateFields.showResults = body.showResults;
-                    if (body.allowTagInstagram !== undefined) updateFields.allowTagInstagram = body.allowTagInstagram;
-                    if (body.allowTagLinkedIn !== undefined) updateFields.allowTagLinkedIn = body.allowTagLinkedIn;
-                    if (body.allowMentionBlog !== undefined) updateFields.allowMentionBlog = body.allowMentionBlog;
-                    if (body.showProfilePublicly !== undefined) updateFields.showProfilePublicly = body.showProfilePublicly;
-                    if (body.photoConsent !== undefined) updateFields.photoConsent = body.photoConsent;
-                    if (body.allowAnonUsage !== undefined) updateFields.allowAnonUsage = body.allowAnonUsage;
-                    break;
+            if (body.showAttendance !== undefined) updateFields.showAttendance = body.showAttendance;
+            if (body.showResults !== undefined) updateFields.showResults = body.showResults;
+            if (body.allowTagInstagram !== undefined) updateFields.allowTagInstagram = body.allowTagInstagram;
+            if (body.allowTagLinkedIn !== undefined) updateFields.allowTagLinkedIn = body.allowTagLinkedIn;
+            if (body.allowMentionBlog !== undefined) updateFields.allowMentionBlog = body.allowMentionBlog;
+            if (body.showProfilePublicly !== undefined) updateFields.showProfilePublicly = body.showProfilePublicly;
+            if (body.photoConsent !== undefined) updateFields.photoConsent = body.photoConsent;
+            if (body.allowAnonUsage !== undefined) updateFields.allowAnonUsage = body.allowAnonUsage;
 
-                case "events":
-                    if (body.dietary !== undefined) updateFields.dietary = body.dietary;
-                    if (body.tshirtSize !== undefined) updateFields.tshirtSize = body.tshirtSize;
-                    break;
+            if (body.dietary !== undefined) updateFields.dietary = body.dietary;
+            if (body.tshirtSize !== undefined) updateFields.tshirtSize = body.tshirtSize;
 
-                // case "games":
-                //     if (body.scoreboardNickname !== undefined) updateFields.scoreboardNickname = body.scoreboardNickname;
-                //     if (body.anonymousOnScoreboard !== undefined) updateFields.anonymousOnScoreboard = body.anonymousOnScoreboard;
-                //     if (body.showRankings !== undefined) updateFields.showRankings = body.showRankings;
-                //     break;
+            // if (body.scoreboardNickname !== undefined) updateFields.scoreboardNickname = body.scoreboardNickname;
+            // if (body.anonymousOnScoreboard !== undefined) updateFields.anonymousOnScoreboard = body.anonymousOnScoreboard;
+            // if (body.showRankings !== undefined) updateFields.showRankings = body.showRankings;
 
-                case "notifications":
-                    if (body.emailMentions !== undefined) updateFields.emailMentions = body.emailMentions;
-                    if (body.weeklyNewsletter !== undefined) updateFields.weeklyNewsletter = body.weeklyNewsletter;
-                    // Always enforce urgentAlerts as true
-                    if (body.urgentAlerts !== undefined) updateFields.urgentAlerts = true;
-                    break;
+            if (body.emailMentions !== undefined) updateFields.emailMentions = body.emailMentions;
+            if (body.weeklyNewsletter !== undefined) updateFields.weeklyNewsletter = body.weeklyNewsletter;
+            // Always enforce urgentAlerts as true
+            if (body.urgentAlerts !== undefined) updateFields.urgentAlerts = true;
 
-                case "accessibility":
-                    if (body.highContrast !== undefined) updateFields.highContrast = body.highContrast;
-                    if (body.reducedMotion !== undefined) updateFields.reducedMotion = body.reducedMotion;
-                    if (body.dyslexicFont !== undefined) updateFields.dyslexicFont = body.dyslexicFont;
-                    if (body.daltonismMode !== undefined) updateFields.daltonismMode = body.daltonismMode;
-                    break;
-            }
+            if (body.highContrast !== undefined) updateFields.highContrast = body.highContrast;
+            if (body.reducedMotion !== undefined) updateFields.reducedMotion = body.reducedMotion;
+            if (body.dyslexicFont !== undefined) updateFields.dyslexicFont = body.dyslexicFont;
+            if (body.daltonismMode !== undefined) updateFields.daltonismMode = body.daltonismMode;
 
             // Update the user document
             const { userRepository } = db.getRepositories();
@@ -160,9 +244,11 @@ export const settingsRoutes = new Elysia({ prefix: "/settings" })
             return userToSettingsDTO(result);
         },
         {
-            body: t.Record(t.String(), t.Unknown()),
-            params: t.Object({
-                category: t.String()
-            })
+            body: t.Partial(UserSettingsFlatSchema),
+            response: {
+                200: UserSettingsSchema,
+                401: t.Object({ error: t.String() }),
+                404: t.Object({ error: t.String() })
+            }
         }
     );

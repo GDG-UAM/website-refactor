@@ -64,4 +64,8 @@ export class UserRepository {
         await this.collection.createIndex({ email: 1 }, { unique: true });
         await this.collection.createIndex({ role: 1 });
     }
+
+    async getTeam(): Promise<User[]> {
+        return await this.collection.find({ role: { $in: ["team", "organizer"] } }).toArray();
+    }
 }

@@ -10,7 +10,8 @@
         "paraglide:compile": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide"
     },
     "imports": {
-        "#/*": "./src/*"
+        "#/*": "./src/*",
+        "#app/*": "./app/*"
     },
     "dependencies": {
         "@elysiajs/eden": "latest",
