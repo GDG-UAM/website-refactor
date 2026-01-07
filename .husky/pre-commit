@@ -7,7 +7,13 @@ bun x turbo run type-check || {
   exit 1
 }
 
-# 2. Lint Staged (Formats only the files you changed)
+# Run tests for permissions package
+bun run test:permissions || {
+  echo "❌ Permissions tests failed. Commit aborted."
+  exit 1
+}
+
+# Run linting
 bun x lint-staged || {
   echo "❌ Linting failed."
   exit 1

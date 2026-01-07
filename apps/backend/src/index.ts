@@ -6,13 +6,13 @@ import { permissionsPlugin } from "./plugins/permissions";
 import { auth } from "./lib/auth";
 import { adminRoutes, settingsRoutes, userRoutes, contactRoutes } from "./routes";
 import db from "./lib/db";
-import { initializeSuperadmin } from "./lib/superadmin";
+import { initializeDefaults } from "./lib/init";
 
-// Initialize database and superadmin on startup
+// Initialize database and defaults on startup
 db.connect()
     .then(async () => {
         console.log("[Server] Database connected");
-        await initializeSuperadmin();
+        await initializeDefaults();
     })
     .catch((err) => {
         console.error("[Server] Failed to initialize:", err);

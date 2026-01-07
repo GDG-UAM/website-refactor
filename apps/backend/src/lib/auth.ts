@@ -17,12 +17,22 @@ export const auth = betterAuth({
                 type: "string",
                 required: false,
                 defaultValue: "user",
-                input: false // Not settable by user
+                input: false
             },
-            permissions: {
+            individualPermissions: {
                 type: "json",
                 required: false,
-                input: false // Not settable by user
+                input: false
+            },
+            templatesUsed: {
+                type: "string[]",
+                required: false,
+                input: false
+            },
+            templatePermissions: {
+                type: "json",
+                required: false,
+                input: false
             },
             // General Settings
             timeFormat: {

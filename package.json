@@ -19,6 +19,7 @@
         "dev": "turbo run dev",
         "build": "turbo run build",
         "build:permissions": "turbo run build:permissions",
+        "test:permissions": "bun test --cwd packages/permissions --reporter dots",
         "prepare": "husky"
     },
     "devDependencies": {

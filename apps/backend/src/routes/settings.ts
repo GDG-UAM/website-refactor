@@ -111,12 +111,8 @@ const UserSettingsSchema = t.Object({
 });
 
 const UserSettingsFlatSchema = t.Object({
-    timeFormat: t.Union([t.Literal("24h"), t.Literal("12h")], {
-        default: "24h"
-    }),
-    firstDayOfWeek: t.Union([t.Literal("monday"), t.Literal("sunday")], {
-        default: "monday"
-    }),
+    timeFormat: t.Optional(t.Union([t.Literal("24h"), t.Literal("12h")])),
+    firstDayOfWeek: t.Optional(t.Union([t.Literal("monday"), t.Literal("sunday")])),
 
     displayName: t.Optional(t.String()),
     shortBio: t.Optional(t.String()),
@@ -127,30 +123,30 @@ const UserSettingsFlatSchema = t.Object({
     website: t.Optional(t.String()),
     customTags: t.Optional(t.Array(t.String())),
 
-    showAttendance: t.Boolean({ default: false }),
-    showResults: t.Boolean({ default: false }),
-    allowTagInstagram: t.Boolean({ default: true }),
-    allowTagLinkedIn: t.Boolean({ default: true }),
-    allowMentionBlog: t.Boolean({ default: true }),
-    showProfilePublicly: t.Boolean({ default: true }),
-    photoConsent: t.Boolean({ default: true }),
-    allowAnonUsage: t.Boolean({ default: true }),
+    showAttendance: t.Optional(t.Boolean()),
+    showResults: t.Optional(t.Boolean()),
+    allowTagInstagram: t.Optional(t.Boolean()),
+    allowTagLinkedIn: t.Optional(t.Boolean()),
+    allowMentionBlog: t.Optional(t.Boolean()),
+    showProfilePublicly: t.Optional(t.Boolean()),
+    photoConsent: t.Optional(t.Boolean()),
+    allowAnonUsage: t.Optional(t.Boolean()),
 
     dietary: t.Optional(t.String()),
     tshirtSize: t.Optional(t.Union([t.Literal("XS"), t.Literal("S"), t.Literal("M"), t.Literal("L"), t.Literal("XL"), t.Literal("XXL")])),
 
     // scoreboardNickname: t.Optional(t.String()),
-    // anonymousOnScoreboard: t.Boolean({ default: false }),
-    // showRankings: t.Boolean({ default: true }),
+    // anonymousOnScoreboard: t.Optional(t.Boolean()),
+    // showRankings: t.Optional(t.Boolean()),
 
-    emailMentions: t.Boolean({ default: true }),
-    weeklyNewsletter: t.Boolean({ default: false }),
-    urgentAlerts: t.Boolean({ default: true }),
+    emailMentions: t.Optional(t.Boolean()),
+    weeklyNewsletter: t.Optional(t.Boolean()),
+    urgentAlerts: t.Optional(t.Boolean()),
 
-    highContrast: t.Boolean({ default: false }),
-    reducedMotion: t.Boolean({ default: false }),
-    dyslexicFont: t.Boolean({ default: false }),
-    daltonismMode: t.Union([t.Literal("none"), t.Literal("deuteranopia"), t.Literal("protanopia"), t.Literal("tritanopia")], { default: "none" })
+    highContrast: t.Optional(t.Boolean()),
+    reducedMotion: t.Optional(t.Boolean()),
+    dyslexicFont: t.Optional(t.Boolean()),
+    daltonismMode: t.Optional(t.Union([t.Literal("none"), t.Literal("deuteranopia"), t.Literal("protanopia"), t.Literal("tritanopia")]))
 });
 
 export const settingsRoutes = new Elysia({ prefix: "/settings" })
@@ -194,8 +190,8 @@ export const settingsRoutes = new Elysia({ prefix: "/settings" })
             // Map nested category data to flat user fields
             const updateFields: Record<string, unknown> = {};
 
-            if (body.timeFormat) updateFields.timeFormat = body.timeFormat;
-            if (body.firstDayOfWeek) updateFields.firstDayOfWeek = body.firstDayOfWeek;
+            if (body.timeFormat !== undefined) updateFields.timeFormat = body.timeFormat;
+            if (body.firstDayOfWeek !== undefined) updateFields.firstDayOfWeek = body.firstDayOfWeek;
 
             if (body.displayName !== undefined) updateFields.displayName = body.displayName;
             if (body.shortBio !== undefined) updateFields.shortBio = body.shortBio;

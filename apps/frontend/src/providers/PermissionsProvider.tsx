@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo, ReactNode } from "react";
 import { useSession } from "#/providers/SessionProvider";
-import type { AppAbility, Actions, Subjects, PermissionUser } from "@gdg-uam/permissions";
+import type { AppAbility, Actions, PermissionUser } from "@gdg-uam/permissions";
 import {
     AbilityBuilder,
     canUser,
@@ -24,8 +24,8 @@ type Permission = {
 interface PermissionContextType {
     ability: AppAbility;
     permissions: Permission[];
-    can: (action: Actions, subject: Subjects, field?: string) => boolean;
-    cannot: (action: Actions, subject: Subjects, field?: string) => boolean;
+    can: (action: Actions, subject: string, data?: Record<string, unknown>) => boolean;
+    cannot: (action: Actions, subject: string, data?: Record<string, unknown>) => boolean;
     loading: boolean;
 }
 
@@ -53,14 +53,26 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
         const sessionUser = session.user as {
             id: string;
             role?: string;
-            permissions?: Permission[];
+            individualPermissions?: Permission[];
+            templatePermissions?: Permission[];
         };
+
+        // Combine individual and template permissions
+        const allPermissions: Permission[] = [];
+
+        if (sessionUser.individualPermissions && Array.isArray(sessionUser.individualPermissions)) {
+            allPermissions.push(...sessionUser.individualPermissions);
+        }
+
+        if (sessionUser.templatePermissions && Array.isArray(sessionUser.templatePermissions)) {
+            allPermissions.push(...sessionUser.templatePermissions);
+        }
 
         // Build permission user object
         const permUser: PermissionUser = {
             id: sessionUser.id,
             role: sessionUser.role,
-            permissions: sessionUser.permissions
+            permissions: allPermissions
         };
 
         // Base permissions for authenticated users
@@ -69,20 +81,20 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
         // Check for global admin role
         if (hasGlobalAdminRole(permUser)) {
             applyGlobalAdminPermissions(builder);
-            return { ability: builder.build(), permissions: permUser.permissions || [] };
+            return { ability: builder.build(), permissions: allPermissions };
         }
 
         // Apply user-specific permissions
         applyUserPermissions(builder, permUser, {});
 
-        return { ability: builder.build(), permissions: permUser.permissions || [] };
+        return { ability: builder.build(), permissions: allPermissions };
     }, [session]);
 
     const value: PermissionContextType = {
         ability,
         permissions,
-        can: (action, subject, field) => canUser(ability, action, subject, field),
-        cannot: (action, subject, field) => cannotUser(ability, action, subject, field),
+        can: (action, subject) => canUser(ability, action, subject),
+        cannot: (action, subject) => cannotUser(ability, action, subject),
         loading: isPending
     };
 
@@ -105,31 +117,40 @@ export function usePermissions(): PermissionContextType {
  * Hook to check a specific permission
  * @param action - The action to check (create, read, update, delete, manage)
  * @param subject - The subject/resource to check
- * @param field - Optional field to check
+ * @param data - Optional data to check
  * @returns boolean indicating if the user has permission
  */
-export function usePermission(action: Actions, subject: Subjects, field?: string): boolean {
+export function usePermission(action: Actions, subject: string, data?: Record<string, unknown>): boolean {
     const { can } = usePermissions();
-    return can(action, subject, field);
+    return can(action, subject, data);
 }
 
 /**
  * Hook to check if user has any admin permissions
  * @returns boolean indicating if user has at least one permission starting with "admin."
  */
-export function useHasAdminPermissions(): boolean {
+export function useHasSectionPermissions(section: string): boolean {
     const { permissions } = usePermissions();
-    return permissions.some((p) => p.resource.startsWith("admin.") && p.effect === "allow");
+    if (!section.endsWith(".")) {
+        section += ".";
+    }
+    return permissions.some((p) => p.resource.startsWith(section) && p.effect === "allow");
 }
 
 /**
  * Higher-order component to conditionally render based on permissions
  */
-export function withPermission<P extends object>(Component: React.ComponentType<P>, action: Actions, subject: Subjects, fallback?: ReactNode) {
+export function withPermission<P extends object>(
+    Component: React.ComponentType<P>,
+    action: Actions,
+    subject: string,
+    data?: Record<string, unknown>,
+    fallback?: ReactNode
+) {
     return function PermissionGuard(props: P) {
-        const { can } = usePermissions();
+        const { cannot } = usePermissions();
 
-        if (!can(action, subject)) {
+        if (cannot(action, subject, data)) {
             return <>{fallback || null}</>;
         }
 

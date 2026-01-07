@@ -25,20 +25,11 @@ export const ActionsSchema = t.Union([t.Literal("create"), t.Literal("read"), t.
 // ==================== Permission Types ====================
 
 export interface Permission {
-    _id?: ObjectId;
-    userId: string;
-    templateId?: string;
     resource: string;
-    resourcePath?: string[];
-    pathDepth?: number;
     actions: Actions[];
     effect: "allow" | "deny";
     conditions?: ConditionQuery;
     priority: number;
-    expiresAt?: Date;
-    isActive: boolean;
-    grantedBy?: string;
-    reason?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -46,19 +37,11 @@ export interface Permission {
 // Elysia validation schema for Permission
 export const PermissionSchema = t.Object({
     _id: t.Optional(t.String()),
-    userId: t.String({ minLength: 1 }),
-    templateId: t.Optional(t.String()),
     resource: t.String({ minLength: 1 }),
-    resourcePath: t.Optional(t.Array(t.String())),
-    pathDepth: t.Optional(t.Number({ minimum: 0 })),
     actions: t.Array(ActionsSchema, { minItems: 1 }),
     effect: t.Union([t.Literal("allow"), t.Literal("deny")]),
     conditions: t.Optional(t.Record(t.String(), t.Any())),
     priority: t.Number({ default: 50 }),
-    expiresAt: t.Optional(t.Date()),
-    isActive: t.Boolean({ default: true }),
-    grantedBy: t.Optional(t.String()),
-    reason: t.Optional(t.String()),
     createdAt: t.Optional(t.Date()),
     updatedAt: t.Optional(t.Date())
 });
@@ -69,12 +52,8 @@ export interface PermissionTemplate {
     _id?: ObjectId;
     name: string;
     description?: string;
-    pattern: string;
-    grants: Actions[];
-    denies: Actions[];
-    conditions?: ConditionQuery;
+    permissions: SerializablePermission[];
     isActive: boolean;
-    usageCount: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -84,12 +63,16 @@ export const PermissionTemplateSchema = t.Object({
     _id: t.Optional(t.String()),
     name: t.String({ minLength: 1 }),
     description: t.Optional(t.String()),
-    pattern: t.String({ minLength: 1 }),
-    grants: t.Array(ActionsSchema),
-    denies: t.Array(ActionsSchema),
-    conditions: t.Optional(t.Record(t.String(), t.Any())),
+    permissions: t.Array(
+        t.Object({
+            resource: t.String({ minLength: 1 }),
+            actions: t.Array(ActionsSchema, { minItems: 1 }),
+            effect: t.Union([t.Literal("allow"), t.Literal("deny")]),
+            conditions: t.Optional(t.Record(t.String(), t.Any())),
+            priority: t.Number({ default: 50 })
+        })
+    ),
     isActive: t.Boolean({ default: true }),
-    usageCount: t.Number({ default: 0 }),
     createdAt: t.Optional(t.Date()),
     updatedAt: t.Optional(t.Date())
 });
@@ -97,6 +80,13 @@ export const PermissionTemplateSchema = t.Object({
 // ==================== User Types ====================
 
 // Remove id and add objectid _id
+// Update User type to include permission-related fields
 export type User = Omit<typeof auth.$Infer.Session.user, "id"> & {
     _id: ObjectId;
+    // Template IDs that this user is assigned to (references to PermissionTemplate._id)
+    templatesUsed?: string[]; // ObjectIds as strings
+    // Individual permissions granted directly to this user
+    individualPermissions?: SerializablePermission[];
+    // Computed permissions from templates (denormalized for performance)
+    templatePermissions?: SerializablePermission[];
 };

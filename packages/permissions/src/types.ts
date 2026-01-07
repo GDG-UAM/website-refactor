@@ -4,30 +4,12 @@ export type ConditionQuery = Record<string, unknown>;
 // Permission actions
 export type Actions = "create" | "read" | "update" | "delete" | "manage";
 
-// Permission subjects - extend as needed
-export type Subjects =
-    | "Post"
-    | "User"
-    | "Organization"
-    | "Event"
-    | "Blog"
-    | "Newsletter"
-    | "Certificate"
-    | "Hackathon"
-    | "Team"
-    | "Giveaway"
-    | "Link"
-    | "FeatureFlag"
-    | "all"
-    | string; // Allow dynamic subjects for pattern-based permissions
-
 // Permission rule for database-agnostic ability system
 export interface PermissionRule {
     action: Actions | Actions[];
-    subject: Subjects | Subjects[];
+    subject: string | string[];
     conditions?: ConditionQuery;
     inverted: boolean; // true for "cannot", false for "can"
-    fields?: string[];
 }
 
 // Database-agnostic ability class
@@ -38,29 +20,29 @@ export class Ability {
         this.rules = rules;
     }
 
-    can(action: Actions, subject: Subjects, field?: string): boolean {
-        return this.checkPermission(action, subject, field, false);
+    can(action: Actions, subject: string, data?: Record<string, unknown>): boolean {
+        return this.checkPermission(action, subject, data, false);
     }
 
-    cannot(action: Actions, subject: Subjects, field?: string): boolean {
-        return !this.can(action, subject, field);
+    cannot(action: Actions, subject: string, data?: Record<string, unknown>): boolean {
+        return !this.can(action, subject, data);
     }
 
-    private checkPermission(action: Actions, subject: Subjects, field: string | undefined, inverted: boolean): boolean {
+    private checkPermission(action: Actions, subject: string, data: Record<string, unknown> | undefined, inverted: boolean): boolean {
         // Find matching rules (deny rules checked first due to higher priority)
         const denyRules = this.rules.filter((rule) => rule.inverted);
         const allowRules = this.rules.filter((rule) => !rule.inverted);
 
         // Check deny rules first
         for (const rule of denyRules) {
-            if (this.matchesRule(rule, action, subject, field)) {
+            if (this.matchesRule(rule, action, subject, data)) {
                 return inverted; // Denied
             }
         }
 
         // Check allow rules
         for (const rule of allowRules) {
-            if (this.matchesRule(rule, action, subject, field)) {
+            if (this.matchesRule(rule, action, subject, data)) {
                 return !inverted; // Allowed
             }
         }
@@ -68,7 +50,7 @@ export class Ability {
         return inverted; // Default: deny
     }
 
-    private matchesRule(rule: PermissionRule, action: Actions, subject: Subjects, field?: string): boolean {
+    private matchesRule(rule: PermissionRule, action: Actions, subject: string, data?: Record<string, unknown>): boolean {
         // Check action match
         const actions = Array.isArray(rule.action) ? rule.action : [rule.action];
         const actionMatches = actions.includes(action) || actions.includes("manage");
@@ -79,35 +61,45 @@ export class Ability {
 
         // Check subject match
         const subjects = Array.isArray(rule.subject) ? rule.subject : [rule.subject];
+        let subjectMatches = false;
         
         // First check for exact matches or "all"
         if (subjects.includes(subject) || subjects.includes("all")) {
-            // Check field match
-            if (field && rule.fields && rule.fields.length > 0) {
-                return rule.fields.includes(field);
-            }
-            return true;
-        }
-
-        // Check for wildcard pattern matching (e.g., users.* matches users.123)
-        for (const ruleSubject of subjects) {
-            if (ruleSubject.includes("*") || ruleSubject.includes("{")) {
-                // Import pattern matching at runtime
-                const { parsePattern, matchesPattern } = require("./parser");
-                const pattern = parsePattern(ruleSubject);
-                const targetPath = subject.split(".");
-                
-                if (matchesPattern(pattern.segments, targetPath)) {
-                    // Check field match
-                    if (field && rule.fields && rule.fields.length > 0) {
-                        return rule.fields.includes(field);
+            subjectMatches = true;
+        } else {
+            // Check for wildcard pattern matching (e.g., users.* matches users.123)
+            for (const ruleSubject of subjects) {
+                if (ruleSubject.includes("*") || ruleSubject.includes("{")) {
+                    // Import pattern matching at runtime
+                    const { parsePattern, matchesPattern } = require("./parser");
+                    const pattern = parsePattern(ruleSubject);
+                    const targetPath = subject.split(".");
+                    
+                    if (matchesPattern(pattern.segments, targetPath)) {
+                        subjectMatches = true;
+                        break;
                     }
-                    return true;
                 }
             }
         }
 
-        return false;
+        if (!subjectMatches) {
+            return false;
+        }
+
+        // Check conditions match
+        if (rule.conditions && Object.keys(rule.conditions).length > 0) {
+            if (!data) {
+                return false; // Conditions required but no data provided
+            }
+
+            const { matchCondition } = require("./utils");
+            if (!matchCondition(data, rule.conditions)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     getRules(): PermissionRule[] {
@@ -119,7 +111,7 @@ export class Ability {
 export class AbilityBuilder {
     private rules: PermissionRule[] = [];
 
-    can(action: Actions | Actions[], subject: Subjects | Subjects[], conditions?: ConditionQuery): void {
+    can(action: Actions | Actions[], subject: string | string[], conditions?: ConditionQuery): void {
         this.rules.push({
             action,
             subject,
@@ -128,7 +120,7 @@ export class AbilityBuilder {
         });
     }
 
-    cannot(action: Actions | Actions[], subject: Subjects | Subjects[], conditions?: ConditionQuery): void {
+    cannot(action: Actions | Actions[], subject: string | string[], conditions?: ConditionQuery): void {
         this.rules.push({
             action,
             subject,

@@ -7,6 +7,10 @@
         ".": "./src/index.ts",
         "./types": "./src/types.ts"
     },
+    "scripts": {
+        "test": "bun test",
+        "test:watch": "bun test --watch"
+    },
     "dependencies": {
         "@casl/ability": "^6.7.5"
     },

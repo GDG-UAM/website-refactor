@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "#/providers/SessionProvider";
-import { useHasAdminPermissions } from "#/providers/PermissionsProvider";
+import { useHasSectionPermissions } from "#/providers/PermissionsProvider";
 import * as m from "#/paraglide/messages";
 import {
     AvatarButton,
@@ -19,11 +19,13 @@ import { LoginButton } from "#/components/Buttons";
 export default function UserMenu() {
     const { data: session, isPending } = useSession();
     const [open, setOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
-    const hasAdminPermissions = useHasAdminPermissions();
+    const hasAdminPermissions = useHasSectionPermissions("admin");
     // const { participating } = useGiveawaysParticipation({ revalidateOnFocus: false });
 
     useEffect(() => {
+        setMounted(true);
         function handleClick(e: MouseEvent) {
             if (!ref.current) return;
             if (!ref.current.contains(e.target as Node)) setOpen(false);
@@ -41,7 +43,7 @@ export default function UserMenu() {
                 onClick={() => {
                     signIn.social({ provider: "google", callbackURL: "/" });
                 }}
-                disabled={isPending}
+                disabled={!mounted || isPending}
                 iconSize={18}
             />
         );

@@ -187,6 +187,11 @@ export const NavLinkA = styled(Link)<{ $active?: boolean }>`
     ${navLinkStyles}
 `;
 
+export const NavLinkDiv = styled.div<{ $active?: false; href?: "" }>`
+    ${navLinkStyles}
+    cursor: pointer;
+`;
+
 export const Actions = styled.div`
     display: flex;
     align-items: center;

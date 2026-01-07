@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Open_Sans, Poppins, Roboto, Lexend } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { cookies } from "next/headers";
 import { ButtonProvider } from "#/components/Buttons";
@@ -11,7 +12,9 @@ import Navbar from "#/components/pages/layout/Navbar";
 import { SessionProvider } from "#/providers/SessionProvider";
 import { PermissionProvider } from "#/providers/PermissionsProvider";
 import { SettingsProvider } from "#/providers/SettingsProvider";
+import { CustomThemeProvider } from "#/providers/ThemeProvider";
 import { getServerSession } from "#/lib/auth-server";
+import { AccessibilityAttributes, accessibilityScript } from "#/components/AccessibilityAttributes";
 
 const openSans = Open_Sans({
     subsets: ["latin"],
@@ -49,19 +52,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     const { data: session } = await getServerSession();
 
     return (
-        <html lang={locale} className={`${openSans.className} ${poppins.className} ${roboto.className} ${lexend.className}`}>
+        <html lang={locale} className={`${openSans.className} ${poppins.className} ${roboto.className} ${lexend.className}`} suppressHydrationWarning>
             <body>
+                <Script id="accessibility-init" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: accessibilityScript }} />
                 <StyledComponentsRegistry>
                     <SessionProvider initialSession={session}>
                         <PermissionProvider>
                             <SettingsProvider>
-                                <AITranslationProvider sourceLang={locale}>
-                                    <ButtonProvider>
-                                        <Navbar />
-                                        <main>{children}</main>
-                                        <Footer />
-                                    </ButtonProvider>
-                                </AITranslationProvider>
+                                <ButtonProvider>
+                                    <AccessibilityAttributes />
+                                    <CustomThemeProvider>
+                                        <AITranslationProvider sourceLang={locale}>
+                                            <Navbar />
+                                            <main>{children}</main>
+                                            <Footer />
+                                        </AITranslationProvider>
+                                    </CustomThemeProvider>
+                                </ButtonProvider>
                             </SettingsProvider>
                         </PermissionProvider>
                     </SessionProvider>

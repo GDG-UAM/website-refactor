@@ -1,8 +1,7 @@
 import { Elysia } from "elysia";
 import { auth } from "../lib/auth";
 import { defineAbilitiesFor } from "../lib/permissions";
-import db from "../lib/db";
-import type { Actions } from "@gdg-uam/permissions";
+import type { SerializablePermission } from "../repositories";
 
 export const permissionsPlugin = (app: Elysia) =>
     app.derive(async ({ request }) => {
@@ -25,61 +24,41 @@ export const permissionsPlugin = (app: Elysia) =>
         const user = betterAuthUser
             ? {
                   id: betterAuthUser.id,
-                  roles: betterAuthUser.role ? betterAuthUser.role.split(",").map((r) => r.trim()) : []
+                  role: betterAuthUser.role ?? undefined
               }
             : undefined;
 
         // Get permissions from user object (stored in Better Auth user document)
         // If not present, fall back to loading from database (for backwards compatibility)
-        let sessionPermissions: Array<{
-            resource: string;
-            actions: Actions[];
-            effect: "allow" | "deny";
-            conditions?: Record<string, unknown>;
-            priority: number;
-        }> = [];
+        let sessionPermissions: SerializablePermission[] = [];
 
         if (betterAuthUser) {
             try {
-                // Permissions are stored as JSON object in user document
-                const permissions = betterAuthUser.permissions;
-                if (permissions && Array.isArray(permissions) && permissions.length > 0) {
-                    sessionPermissions = permissions as Array<{
-                        resource: string;
-                        actions: Actions[];
-                        effect: "allow" | "deny";
-                        conditions?: Record<string, unknown>;
-                        priority: number;
-                    }>;
-                } else {
-                    // No permissions in user object, load from database and sync
-                    try {
-                        const { permissionRepository } = db.getRepositories();
-                        sessionPermissions = await permissionRepository.getUserPermissions(betterAuthUser.id);
-                        // Sync to user document for next time (don't await to avoid blocking)
-                        permissionRepository.syncPermissionsToUser(betterAuthUser.id).catch((err) => {
-                            console.error("Failed to sync permissions to user:", err);
-                        });
-                    } catch (dbError) {
-                        console.error("Failed to load permissions from database:", dbError);
-                        // Continue with empty permissions - better than blocking the request
-                    }
+                // Permissions are stored in individualPermissions and templatePermissions in user document
+                const individualPermissions = betterAuthUser.individualPermissions;
+                const templatePermissions = betterAuthUser.templatePermissions;
+
+                // Combine individual and template permissions
+                const allPermissions: SerializablePermission[] = [];
+
+                if (individualPermissions && Array.isArray(individualPermissions) && individualPermissions.length > 0) {
+                    allPermissions.push(...(individualPermissions as SerializablePermission[]));
                 }
+
+                if (templatePermissions && Array.isArray(templatePermissions) && templatePermissions.length > 0) {
+                    allPermissions.push(...(templatePermissions as SerializablePermission[]));
+                }
+
+                sessionPermissions = allPermissions;
             } catch (error) {
-                // If parsing fails, load from database
                 console.error("Failed to load permissions from user object:", error);
-                try {
-                    const { permissionRepository } = db.getRepositories();
-                    sessionPermissions = await permissionRepository.getUserPermissions(betterAuthUser.id);
-                } catch (dbError) {
-                    console.error("Failed to load permissions from database:", dbError);
-                    // Continue with empty permissions
-                }
+                // Continue with empty permissions
+                sessionPermissions = [];
             }
         }
 
         // Define abilities based on user and pre-loaded permissions
-        const ability = user ? await defineAbilitiesFor(user, context, sessionPermissions) : await defineAbilitiesFor({ id: "", roles: [] }, context, []);
+        const ability = user ? await defineAbilitiesFor(user, context, sessionPermissions) : await defineAbilitiesFor({ id: "", role: undefined }, context, []);
 
         return {
             user: betterAuthUser,

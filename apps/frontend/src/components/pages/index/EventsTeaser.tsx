@@ -288,9 +288,9 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000
                         />
                     </p>
                     <Bullets>
-                        <li>{m["index.events.copyBullets.0"]()}</li>
-                        <li>{m["index.events.copyBullets.1"]()}</li>
-                        <li>{m["index.events.copyBullets.2"]()}</li>
+                        <li>{m["index.events.copyBullets._0"]()}</li>
+                        <li>{m["index.events.copyBullets._1"]()}</li>
+                        <li>{m["index.events.copyBullets._2"]()}</li>
                     </Bullets>
                     <PlainButton hasBorder slim onClick={() => openLink(eventHref, false)}>
                         {m["index.events.seeAll"]()}

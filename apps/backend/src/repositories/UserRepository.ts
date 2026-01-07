@@ -1,8 +1,19 @@
-import { Collection, ObjectId } from "mongodb";
+import { Collection, ObjectId, Document } from "mongodb";
 import type { User, SerializablePermission } from "./types";
 
+// Role template name constants
+const ROLE_TEMPLATE_PREFIX = "role:";
+const ROLE_TEMPLATES: Record<string, string> = {
+    team: `${ROLE_TEMPLATE_PREFIX}team`,
+    organizer: `${ROLE_TEMPLATE_PREFIX}organizer`
+};
+
 export class UserRepository {
-    constructor(private collection: Collection<User>) {}
+    constructor(
+        private collection: Collection<User>,
+        private templateCollection?: Collection<Document>,
+        private permissionRepository?: { recomputeUserTemplatePermissions: (userId: string, userCollection: Collection<Document>) => Promise<void> }
+    ) {}
 
     /**
      * Find user by ID
@@ -19,22 +30,98 @@ export class UserRepository {
     }
 
     /**
-     * Update user role
+     * Update user role and automatically manage role templates
      */
-    async updateRole(userId: string, role: string): Promise<User | null> {
+    async updateRole(userId: string, role: string, oldRole?: string): Promise<User | null> {
+        // Get current user to determine old role if not provided
+        if (!oldRole) {
+            const user = await this.findById(userId);
+            oldRole = user?.role ?? undefined;
+        }
+
+        // Update the role
         const result = await this.collection.findOneAndUpdate(
             { _id: new ObjectId(userId) },
             { $set: { role, updatedAt: new Date() } },
             { returnDocument: "after" }
         );
+
+        if (!result) {
+            return null;
+        }
+
+        // Manage role templates if templateCollection is available
+        if (this.templateCollection) {
+            await this.syncRoleTemplates(userId, role, oldRole);
+        }
+
         return result;
     }
 
     /**
-     * Sync permissions to user document (for Better Auth session)
+     * Sync role-based templates for a user
+     * Adds template for new role, removes template from old role
      */
-    async syncPermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
-        await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { permissions, updatedAt: new Date() } });
+    private async syncRoleTemplates(userId: string, newRole: string, oldRole?: string): Promise<void> {
+        if (!this.templateCollection) {
+            return;
+        }
+
+        const user = await this.findById(userId);
+        if (!user) {
+            return;
+        }
+
+        let templatesUsed = user.templatesUsed || [];
+
+        // Remove old role template if applicable
+        if (oldRole && ROLE_TEMPLATES[oldRole]) {
+            const oldTemplate = await this.templateCollection.findOne({ name: ROLE_TEMPLATES[oldRole] });
+            if (oldTemplate) {
+                const oldTemplateId = oldTemplate._id.toString();
+                templatesUsed = templatesUsed.filter((id) => id !== oldTemplateId);
+            }
+        }
+
+        // Add new role template if applicable
+        if (ROLE_TEMPLATES[newRole]) {
+            const newTemplate = await this.templateCollection.findOne({ name: ROLE_TEMPLATES[newRole] });
+            if (newTemplate) {
+                const newTemplateId = newTemplate._id.toString();
+                if (!templatesUsed.includes(newTemplateId)) {
+                    templatesUsed.push(newTemplateId);
+                }
+            }
+        }
+
+        // Update user's templates
+        await this.updateTemplatesUsed(userId, templatesUsed);
+
+        // Recompute template permissions
+        if (this.permissionRepository) {
+            await this.permissionRepository.recomputeUserTemplatePermissions(userId, this.collection as unknown as Collection<Document>);
+        }
+    }
+
+    /**
+     * Update individual permissions for a user
+     */
+    async updateIndividualPermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
+        await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { individualPermissions: permissions, updatedAt: new Date() } });
+    }
+
+    /**
+     * Update template permissions for a user (computed from templates)
+     */
+    async updateTemplatePermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
+        await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatePermissions: permissions, updatedAt: new Date() } });
+    }
+
+    /**
+     * Update templates used by a user
+     */
+    async updateTemplatesUsed(userId: string, templateIds: string[]): Promise<void> {
+        await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatesUsed: templateIds, updatedAt: new Date() } });
     }
 
     /**

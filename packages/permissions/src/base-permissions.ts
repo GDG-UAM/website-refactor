@@ -1,5 +1,4 @@
 import type { AbilityBuilder, Actions } from "./types";
-import type { Subjects } from "./types";
 import { evaluateConditions } from "./utils";
 
 /**
@@ -8,7 +7,6 @@ import { evaluateConditions } from "./utils";
 export interface PermissionUser {
     id: string;
     role?: string;
-    roles?: string[];
     permissions?: Array<{
         resource: string;
         actions: Actions[];
@@ -23,23 +21,15 @@ export interface PermissionUser {
  * These are global permissions automatically granted to any logged-in user
  */
 export function applyBasePermissions(builder: AbilityBuilder, userId: string): void {
-    builder.can("read", `users.${userId}` as Subjects);
+    builder.can("read", `users.${userId}`);
 }
 
 /**
  * Check if user has global admin role
  */
 export function hasGlobalAdminRole(user: PermissionUser): boolean {
-    // Check roles array
-    if (user.roles?.includes("admin")) {
-        return true;
-    }
     // Check single role string (comma-separated)
-    if (user.role) {
-        const roles = user.role.split(",").map((r) => r.trim());
-        return roles.includes("admin");
-    }
-    return false;
+    return user.role === "admin";
 }
 
 /**
@@ -67,7 +57,7 @@ export function applyUserPermissions(builder: AbilityBuilder, user: PermissionUs
         const evaluatedConditions = evaluateConditions(perm.conditions, { user, ...context });
 
         for (const action of perm.actions) {
-            method(action, perm.resource as Subjects, evaluatedConditions);
+            method(action, perm.resource, evaluatedConditions);
         }
     }
 }

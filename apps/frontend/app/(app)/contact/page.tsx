@@ -37,9 +37,9 @@ export default function Page() {
                         items={Array.from({ length: 4 }).map((_, i) => ({
                             id: `faq_${i}`,
                             // @ts-ignore
-                            question: m[`contact.faq.items.${i}.q`](),
+                            question: m[`contact.faq.items._${i}.q`](),
                             // @ts-ignore
-                            answer: m[`contact.faq.items.${i}.a`]()
+                            answer: m[`contact.faq.items._${i}.a`]()
                         }))}
                     />
                 </FAQSection>

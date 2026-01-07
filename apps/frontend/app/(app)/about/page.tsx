@@ -166,9 +166,9 @@ export default function AboutPage() {
                         {Array.from({ length: 4 }, (_, index) => (
                             <InfoCard key={index} color={missionColors[index]}>
                                 {/* @ts-ignore */}
-                                <CardTitle>{m[`about.mission.${index}.title`]()}</CardTitle>
+                                <CardTitle>{m[`about.mission._${index}.title`]()}</CardTitle>
                                 {/* @ts-ignore */}
-                                <CardText>{m[`about.mission.${index}.text`]()}</CardText>
+                                <CardText>{m[`about.mission._${index}.text`]()}</CardText>
                             </InfoCard>
                         ))}
                     </Grid>
@@ -182,9 +182,9 @@ export default function AboutPage() {
                         {Array.from({ length: 4 }, (_, index) => (
                             <InfoCard key={index} color={whatWeDoColors[index]}>
                                 {/* @ts-ignore */}
-                                <CardTitle>{m[`about.whatWeDo.${index}.title`]()}</CardTitle>
+                                <CardTitle>{m[`about.whatWeDo._${index}.title`]()}</CardTitle>
                                 {/* @ts-ignore */}
-                                <CardText>{m[`about.whatWeDo.${index}.description`]()}</CardText>
+                                <CardText>{m[`about.whatWeDo._${index}.description`]()}</CardText>
                             </InfoCard>
                         ))}
                     </Grid>

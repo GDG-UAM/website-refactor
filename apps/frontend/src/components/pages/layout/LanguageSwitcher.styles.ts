@@ -67,6 +67,7 @@ export const LangMenuItem = styled.li`
         cursor: pointer;
         color: var(--navbar-lang-item-text);
         text-align: left;
+        font-family: var(--font-body);
         &:hover {
             background: var(--navbar-lang-item-bg-hover);
         }

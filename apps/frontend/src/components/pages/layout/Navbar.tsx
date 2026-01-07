@@ -8,9 +8,24 @@ import { getLocale } from "#/paraglide/runtime";
 import { CollapsableMenuButton } from "#/components/Buttons";
 import { AITranslationBanner } from "#/components/ai/translation/AITranslationBanner";
 import { useAITranslation } from "#/components/ai/translation/AITranslationProvider";
-import { Actions, Bar, Brand, CollapsableMenuWrapper, DesktopNav, DesktopSpacer, Inner, MobileNav, NavItem, NavLinkA, Overlay } from "./Navbar.styles";
+import { AccessibilityModal } from "#/components/AccessibilityAttributes";
+import {
+    Actions,
+    Bar,
+    Brand,
+    CollapsableMenuWrapper,
+    DesktopNav,
+    DesktopSpacer,
+    Inner,
+    MobileNav,
+    NavItem,
+    NavLinkA,
+    NavLinkDiv,
+    Overlay
+} from "./Navbar.styles";
 import LanguageSwitcher from "./LanguageSwitcher";
 import UserMenu from "./UserMenu";
+import { useSession } from "#/providers/SessionProvider";
 
 type NavItemDef = { href: string; key: string };
 
@@ -39,12 +54,27 @@ function useLocaleLabels() {
 }
 
 export default function Navbar() {
+    const { data: session } = useSession();
+    const isLoggedIn = !!session?.user;
     const pathname = usePathname();
     const { labels } = useLocaleLabels();
     const [open, setOpen] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [isDesktop, setIsDesktop] = useState(true); // Default to true to avoid hydration mismatch
+    const [mounted, setMounted] = useState(false);
     // Translation active state (used for banner visibility & mobile nav offset)
     const { active: aiActive } = useAITranslation();
     // locale var kept for potential future uses; removed language & AI logic (moved to LanguageSwitcher)
+
+    // Track window width for responsive behavior
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+        setMounted(true);
+        const handleResize = () => setIsDesktop(window.innerWidth > 767);
+        handleResize(); // Set initial value
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     // Dynamically expose the navbar height as a CSS variable so other components (e.g. settings mobile panel)
     // can position themselves below it even when the AI translation banner changes height.
@@ -85,6 +115,19 @@ export default function Navbar() {
                         </NavItem>
                     );
                 })}
+                {isLoggedIn || !mounted || isDesktop ? null : (
+                    <>
+                        <hr style={{ margin: "12px 0", border: "none", borderTop: "1px solid var(--google-extra-light-gray)" }} />
+
+                        <NavItem role="none" key="accessibility">
+                            <NavLinkDiv onClick={() => setModalOpen(true)}>
+                                {/* {m["navbar.accessibility"]()} */}
+                                Accessibility
+                            </NavLinkDiv>
+                        </NavItem>
+                        <AccessibilityModal modalOpen={modalOpen} setModalOpen={setModalOpen} />
+                    </>
+                )}
             </MobileNav>
 
             <Bar ref={barRef}>

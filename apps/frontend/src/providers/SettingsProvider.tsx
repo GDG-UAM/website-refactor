@@ -1,11 +1,11 @@
 "use client";
 
-import React, { createContext, useContext, useMemo, useCallback } from "react";
+import React, { createContext, useContext, useMemo, useCallback, useState, useEffect } from "react";
 import { useSession } from "./SessionProvider";
 import { api } from "#/lib/eden";
 import { authClient } from "#/lib/auth-client";
 
-interface UserSettings {
+export interface UserSettings {
     general: {
         timeFormat: "24h" | "12h";
         firstDayOfWeek: "monday" | "sunday";
@@ -54,7 +54,7 @@ interface UserSettings {
 
 interface SettingsContextValue {
     settings: UserSettings;
-    updateSettings: (category: keyof UserSettings, data: Partial<UserSettings[keyof UserSettings]>) => Promise<void>;
+    updateSettings: (data: Partial<UserSettings[keyof UserSettings]>) => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
@@ -63,7 +63,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const { data: session } = useSession();
     const user = session?.user;
 
-    const settings = useMemo<UserSettings>(() => {
+    // Compute settings from session
+    const sessionSettings = useMemo<UserSettings>(() => {
         if (!user) {
             // Return default settings when no user is logged in
             return {
@@ -150,26 +151,61 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         };
     }, [user]);
 
+    // Local state for optimistic updates
+    const [localSettings, setLocalSettings] = useState<UserSettings>(sessionSettings);
+
+    // Sync local settings with session settings when session changes
+    useEffect(() => {
+        setLocalSettings(sessionSettings);
+    }, [sessionSettings]);
+
     const updateSettings = useCallback(
-        async (category: keyof UserSettings, data: Partial<UserSettings[keyof UserSettings]>) => {
+        async (data: Partial<UserSettings[keyof UserSettings]>) => {
             if (!user) {
                 throw new Error("Cannot update settings: User not logged in");
             }
+
+            // Optimistically update local settings
+            setLocalSettings((prev) => {
+                // Deep merge the update into the appropriate category
+                const updated = { ...prev };
+
+                // Find which category the data belongs to by checking keys
+                for (const category of ["general", "profile", "privacy", "events", "notifications", "accessibility"] as const) {
+                    const categoryKeys = Object.keys(prev[category]);
+                    const dataKeys = Object.keys(data);
+
+                    if (dataKeys.some((key) => categoryKeys.includes(key))) {
+                        updated[category] = { ...prev[category], ...data } as any;
+                        break;
+                    }
+                }
+
+                return updated;
+            });
 
             // Call the backend API to update settings
             const response = await api.settings.patch(data);
 
             if (response.error) {
+                // Revert on error
+                setLocalSettings(sessionSettings);
                 throw new Error(`Failed to update settings: ${response.error}`);
             }
 
-            // Refresh the session to update the cookie cache
-            await authClient.getSession({ query: { disableCookieCache: true } });
+            // Refresh the session to get the updated data from server
+            const newSession = await authClient.getSession({ query: { disableCookieCache: true } });
+
+            // Update with server response if available
+            if (newSession.data && response.data) {
+                // The session will trigger a re-render and sessionSettings will update
+                // which will then sync to localSettings via useEffect
+            }
         },
-        [user]
+        [user, sessionSettings]
     );
 
-    return <SettingsContext.Provider value={{ settings, updateSettings }}>{children}</SettingsContext.Provider>;
+    return <SettingsContext.Provider value={{ settings: localSettings, updateSettings }}>{children}</SettingsContext.Provider>;
 };
 
 export function useSettings() {

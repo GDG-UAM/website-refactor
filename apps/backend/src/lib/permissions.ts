@@ -1,5 +1,5 @@
 import { AbilityBuilder, applyBasePermissions, hasGlobalAdminRole, applyGlobalAdminPermissions, applyUserPermissions } from "@gdg-uam/permissions";
-import type { AppAbility, Actions, Subjects, PermissionUser } from "@gdg-uam/permissions";
+import type { AppAbility, Actions, PermissionUser } from "@gdg-uam/permissions";
 import type { SerializablePermission } from "../repositories/types";
 import { checkPermission as checkPermissionUtil } from "@gdg-uam/permissions";
 
@@ -8,7 +8,7 @@ import { checkPermission as checkPermissionUtil } from "@gdg-uam/permissions";
  * Combines role-based and fine-grained permissions (from session)
  */
 export const defineAbilitiesFor = async (
-    user: { id: string; roles?: string[] },
+    user: { id: string; role?: string },
     context: Record<string, unknown> = {},
     sessionPermissions: SerializablePermission[] = []
 ): Promise<AppAbility> => {
@@ -22,7 +22,7 @@ export const defineAbilitiesFor = async (
     // Build permission user object
     const permUser: PermissionUser = {
         id: user.id,
-        roles: user.roles,
+        role: user.role,
         permissions: sessionPermissions.map((p) => ({
             resource: p.resource,
             actions: p.actions,
@@ -50,6 +50,6 @@ export const defineAbilitiesFor = async (
 /**
  * Helper function to check permission and throw error if denied
  */
-export const checkPermission = (ability: AppAbility, action: Actions, subject: Subjects, field?: string): void => {
-    checkPermissionUtil(ability, action, subject, field);
+export const checkPermission = (ability: AppAbility, action: Actions, subject: string, data?: Record<string, unknown>): void => {
+    checkPermissionUtil(ability, action, subject, data);
 };
