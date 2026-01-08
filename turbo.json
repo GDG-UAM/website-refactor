@@ -21,6 +21,7 @@
             "env": ["PORT", "BACKEND_PORT", "NEXT_PUBLIC_BACKEND_URL", "INTERNAL_BACKEND_URL", "INTERNAL_API_SECRET"]
         },
         "build": {
+            "cache": false,
             "dependsOn": ["^build"],
             "outputs": [".next/**", "dist/**"],
             "env": ["NEXT_PUBLIC_BACKEND_URL", "INTERNAL_BACKEND_URL", "INTERNAL_API_SECRET", "MONGODB_URI"]

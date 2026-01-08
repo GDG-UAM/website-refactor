@@ -32,6 +32,19 @@ describe("base-permissions", () => {
             expect(ability.can("manage", "all")).toBe(true);
             expect(ability.can("delete", "anything")).toBe(true);
         });
+
+        it("should NOT allow deleting protected permission templates", () => {
+            const builder = new AbilityBuilder();
+            applyGlobalAdminPermissions(builder);
+            const ability = builder.build();
+            
+            // Should not allow deleting specific roles
+            expect(ability.can("delete", "permissiontemplates.*", { name: "role:team" })).toBe(false);
+            expect(ability.can("delete", "permissiontemplates.*", { name: "role:organizer" })).toBe(false);
+            
+            // Should allow deleting other templates
+            expect(ability.can("delete", "permissiontemplates.*", { name: "other-template" })).toBe(true);
+        });
     });
 
     describe("applyUserPermissions", () => {

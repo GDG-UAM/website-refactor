@@ -183,3 +183,49 @@ export const EventSchema = t.Object({
     createdAt: t.Optional(t.Date()),
     updatedAt: t.Optional(t.Date())
 });
+
+// ==================== Link Types ====================
+
+export interface Link {
+    _id: ObjectId;
+    slug: string;
+    destination: string;
+    title: string;
+    description?: string;
+    isActive: boolean;
+    clicks: number;
+    order?: number;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export const LinkSchema = t.Object({
+    _id: t.Optional(t.String()),
+    slug: t.String({ minLength: 1 }),
+    destination: t.String({ minLength: 1 }),
+    title: t.String({ minLength: 1 }),
+    description: t.Optional(t.String()),
+    isActive: t.Boolean({ default: true }),
+    clicks: t.Number({ default: 0 }),
+    order: t.Optional(t.Number()),
+    createdBy: t.String(),
+    createdAt: t.Date(),
+    updatedAt: t.Date()
+});
+
+export const LinkInputSchema = t.Object({
+    slug: t.String({ minLength: 1 }),
+    destination: t.String({ minLength: 1 }),
+    title: t.String({ minLength: 1 }),
+    description: t.Optional(t.String()),
+    isActive: t.Optional(t.Boolean()),
+    order: t.Optional(t.Number())
+});
+
+export const LinksListResponseSchema = t.Object({
+    items: t.Array(LinkSchema),
+    total: t.Number(),
+    page: t.Number(),
+    pageSize: t.Number()
+});

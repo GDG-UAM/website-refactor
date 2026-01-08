@@ -1,25 +1,12 @@
 "use client";
 
-import { createContext, useContext, useMemo, ReactNode } from "react";
+import { createContext, useContext, useMemo, ReactNode, useEffect } from "react";
 import { useSession } from "#/providers/SessionProvider";
-import type { AppAbility, Actions, PermissionUser } from "@gdg-uam/permissions";
-import {
-    AbilityBuilder,
-    canUser,
-    cannotUser,
-    applyBasePermissions,
-    hasGlobalAdminRole,
-    applyGlobalAdminPermissions,
-    applyUserPermissions
-} from "@gdg-uam/permissions";
+import { useRouter } from "next/navigation";
+import type { AppAbility, Actions } from "@gdg-uam/permissions";
+import { canUser, cannotUser } from "@gdg-uam/permissions";
 
-type Permission = {
-    resource: string;
-    actions: Actions[];
-    effect: "allow" | "deny";
-    conditions?: Record<string, unknown>;
-    priority: number;
-};
+import { buildAbilityForUser, Permission } from "#/lib/permissions/utils";
 
 interface PermissionContextType {
     ability: AppAbility;
@@ -43,51 +30,7 @@ export function PermissionProvider({ children }: PermissionProviderProps) {
     const { data: session, isPending } = useSession();
 
     const { ability, permissions } = useMemo(() => {
-        const builder = new AbilityBuilder();
-
-        // No user = no permissions
-        if (!session?.user) {
-            return { ability: builder.build(), permissions: [] };
-        }
-
-        const sessionUser = session.user as {
-            id: string;
-            role?: string;
-            individualPermissions?: Permission[];
-            templatePermissions?: Permission[];
-        };
-
-        // Combine individual and template permissions
-        const allPermissions: Permission[] = [];
-
-        if (sessionUser.individualPermissions && Array.isArray(sessionUser.individualPermissions)) {
-            allPermissions.push(...sessionUser.individualPermissions);
-        }
-
-        if (sessionUser.templatePermissions && Array.isArray(sessionUser.templatePermissions)) {
-            allPermissions.push(...sessionUser.templatePermissions);
-        }
-
-        // Build permission user object
-        const permUser: PermissionUser = {
-            id: sessionUser.id,
-            role: sessionUser.role,
-            permissions: allPermissions
-        };
-
-        // Base permissions for authenticated users
-        applyBasePermissions(builder, permUser.id);
-
-        // Check for global admin role
-        if (hasGlobalAdminRole(permUser)) {
-            applyGlobalAdminPermissions(builder);
-            return { ability: builder.build(), permissions: allPermissions };
-        }
-
-        // Apply user-specific permissions
-        applyUserPermissions(builder, permUser, {});
-
-        return { ability: builder.build(), permissions: allPermissions };
+        return buildAbilityForUser(session?.user);
     }, [session]);
 
     const value: PermissionContextType = {
@@ -130,11 +73,8 @@ export function usePermission(action: Actions, subject: string, data?: Record<st
  * @returns boolean indicating if user has at least one permission starting with "admin."
  */
 export function useHasSectionPermissions(section: string): boolean {
-    const { permissions } = usePermissions();
-    if (!section.endsWith(".")) {
-        section += ".";
-    }
-    return permissions.some((p) => p.resource.startsWith(section) && p.effect === "allow");
+    const { ability } = usePermissions();
+    return ability.hasSectionPermissions(section);
 }
 
 /**
@@ -155,5 +95,36 @@ export function withPermission<P extends object>(
         }
 
         return <Component {...props} />;
+    };
+}
+
+/**
+ * Component to conditionally render children based on section access
+ */
+export function SectionGuard({ section, children }: { section: string; children: ReactNode }) {
+    const hasAccess = useHasSectionPermissions(section);
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!hasAccess) {
+            router.push("/");
+        }
+    }, [hasAccess, router]);
+
+    if (!hasAccess) return null;
+
+    return <>{children}</>;
+}
+
+/**
+ * Higher-order component to conditionally render based on section access
+ */
+export function withSectionAccess<P extends object>(Component: React.ComponentType<P>, section: string) {
+    return function PermissionGuard(props: P) {
+        return (
+            <SectionGuard section={section}>
+                <Component {...props} />
+            </SectionGuard>
+        );
     };
 }

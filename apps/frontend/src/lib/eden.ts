@@ -17,7 +17,7 @@ if (typeof window !== "undefined") {
     csrfReady = (async () => {
         const hasCookie = document.cookie.includes("XSRF-TOKEN");
         if (!hasCookie) {
-            await fetch(`${baseURL}/csrf`, {
+            await fetch(`${baseURL}/api/csrf`, {
                 credentials: "include"
             });
         }

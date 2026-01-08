@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { cookies } from "next/headers";
 import { ButtonProvider } from "#/components/Buttons";
+import { ToastProvider } from "#/components/Toast";
 import { AITranslationProvider } from "#/components/ai/translation/AITranslationProvider";
 import StyledComponentsRegistry from "#/lib/registry";
 import * as m from "#/paraglide/messages";
@@ -64,14 +65,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                                 <EventsProvider>
                                     <SettingsProvider>
                                         <ButtonProvider>
-                                            <AccessibilityAttributes />
-                                            <CustomThemeProvider>
-                                                <AITranslationProvider sourceLang={locale}>
-                                                    <Navbar />
-                                                    <main>{children}</main>
-                                                    <Footer />
-                                                </AITranslationProvider>
-                                            </CustomThemeProvider>
+                                            <ToastProvider>
+                                                <AccessibilityAttributes />
+                                                <CustomThemeProvider>
+                                                    <AITranslationProvider sourceLang={locale}>
+                                                        <Navbar />
+                                                        <main>{children}</main>
+                                                        <Footer />
+                                                    </AITranslationProvider>
+                                                </CustomThemeProvider>
+                                            </ToastProvider>
                                         </ButtonProvider>
                                     </SettingsProvider>
                                 </EventsProvider>

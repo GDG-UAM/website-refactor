@@ -24,7 +24,7 @@ export default function GoogleLoginButton({ label, callbackUrl, size = "md", ful
             const cb = callbackUrl || (typeof window !== "undefined" ? window.location.href : "/");
             await authClient.signIn.social({
                 provider: "google",
-                callbackURL: cb
+                callbackURL: cb.startsWith("/") ? `${window.location.origin}${cb}` : cb
             });
         } catch (error) {
             console.error("Authentication error:", error);

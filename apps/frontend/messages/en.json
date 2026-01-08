@@ -80,7 +80,8 @@
         "openGithub": "Open Github",
         "openGdgCommunity": "Open GDG Community",
         "addOpenBadge": "Add OpenBadge",
-        "accessibility": "Accessibility options"
+        "accessibility": "Accessibility options",
+        "restore": "Restore"
     },
     "footer": {
         "quickLinks": "Quick Links",
@@ -585,5 +586,104 @@
     "publishedOn": "Published on [date]",
     "searchArticles": "Search issues...",
     "noArticlesToShow": "No issues to show."
+  },
+  "admin": {
+    "pageTitle": "Admin Dashboard",
+    "pageDescription": "Manage events, articles, permissions, feature flags, and giveaways in the admin dashboard. Ensure smooth operations and community engagement.",
+    "title": "Admin",
+    "links": {
+      "title": "Links",
+      "page": {
+        "title": "Link Management",
+        "createTitle": "Create New Link",
+        "editTitle": "Edit Link"
+      },
+      "breadcrumbs": {
+        "new": "New Link"
+      },
+      "list": {
+        "reload": "Reload",
+        "create": "Create Link",
+        "search": "Search links...",
+        "noLinks": "No short links found. Create your first one!",
+        "noResults": "No links match your search.",
+        "showDeleted": "Show deleted links",
+        "status_active": "Active",
+        "status_inactive": "Inactive",
+        "columns": {
+          "status": "Status",
+          "clicks": "Clicks"
+        },
+        "toasts": {
+          "reloaded": "Links list reloaded",
+          "loadError": "Failed to load links",
+          "deleteSuccess": "Link deleted successfully",
+          "deleteError": "Failed to delete link",
+          "restoreSuccess": "Link restored successfully",
+          "restoreError": "Failed to restore link"
+        }
+      },
+      "form": {
+        "slug": "Slug",
+        "slugHelp": "The short URL suffix (e.g., 'registration'). Only lowercase letters, numbers, and hyphens.",
+        "destination": "Destination URL",
+        "destinationHelp": "The full URL where the user will be redirected.",
+        "title": "Internal Title",
+        "titleHelp": "For internal reference only.",
+        "description": "Description",
+        "descriptionHelp": "Optional notes about this link.",
+        "save": "Save Link",
+        "cancel": "Cancel",
+        "saving": "Saving..."
+      },
+      "toasts": {
+        "created": "Link created successfully",
+        "updated": "Link updated successfully",
+        "createError": "Failed to create link",
+        "updateError": "Failed to update link",
+        "loadError": "Failed to load link data"
+      }
+    },
+    "breadcrumbs": {
+      "admin": "Admin",
+      "blog": "Blog",
+      "newsletter": "Newsletter",
+      "events": "Events",
+      "giveaways": "Giveaways",
+      "links": "Links",
+      "permissions": "Permissions",
+      "certificates": "Certificates",
+      "hackathons": "Hackathons"
+    },
+    "navigation": {
+      "blog": "Blog",
+      "newsletter": "Newsletter",
+      "events": "Events",
+      "giveaways": "Giveaways",
+      "hackathons": "Hackathons",
+      "tracks": "Tracks",
+      "selection": "Selection",
+      "teams": "Teams",
+      "intermission": "Intermission",
+      "games": "Games",
+      "links": "Links",
+      "permissions": "Permissions",
+      "featureFlags": "Feature Flags",
+      "certificates": "Certificates",
+      "hackathon-tracks": "Tracks",
+      "hackathon-track-selection": "Track Selection",
+      "hackathon-teams": "Teams",
+      "hackathon-intermission": "Intermission",
+      "hackathon-certificates": "Certificate Settings",
+      "categories": {
+        "articles": "Articles",
+        "events": "Events",
+        "misc": "Misc",
+        "hackathon-tracks": "Track Management",
+        "hackathon-teams": "Team Management",
+        "hackathon-intermission": "Intermission",
+        "hackathon-certificates": "Certificates"
+      }
+    }
   }
 }

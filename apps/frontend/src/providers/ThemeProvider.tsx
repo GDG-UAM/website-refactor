@@ -4,11 +4,25 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import { ReactNode } from "react";
 
+const COLOR_MAP = {
+    primary: "var(--button-primary-bg)",
+    info: "var(--button-primary-bg)",
+    secondary: "var(--button-secondary-bg)",
+    success: "var(--button-success-bg)",
+    warning: "var(--button-warning-bg)",
+    error: "var(--button-danger-bg)",
+    default: "var(--button-default-bg)"
+};
+
+const resolveColor = (color: keyof typeof COLOR_MAP, disabled?: boolean) => {
+    const base = COLOR_MAP[color] ?? COLOR_MAP.default;
+    return disabled ? `color-mix(in srgb, ${base}, transparent 50%)` : base;
+};
+
 /**
  * Custom MUI theme that uses CSS variables for colors.
  * This allows the theme to react to accessibility settings like daltonism modes.
  */
-
 export function CustomThemeProvider({ children }: { children: ReactNode }) {
     const theme = createTheme({
         cssVariables: true,
@@ -166,15 +180,33 @@ export function CustomThemeProvider({ children }: { children: ReactNode }) {
             },
             MuiChip: {
                 styleOverrides: {
-                    root: {
-                        backgroundColor: "var(--google-super-light-gray)",
-                        color: "var(--google-dark-gray)"
-                    },
-                    deleteIcon: {
-                        color: "var(--google-light-gray)",
-                        "&:hover": {
-                            color: "var(--google-dark-gray)"
+                    root: ({ ownerState }) => {
+                        const color = ownerState.color ?? "default";
+                        const resolved = resolveColor(color, ownerState.disabled);
+
+                        if (ownerState.variant === "outlined") {
+                            return {
+                                color: resolved,
+                                borderColor: resolved
+                            };
                         }
+
+                        // filled (default)
+                        return {
+                            backgroundColor: resolved
+                        };
+                    },
+
+                    deleteIcon: ({ ownerState }) => {
+                        const color = ownerState.color ?? "default";
+                        const resolved = resolveColor(color, ownerState.disabled);
+
+                        return {
+                            color: resolved,
+                            "&:hover": {
+                                color: resolved
+                            }
+                        };
                     }
                 }
             },

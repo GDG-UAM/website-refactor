@@ -41,7 +41,7 @@ export default function UserMenu() {
         return (
             <LoginButton
                 onClick={() => {
-                    signIn.social({ provider: "google", callbackURL: "/" });
+                    signIn.social({ provider: "google", callbackURL: window.location.href });
                 }}
                 disabled={!mounted || isPending}
                 iconSize={18}
