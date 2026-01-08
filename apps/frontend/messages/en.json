@@ -589,6 +589,9 @@
   },
   "admin": {
     "pageTitle": "Admin Dashboard",
+    "form": {
+      "view_only_warning": "This form is in view-only mode."
+    },
     "pageDescription": "Manage events, articles, permissions, feature flags, and giveaways in the admin dashboard. Ensure smooth operations and community engagement.",
     "title": "Admin",
     "links": {
@@ -642,6 +645,64 @@
         "createError": "Failed to create link",
         "updateError": "Failed to update link",
         "loadError": "Failed to load link data"
+      }
+    },
+    "events": {
+      "title": "Events",
+      "page": {
+        "title": "Event Management",
+        "createTitle": "Create New Event",
+        "editTitle": "Edit Event"
+      },
+      "breadcrumbs": {
+        "new": "New Event"
+      },
+      "list": {
+        "reload": "Reload",
+        "create": "Create Event",
+        "search": "Search events...",
+        "noEvents": "No events found. Create your first one!",
+        "noResults": "No events match your search.",
+        "showDeleted": "Show deleted events",
+        "status_active": "Active",
+        "status_inactive": "Inactive",
+        "status_draft": "Draft",
+        "status_published": "Published",
+        "status_deleted": "Deleted",
+        "columns": {
+          "status": "Status",
+          "clicks": "Clicks"
+        },
+        "toasts": {
+          "reloaded": "Events list reloaded",
+          "loadError": "Failed to load events",
+          "deleteSuccess": "Event deleted successfully",
+          "deleteError": "Failed to delete event",
+          "restoreSuccess": "Event restored successfully",
+          "restoreError": "Failed to restore event"
+        }
+      },
+      "form": {
+        "title": "Event Title",
+        "slug": "Slug",
+        "description": "Short Description",
+        "date": "Event Date",
+        "location": "Location",
+        "image": "Header Image URL",
+        "status": "Status",
+        "url": "Registration URL (External)",
+        "blogUrl": "External Blog URL",
+        "markdownContent": "Content (Markdown)",
+        "save": "Save Event",
+        "cancel": "Cancel",
+        "saving": "Saving..."
+      },
+      "toasts": {
+        "created": "Event created successfully",
+        "updated": "Event updated successfully",
+        "createError": "Failed to create event",
+        "updateError": "Failed to update event",
+        "loadError": "Failed to load event data"
       }
     },
     "breadcrumbs": {

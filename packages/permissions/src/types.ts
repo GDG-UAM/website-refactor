@@ -28,6 +28,14 @@ export class Ability {
         return !this.can(action, subject, data);
     }
 
+    canUpdateAnyField(subject: string, data: any, options?: { ignore?: string[] }): boolean {
+        if (this.can("update", subject)) return true;
+        if (!data || typeof data !== "object") return false;
+
+        const ignore = options?.ignore || ["_id", "isActive", "createdAt", "updatedAt", "createdBy", "__v"];
+        return Object.keys(data).some((field) => !ignore.includes(field) && this.can("update", subject, { field }));
+    }
+
     private checkPermission(action: Actions, subject: string, data: any | undefined, inverted: boolean): boolean {
         // Find matching rules (deny rules checked first due to higher priority)
         const denyRules = this.rules.filter((rule) => rule.inverted);

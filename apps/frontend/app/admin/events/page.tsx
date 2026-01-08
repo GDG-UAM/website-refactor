@@ -1,6 +1,5 @@
-import AdminNavigation from "#/components/pages/admin/AdminNavigation";
-import * as m from "#/paraglide/messages";
+import { AdminEventsPage } from "#/components/pages/admin/events/AdminEventsPage";
 
-export default function AdminBlogPage() {
-    return <AdminNavigation title={m["admin.navigation.events"]()} categories={[]} />;
+export default function Page() {
+    return <AdminEventsPage />;
 }

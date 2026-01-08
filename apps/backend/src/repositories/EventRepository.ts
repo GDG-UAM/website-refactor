@@ -7,9 +7,9 @@ import { processMarkdownSave } from "../lib/markdownImages";
 export type EventInput = {
     title: string;
     slug?: string;
-    description: string;
+    description?: string;
     date: Date;
-    location: string;
+    location?: string;
     image?: string;
     status?: EventStatus;
     url?: string;
@@ -17,7 +17,7 @@ export type EventInput = {
     blogUrl?: string;
 };
 
-export type EventSortTypes = "newest" | "oldest";
+export type EventSortTypes = "newest" | "oldest" | "title_asc" | "title_desc";
 
 export class EventRepository {
     constructor(private collection: Collection<Event>) {}
@@ -93,7 +93,7 @@ export class EventRepository {
             updates.markdownContent = await processMarkdownSave(input.markdownContent);
         }
 
-        const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id), isActive: true }, { $set: updates }, { returnDocument: "after" });
+        const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
         return result;
     }
@@ -133,16 +133,21 @@ export class EventRepository {
     async list(params: {
         status?: EventStatus;
         dateStatus?: "past" | "upcoming";
+        search?: string;
         page?: number;
         pageSize?: number;
         sort?: EventSortTypes;
         includeInactive?: boolean;
     }): Promise<{ items: Event[]; total: number; page: number; pageSize: number }> {
-        const { status, dateStatus, page = 1, pageSize = 10, sort = "newest", includeInactive = false } = params;
+        const { status, dateStatus, search, page = 1, pageSize = 10, sort = "newest", includeInactive = false } = params;
 
         const filter: Filter<Event> = {};
         if (!includeInactive) filter.isActive = true;
         if (status) filter.status = status;
+
+        if (search) {
+            filter.$or = [{ title: { $regex: search, $options: "i" } }, { slug: { $regex: search, $options: "i" } }];
+        }
 
         if (dateStatus) {
             const now = new Date();
@@ -151,7 +156,9 @@ export class EventRepository {
 
         const sortMap: Record<EventSortTypes, Sort> = {
             newest: { date: -1 },
-            oldest: { date: 1 }
+            oldest: { date: 1 },
+            title_asc: { title: 1 },
+            title_desc: { title: -1 }
         };
 
         const total = await this.collection.countDocuments(filter);

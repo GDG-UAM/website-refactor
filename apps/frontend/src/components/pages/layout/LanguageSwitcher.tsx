@@ -44,14 +44,16 @@ type Availability = "available" | "downloadable" | "downloading" | "unavailable"
 
 interface Props {
     onCloseMobileNav?: () => void;
+    initialLocale?: string;
 }
 
-function LanguageSwitcher({ onCloseMobileNav }: Props) {
+function LanguageSwitcher({ onCloseMobileNav, initialLocale }: Props) {
     const locale = getLocale();
     const { data: session } = useSession();
     const { active: aiActive, supported: aiSupported, enable: enableAi, disable, targetLang: aiTarget, isBusy: aiBusy } = useAITranslation();
     const [langOpen, setLangOpen] = useState(false);
-    const [displayLocale, setDisplayLocale] = useState(locale);
+    const [displayLocale, setDisplayLocale] = useState((initialLocale as any) || locale);
+    const [isMounted, setIsMounted] = useState(false);
     const [search, setSearch] = useState("");
     const [aiPickerOpen, setAiPickerOpen] = useState(false);
     // True only after we have verified a translator can actually translate a sample text
@@ -114,6 +116,10 @@ function LanguageSwitcher({ onCloseMobileNav }: Props) {
     useEffect(() => {
         if (locale !== displayLocale) setDisplayLocale(locale);
     }, [locale, displayLocale]);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const selectAiLanguage = useCallback(
         async (code: string, opts?: { save?: boolean }) => {

@@ -147,9 +147,9 @@ export interface Event {
     title: string;
     slug: string;
     markdownContent: string;
-    description: string;
+    description?: string;
     date: Date;
-    location: string;
+    location?: string;
     image?: string;
     imageBlurHash?: string;
     imageWidth?: number;
@@ -168,9 +168,9 @@ export const EventSchema = t.Object({
     title: t.String(),
     slug: t.String(),
     markdownContent: t.String(),
-    description: t.String(),
+    description: t.Optional(t.String()),
     date: t.Date(),
-    location: t.String(),
+    location: t.Optional(t.String()),
     image: t.Optional(t.String()),
     imageBlurHash: t.Optional(t.String()),
     imageWidth: t.Optional(t.Number()),

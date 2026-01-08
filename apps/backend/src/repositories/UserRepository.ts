@@ -23,6 +23,52 @@ export class UserRepository {
     }
 
     /**
+     * List users with pagination and search
+     */
+    async list({
+        page = 1,
+        pageSize = 50,
+        search,
+        roles
+    }: {
+        page?: number;
+        pageSize?: number;
+        search?: string;
+        roles?: string[];
+    }): Promise<{ items: User[]; total: number; page: number; pageSize: number }> {
+        const query: any = {};
+
+        if (search) {
+            query.$or = [
+                { name: { $regex: search, $options: "i" } },
+                { email: { $regex: search, $options: "i" } },
+                { displayName: { $regex: search, $options: "i" } }
+            ];
+        }
+
+        if (roles) {
+            query.role = { $in: roles };
+        }
+
+        const [items, total] = await Promise.all([
+            this.collection
+                .find(query)
+                .sort({ name: 1 })
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .toArray(),
+            this.collection.countDocuments(query)
+        ]);
+
+        return {
+            items,
+            total,
+            page,
+            pageSize
+        };
+    }
+
+    /**
      * Find user by email
      */
     async findByEmail(email: string): Promise<User | null> {

@@ -5,27 +5,20 @@ import { useRouter } from "next/navigation";
 import { api } from "#/lib/eden";
 import { AdminTable } from "#/components/pages/admin/AdminTable";
 import { textColumn, chipColumn, customColumn } from "#/components/pages/admin/AdminTableFactories";
-import { AddButton, EditButton, DeleteButton, CopyButton, RestoreButton } from "#/components/Buttons";
+import { AddButton, EditButton, DeleteButton, CopyButton, RestoreButton, ViewButton } from "#/components/Buttons";
 import { newErrorToast, newInfoToast, newSuccessToast } from "#/components/Toast";
 import { usePermissions } from "#/providers/PermissionsProvider";
 import { FormControlLabel, Checkbox } from "@mui/material";
 import * as m from "#/paraglide/messages";
-import { Container, Header, Title, LinkDestination } from "./AdminLinksPage.styles";
+import { Container, Header, Title } from "#/components/pages/admin/AdminPage.styles";
+import { LinkDestination } from "./AdminLinksPage.styles";
 
-type LinkRow = {
-    _id: string;
-    slug: string;
-    destination: string;
-    title: string;
-    description?: string;
-    isActive: boolean;
-    clicks: number;
-};
+export type AdminLink = NonNullable<Awaited<ReturnType<typeof api.admin.links.get>>["data"]>["items"][number];
 
 export function AdminLinksPage() {
     const router = useRouter();
     const { ability } = usePermissions();
-    const [rows, setRows] = useState<LinkRow[]>([]);
+    const [rows, setRows] = useState<AdminLink[]>([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
@@ -50,7 +43,7 @@ export function AdminLinksPage() {
                 });
 
                 if (!error && data) {
-                    setRows((data.items as any[]) || []);
+                    setRows(data.items);
                     setTotal(data.total);
                     if (notify) {
                         newInfoToast(m["admin.links.list.toasts.reloaded"]());
@@ -107,19 +100,19 @@ export function AdminLinksPage() {
 
     const columns = useMemo(
         () => [
-            textColumn<LinkRow>("slug", m["admin.links.form.slug"](), (r) => `/${r.slug}`, {
+            textColumn<AdminLink>("slug", m["admin.links.form.slug"](), (r) => `/${r.slug}`, {
                 bold: true
             }),
-            textColumn<LinkRow>("title", m["admin.links.form.title"](), (r) => r.title, {
+            textColumn<AdminLink>("title", m["admin.links.form.title"](), (r) => r.title, {
                 bold: true,
                 subValue: (r) => r.description
             }),
-            customColumn<LinkRow>("destination", m["admin.links.form.destination"](), (r) => (
+            customColumn<AdminLink>("destination", m["admin.links.form.destination"](), (r) => (
                 <LinkDestination href={r.destination} target="_blank" rel="noopener">
                     {r.destination}
                 </LinkDestination>
             )),
-            chipColumn<LinkRow, "active" | "inactive">(
+            chipColumn<AdminLink, "active" | "inactive">(
                 "status",
                 m["admin.links.list.columns.status"](),
                 (r) => (r.isActive ? "active" : "inactive"),
@@ -127,7 +120,7 @@ export function AdminLinksPage() {
                 (status) => (status === "active" ? "success" : "error"),
                 "filled"
             ),
-            textColumn<LinkRow>("clicks", m["admin.links.list.columns.clicks"](), (r) => r.clicks.toLocaleString())
+            textColumn<AdminLink>("clicks", m["admin.links.list.columns.clicks"](), (r) => r.clicks.toLocaleString())
         ],
         []
     );
@@ -160,19 +153,26 @@ export function AdminLinksPage() {
                 rowActions={(row) => (
                     <>
                         <CopyButton
-                            content={`${typeof window !== "undefined" ? window.location.origin : ""}/link/${row.slug}`}
+                            content={`${typeof window !== "undefined" ? window.location.origin : ""}/link/${row.slug || ""}`}
                             ariaLabel="Copy link URL"
                             iconSize={20}
                         />
-                        <EditButton onClick={() => router.push(`/admin/links/${row._id}`)} ariaLabel="Edit link" iconSize={20} />
-                        {ability.can("manage", `admin.links.${row._id}`) && !row.isActive ? (
-                            <RestoreButton onClick={() => handleRestore(row._id)} ariaLabel="Restore link" iconSize={20} />
+                        {row.isActive &&
+                        (ability.can("update", `admin.links.${row._id!}`) ||
+                            ability.can("update", "admin.links") ||
+                            ability.canUpdateAnyField(`admin.links.${row._id!}`, row)) ? (
+                            <EditButton onClick={() => router.push(`/admin/links/${row._id!}`)} ariaLabel="Edit link" iconSize={20} />
+                        ) : (
+                            <ViewButton onClick={() => router.push(`/admin/links/${row._id!}`)} ariaLabel="View link" iconSize={20} />
+                        )}
+                        {ability.can("manage", `admin.links.${row._id!}`) && !row.isActive ? (
+                            <RestoreButton onClick={() => handleRestore(row._id!)} ariaLabel="Restore link" iconSize={20} />
                         ) : (
                             <DeleteButton
-                                onClick={() => handleDelete(row._id)}
+                                onClick={() => handleDelete(row._id!)}
                                 ariaLabel="Delete link"
                                 iconSize={20}
-                                disabled={!row.isActive || ability.cannot("delete", `admin.links.${row._id}`)}
+                                disabled={!row.isActive || ability.cannot("delete", `admin.links.${row._id!}`)}
                             />
                         )}
                     </>

@@ -13,6 +13,7 @@ import Navbar from "#/components/pages/layout/Navbar";
 import { SessionProvider } from "#/providers/SessionProvider";
 import { PermissionProvider } from "#/providers/PermissionsProvider";
 import { SettingsProvider } from "#/providers/SettingsProvider";
+import { setLocale, locales as availableLanguageTags } from "#/paraglide/runtime";
 import { CustomThemeProvider } from "#/providers/ThemeProvider";
 import { ArticlesProvider } from "#/providers/ArticlesProvider";
 import { EventsProvider } from "#/providers/EventsProvider";
@@ -49,7 +50,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
     const cookieStore = await cookies();
-    const locale = cookieStore.get("PARAGLIDE_LOCALE")?.value || "en";
+    const locale = (cookieStore.get("PARAGLIDE_LOCALE")?.value as any) || "en";
+
+    // Set paraglide locale for server-side rendering of client components
+    if (availableLanguageTags.includes(locale)) {
+        setLocale(locale);
+    }
 
     // Fetch session server-side for faster initial load
     const { data: session } = await getServerSession();
@@ -69,7 +75,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                                                 <AccessibilityAttributes />
                                                 <CustomThemeProvider>
                                                     <AITranslationProvider sourceLang={locale}>
-                                                        <Navbar />
+                                                        <Navbar locale={locale} />
                                                         <main>{children}</main>
                                                         <Footer />
                                                     </AITranslationProvider>

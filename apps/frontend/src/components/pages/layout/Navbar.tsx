@@ -53,7 +53,7 @@ function useLocaleLabels() {
     return { labels, locale } as const;
 }
 
-export default function Navbar() {
+export default function Navbar({ locale: initialLocale }: { locale?: string }) {
     const { data: session } = useSession();
     const isLoggedIn = !!session?.user;
     const pathname = usePathname();
@@ -158,7 +158,7 @@ export default function Navbar() {
                         <CollapsableMenuWrapper>
                             <CollapsableMenuButton onClick={() => setOpen((v) => !v)} iconSize={18} dontUseContext />
                         </CollapsableMenuWrapper>
-                        <LanguageSwitcher onCloseMobileNav={() => setOpen(false)} />
+                        <LanguageSwitcher onCloseMobileNav={() => setOpen(false)} initialLocale={initialLocale} />
                         <UserMenu />
                     </Actions>
                 </Inner>

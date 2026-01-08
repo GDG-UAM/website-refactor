@@ -85,8 +85,8 @@ export function PublicEventsGrid() {
         return [...filteredEvents].sort((a, b) => b.date.getTime() - a.date.getTime());
     }, [filteredEvents, dateStatus]);
 
-    const upcomingCount = useMemo(() => cachedEvents.filter((e) => isUpcoming(e.date.toISOString())).length, [cachedEvents]);
-    const pastCount = useMemo(() => cachedEvents.filter((e) => !isUpcoming(e.date.toISOString())).length, [cachedEvents]);
+    const upcomingCount = useMemo(() => upcoming.items.filter((e) => isUpcoming(e.date.toISOString())).length, [upcoming.items]);
+    const pastCount = useMemo(() => past.items.filter((e) => !isUpcoming(e.date.toISOString())).length, [past.items]);
 
     const handleShareClick = (event: EventItem) => setShareModal({ isOpen: true, event });
     const handleCloseModal = () => setShareModal({ isOpen: false, event: null });
