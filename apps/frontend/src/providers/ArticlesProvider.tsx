@@ -2,9 +2,10 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from "react";
 import { api } from "#/lib/eden";
-import type { ArticleType } from "backend/src/repositories/types";
 
-type Article = NonNullable<Awaited<ReturnType<typeof api.articles.get>>["data"]>["items"][number];
+export type Article = NonNullable<Awaited<ReturnType<typeof api.articles.get>>["data"]>["items"][number];
+export type FullArticle = NonNullable<Awaited<ReturnType<ReturnType<typeof api.articles>["get"]>>["data"]>;
+export type ArticleType = Article["type"];
 
 interface ArticleState {
     items: Article[];
@@ -104,4 +105,10 @@ export function useNewsletterArticles() {
     }, [newsletter.hasFetched, newsletter.isLoading, newsletter.error, fetchArticles]);
 
     return newsletter;
+}
+
+export function useArticles(type: ArticleType) {
+    if (type === "blog") return useBlogArticles();
+    if (type === "newsletter") return useNewsletterArticles();
+    throw new Error("Invalid article type");
 }

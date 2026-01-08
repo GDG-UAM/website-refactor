@@ -568,5 +568,22 @@
     "loading": "[Loading User...]",
     "deleted": "[Deleted User]",
     "restricted": "[Hidden User]"
+  },
+  "blog": {
+    "pageTitle": "Blog",
+    "pageDescription": "Read the latest articles and updates from GDG on Campus UAM. Stay informed about our events, workshops, and community activities through our blog.",
+    "title": "Blog",
+    "authors": "Authors",
+    "publishedOn": "Published on [date]",
+    "searchArticles": "Search articles...",
+    "noArticlesToShow": "No articles to show."
+  },
+  "newsletter": {
+    "pageTitle": "Newsletter",
+    "pageDescription": "Stay updated with the latest news and articles on technology, AI, and Google on our newsletter.",
+    "title": "Newsletter",
+    "publishedOn": "Published on [date]",
+    "searchArticles": "Search issues...",
+    "noArticlesToShow": "No issues to show."
   }
 }
