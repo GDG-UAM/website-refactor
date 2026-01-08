@@ -90,3 +90,96 @@ export type User = Omit<typeof auth.$Infer.Session.user, "id"> & {
     // Computed permissions from templates (denormalized for performance)
     templatePermissions?: SerializablePermission[];
 };
+
+// ==================== Article Types ====================
+
+export type ArticleType = "blog" | "newsletter";
+export type ArticleStatus = "draft" | "published" | "url_only";
+
+export interface Article {
+    _id: ObjectId;
+    type: ArticleType;
+    title: Record<string, string>;
+    slug: string;
+    excerpt?: Record<string, string>;
+    content: Record<string, string>;
+    coverImage?: string;
+    coverImageBlurHash?: string;
+    coverImageWidth?: number;
+    coverImageHeight?: number;
+    status: ArticleStatus;
+    authors: string[]; // User IDs as strings
+    views: number;
+    publishedAt?: Date | null;
+    isActive: boolean; // Soft delete
+    createdBy: string; // User ID as string
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export const ArticleSchema = t.Object({
+    _id: t.Optional(t.String()),
+    type: t.Union([t.Literal("blog"), t.Literal("newsletter")]),
+    title: t.Record(t.String(), t.String()),
+    slug: t.String(),
+    excerpt: t.Optional(t.Record(t.String(), t.String())),
+    content: t.Record(t.String(), t.String()),
+    coverImage: t.Optional(t.String()),
+    coverImageBlurHash: t.Optional(t.String()),
+    coverImageWidth: t.Optional(t.Number()),
+    coverImageHeight: t.Optional(t.Number()),
+    status: t.Union([t.Literal("draft"), t.Literal("published"), t.Literal("url_only")]),
+    authors: t.Array(t.String()),
+    views: t.Number({ default: 0 }),
+    publishedAt: t.Optional(t.Nullable(t.Date())),
+    isActive: t.Boolean({ default: true }),
+    createdBy: t.String(),
+    createdAt: t.Optional(t.Date()),
+    updatedAt: t.Optional(t.Date())
+});
+
+// ==================== Event Types ====================
+
+export type EventStatus = "draft" | "published";
+
+export interface Event {
+    _id: ObjectId;
+    title: string;
+    slug: string;
+    markdownContent: string;
+    description: string;
+    date: Date;
+    location: string;
+    image?: string;
+    imageBlurHash?: string;
+    imageWidth?: number;
+    imageHeight?: number;
+    status: EventStatus;
+    url?: string;
+    blogUrl?: string;
+    isActive: boolean; // Soft delete
+    createdBy: string; // User ID as string
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export const EventSchema = t.Object({
+    _id: t.Optional(t.String()),
+    title: t.String(),
+    slug: t.String(),
+    markdownContent: t.String(),
+    description: t.String(),
+    date: t.Date(),
+    location: t.String(),
+    image: t.Optional(t.String()),
+    imageBlurHash: t.Optional(t.String()),
+    imageWidth: t.Optional(t.Number()),
+    imageHeight: t.Optional(t.Number()),
+    status: t.Union([t.Literal("draft"), t.Literal("published")]),
+    url: t.Optional(t.String()),
+    blogUrl: t.Optional(t.String()),
+    isActive: t.Boolean({ default: true }),
+    createdBy: t.String(),
+    createdAt: t.Optional(t.Date()),
+    updatedAt: t.Optional(t.Date())
+});

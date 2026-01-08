@@ -27,8 +27,8 @@ function userToSettingsDTO(user: User) {
             allowTagLinkedIn: user.allowTagLinkedIn ?? true,
             allowMentionBlog: user.allowMentionBlog ?? true,
             showProfilePublicly: user.showProfilePublicly ?? true,
-            photoConsent: user.photoConsent ?? true,
-            allowAnonUsage: user.allowAnonUsage ?? true
+            photoConsent: user.photoConsent ?? true
+            // allowAnonUsage: user.allowAnonUsage ?? true
         },
         events: {
             dietary: user.dietary ?? undefined,
@@ -81,8 +81,8 @@ const UserSettingsSchema = t.Object({
         allowTagLinkedIn: t.Boolean({ default: true }),
         allowMentionBlog: t.Boolean({ default: true }),
         showProfilePublicly: t.Boolean({ default: true }),
-        photoConsent: t.Boolean({ default: true }),
-        allowAnonUsage: t.Boolean({ default: true })
+        photoConsent: t.Boolean({ default: true })
+        // allowAnonUsage: t.Boolean({ default: true })
     }),
 
     events: t.Object({

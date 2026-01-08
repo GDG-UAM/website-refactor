@@ -28,7 +28,7 @@ export interface UserSettings {
         allowMentionBlog: boolean;
         showProfilePublicly: boolean;
         photoConsent: boolean;
-        allowAnonUsage: boolean;
+        // allowAnonUsage: boolean;
     };
     events: {
         dietary?: string;
@@ -125,8 +125,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 allowTagLinkedIn: user.allowTagLinkedIn ?? true,
                 allowMentionBlog: user.allowMentionBlog ?? true,
                 showProfilePublicly: user.showProfilePublicly ?? true,
-                photoConsent: user.photoConsent ?? true,
-                allowAnonUsage: user.allowAnonUsage ?? true
+                photoConsent: user.photoConsent ?? true
+                // allowAnonUsage: user.allowAnonUsage ?? true
             },
             events: {
                 dietary: user.dietary ?? undefined,
@@ -176,6 +176,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                     const dataKeys = Object.keys(data);
 
                     if (dataKeys.some((key) => categoryKeys.includes(key))) {
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         updated[category] = { ...prev[category], ...data } as any;
                         break;
                     }

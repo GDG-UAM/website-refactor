@@ -131,12 +131,12 @@ export const auth = betterAuth({
                 defaultValue: true,
                 input: false
             },
-            allowAnonUsage: {
-                type: "boolean",
-                required: false,
-                defaultValue: true,
-                input: false
-            },
+            // allowAnonUsage: {
+            //     type: "boolean",
+            //     required: false,
+            //     defaultValue: true,
+            //     input: false
+            // },
             // Events
             dietary: {
                 type: "string",

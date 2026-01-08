@@ -540,5 +540,33 @@
             "finishTitle": "All set!",
             "finishMessage": "Thanks for setting up your preferences! You can change everything later on the Settings page, including options not shown here."
         }
+    },
+    "events": {
+        "pageTitle": "Events",
+        "pageDescription": "Stay updated with the latest events organized by GDG on Campus UAM. Join us for tech talks, workshops, hackathons, and more!",
+        "events": "Events",
+        "filters": {
+        "upcoming": "Upcoming ({count})",
+        "past": "Past ({count})"
+        },
+        "registerMoreInfo": "Register / More info",
+        "loading": "Loading events...",
+        "error": "Error",
+        "noEvents": "No events to show.",
+        "share": {
+            "title": "Share",
+            "description": "Share the event \"{title}\" on {date}.",
+            "linkLabel": "Copy event link"
+        }
+  },
+  "markdown": {
+    "components": {
+      "seeMoreButton": "See more"
     }
+  },
+  "mentions": {
+    "loading": "[Loading User...]",
+    "deleted": "[Deleted User]",
+    "restricted": "[Hidden User]"
+  }
 }

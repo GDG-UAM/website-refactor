@@ -27,8 +27,8 @@ const privacyMap = {
     allowMentionBlog: "mentionBlog",
     photoConsent: "photoConsent",
     allowTagInstagram: "tagInstagram",
-    allowTagLinkedIn: "tagLinkedIn",
-    allowAnonUsage: "anonUsage"
+    allowTagLinkedIn: "tagLinkedIn"
+    // allowAnonUsage: "anonUsage"
 } as const;
 type PrivacyLocal = Record<(typeof privacyMap)[keyof typeof privacyMap], boolean>;
 
@@ -49,8 +49,8 @@ const PrivacySection: React.FC<{
         mentionBlog: true,
         photoConsent: true,
         tagInstagram: true,
-        tagLinkedIn: true,
-        anonUsage: true
+        tagLinkedIn: true
+        // anonUsage: true
     };
 
     const [state, setState] = useState<PrivacyLocal>(() =>
@@ -62,8 +62,8 @@ const PrivacySection: React.FC<{
                   mentionBlog: value.allowMentionBlog,
                   photoConsent: value.photoConsent,
                   tagInstagram: value.allowTagInstagram,
-                  tagLinkedIn: value.allowTagLinkedIn,
-                  anonUsage: value.allowAnonUsage
+                  tagLinkedIn: value.allowTagLinkedIn
+                  //   anonUsage: value.allowAnonUsage
               }
             : DEFAULTS
     );
@@ -78,8 +78,8 @@ const PrivacySection: React.FC<{
                 mentionBlog: value.allowMentionBlog,
                 photoConsent: value.photoConsent,
                 tagInstagram: value.allowTagInstagram,
-                tagLinkedIn: value.allowTagLinkedIn,
-                anonUsage: value.allowAnonUsage
+                tagLinkedIn: value.allowTagLinkedIn
+                // anonUsage: value.allowAnonUsage
             };
             for (const k of Object.keys(next) as (keyof PrivacyLocal)[]) {
                 if (next[k] !== prev[k]) return next;
@@ -235,10 +235,10 @@ const PrivacySection: React.FC<{
 
                 {/* Anonymized usage */}
                 {/* <FormControlLabel
-          control={<Checkbox checked={state.anonUsage} onChange={toggle("anonUsage")} />}
-          label={t("privacy.anonUsage")}
-          style={{ marginLeft: 0 }}
-        /> */}
+                    control={<Checkbox checked={state.anonUsage} onChange={toggle("anonUsage")} />}
+                    label={t("privacy.anonUsage")}
+                    style={{ marginLeft: 0 }}
+                /> */}
             </Stack>
 
             {/* Info modal */}

@@ -13,6 +13,8 @@ import { SessionProvider } from "#/providers/SessionProvider";
 import { PermissionProvider } from "#/providers/PermissionsProvider";
 import { SettingsProvider } from "#/providers/SettingsProvider";
 import { CustomThemeProvider } from "#/providers/ThemeProvider";
+import { ArticlesProvider } from "#/providers/ArticlesProvider";
+import { EventsProvider } from "#/providers/EventsProvider";
 import { getServerSession } from "#/lib/auth-server";
 import { AccessibilityAttributes, accessibilityScript } from "#/components/AccessibilityAttributes";
 
@@ -58,18 +60,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <StyledComponentsRegistry>
                     <SessionProvider initialSession={session}>
                         <PermissionProvider>
-                            <SettingsProvider>
-                                <ButtonProvider>
-                                    <AccessibilityAttributes />
-                                    <CustomThemeProvider>
-                                        <AITranslationProvider sourceLang={locale}>
-                                            <Navbar />
-                                            <main>{children}</main>
-                                            <Footer />
-                                        </AITranslationProvider>
-                                    </CustomThemeProvider>
-                                </ButtonProvider>
-                            </SettingsProvider>
+                            <ArticlesProvider>
+                                <EventsProvider>
+                                    <SettingsProvider>
+                                        <ButtonProvider>
+                                            <AccessibilityAttributes />
+                                            <CustomThemeProvider>
+                                                <AITranslationProvider sourceLang={locale}>
+                                                    <Navbar />
+                                                    <main>{children}</main>
+                                                    <Footer />
+                                                </AITranslationProvider>
+                                            </CustomThemeProvider>
+                                        </ButtonProvider>
+                                    </SettingsProvider>
+                                </EventsProvider>
+                            </ArticlesProvider>
                         </PermissionProvider>
                     </SessionProvider>
                 </StyledComponentsRegistry>

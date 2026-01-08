@@ -4,14 +4,14 @@ import type { AppAbility, Actions } from "./types";
  * Helper function to check if user can perform action on subject
  * Returns boolean for UI conditional rendering
  */
-export function canUser(ability: AppAbility, action: Actions, subject: string, data?: Record<string, unknown>): boolean {
+export function canUser(ability: AppAbility, action: Actions, subject: string, data?: any): boolean {
     return ability.can(action, subject, data);
 }
 
 /**
  * Helper function to check if user cannot perform action
  */
-export function cannotUser(ability: AppAbility, action: Actions, subject: string, data?: Record<string, unknown>): boolean {
+export function cannotUser(ability: AppAbility, action: Actions, subject: string, data?: any): boolean {
     return ability.cannot(action, subject, data);
 }
 
@@ -19,7 +19,7 @@ export function cannotUser(ability: AppAbility, action: Actions, subject: string
  * Check permission and throw error if denied
  * Useful for route handlers
  */
-export function checkPermission(ability: AppAbility, action: Actions, subject: string, data?: Record<string, unknown>): void {
+export function checkPermission(ability: AppAbility, action: Actions, subject: string, data?: any): void {
     if (ability.cannot(action, subject, data)) {
         const dataStr = data ? ` (with data: ${JSON.stringify(data)})` : "";
         throw new Error(`Forbidden: Cannot ${action} ${subject}${dataStr}`);
@@ -55,7 +55,7 @@ export function evaluateConditions(conditions: Record<string, unknown> | undefin
 /**
  * Check if data matches Mongo-like conditions
  */
-export function matchCondition(data: Record<string, unknown>, conditions: Record<string, unknown>): boolean {
+export function matchCondition(data: any, conditions: Record<string, unknown>): boolean {
     for (const [key, requirement] of Object.entries(conditions)) {
         const value = getNestedValue(data, key);
 
@@ -116,10 +116,10 @@ export function matchCondition(data: Record<string, unknown>, conditions: Record
 /**
  * Get nested value from object using dot notation
  */
-export function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
+export function getNestedValue(obj: any, path: string): unknown {
     return path.split(".").reduce((acc: unknown, part: string) => {
         if (acc && typeof acc === "object" && part in acc) {
-            return (acc as Record<string, unknown>)[part];
+            return (acc as any)[part];
         }
         return undefined;
     }, obj);

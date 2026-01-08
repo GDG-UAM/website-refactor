@@ -4,7 +4,7 @@ import { swagger } from "@elysiajs/swagger";
 import { csrfPlugin } from "./plugins/csrf";
 import { permissionsPlugin } from "./plugins/permissions";
 import { auth } from "./lib/auth";
-import { adminRoutes, settingsRoutes, userRoutes, contactRoutes } from "./routes";
+import { adminRoutes, settingsRoutes, userRoutes, contactRoutes, eventsRoutes, articlesRoutes, miscRoutes } from "./routes";
 import db from "./lib/db";
 import { initializeDefaults } from "./lib/init";
 
@@ -91,7 +91,10 @@ const app = new Elysia({ prefix: "/api" })
     .use(adminRoutes)
     .use(settingsRoutes)
     .use(userRoutes)
-    .use(contactRoutes);
+    .use(contactRoutes)
+    .use(eventsRoutes)
+    .use(articlesRoutes)
+    .use(miscRoutes);
 
 export type App = typeof app;
 export default app;

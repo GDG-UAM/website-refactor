@@ -20,15 +20,15 @@ export class Ability {
         this.rules = rules;
     }
 
-    can(action: Actions, subject: string, data?: Record<string, unknown>): boolean {
+    can(action: Actions, subject: string, data?: any): boolean {
         return this.checkPermission(action, subject, data, false);
     }
 
-    cannot(action: Actions, subject: string, data?: Record<string, unknown>): boolean {
+    cannot(action: Actions, subject: string, data?: any): boolean {
         return !this.can(action, subject, data);
     }
 
-    private checkPermission(action: Actions, subject: string, data: Record<string, unknown> | undefined, inverted: boolean): boolean {
+    private checkPermission(action: Actions, subject: string, data: any | undefined, inverted: boolean): boolean {
         // Find matching rules (deny rules checked first due to higher priority)
         const denyRules = this.rules.filter((rule) => rule.inverted);
         const allowRules = this.rules.filter((rule) => !rule.inverted);
@@ -50,7 +50,7 @@ export class Ability {
         return inverted; // Default: deny
     }
 
-    private matchesRule(rule: PermissionRule, action: Actions, subject: string, data?: Record<string, unknown>): boolean {
+    private matchesRule(rule: PermissionRule, action: Actions, subject: string, data?: any): boolean {
         // Check action match
         const actions = Array.isArray(rule.action) ? rule.action : [rule.action];
         const actionMatches = actions.includes(action) || actions.includes("manage");

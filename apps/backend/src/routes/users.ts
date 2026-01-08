@@ -103,4 +103,42 @@ export const userRoutes = new Elysia({ prefix: "/users" })
             },
             params: t.Object({ userId: t.String() })
         }
+    )
+    .get(
+        "/mentions/:id",
+        async ({ params: { id }, set }) => {
+            try {
+                const { userRepository } = db.getRepositories();
+                const user = await userRepository.findById(id);
+
+                if (!user || !user.allowMentionBlog) {
+                    set.status = 404;
+                    return { error: "User not found" };
+                }
+
+                return {
+                    _id: user._id.toString(),
+                    name: user.displayName || user.name || "",
+                    image: user.image || "",
+                    showProfilePublicly: user.showProfilePublicly ?? true
+                };
+            } catch {
+                set.status = 500;
+                return { error: "Internal Server Error" };
+            }
+        },
+        {
+            params: t.Object({
+                id: t.String()
+            }),
+            response: {
+                200: t.Object({
+                    _id: t.String(),
+                    name: t.String(),
+                    image: t.String(),
+                    showProfilePublicly: t.Boolean()
+                }),
+                500: t.Object({ error: t.String() })
+            }
+        }
     );
