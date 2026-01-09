@@ -5,6 +5,17 @@ import { csrfPlugin } from "./plugins/csrf";
 import { permissionsPlugin } from "./plugins/permissions";
 import { auth } from "./lib/auth";
 import { adminRoutes, settingsRoutes, userRoutes, contactRoutes, eventsRoutes, articlesRoutes, miscRoutes, linksRoutes, hackathonRoutes } from "./routes";
+import db from "./lib/db";
+import { initializeDefaults } from "./lib/init";
+
+db.connect()
+    .then(async () => {
+        console.log("[Server] Database connected");
+        await initializeDefaults();
+    })
+    .catch((err) => {
+        console.error("[Server] Failed to initialize:", err);
+    });
 
 const betterAuthView = (context: Context) => {
     const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
@@ -87,4 +98,4 @@ const app = new Elysia({ prefix: "/api" })
     .use(hackathonRoutes);
 
 export type App = typeof app;
-export { app };
+export default app;

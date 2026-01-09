@@ -2,8 +2,8 @@
     "name": "backend",
     "version": "1.0.50",
     "scripts": {
-        "dev": "bun run --watch src/server.ts",
-        "start": "bun run src/server.ts",
+        "dev": "bun run --watch src/index.ts",
+        "start": "bun run src/index.ts",
         "type-check": "tsc --noEmit",
         "lint": "eslint ."
     },
