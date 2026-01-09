@@ -1,11 +1,9 @@
 import { createAuthClient } from "better-auth/react";
 import type { auth } from "backend/src/lib/auth";
 
-// Use internal URL for server-side, public URL for client-side
-const isServer = typeof window === "undefined";
-const backendURL = isServer
-    ? process.env.INTERNAL_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000"
-    : process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+console.log("[DEBUG] Backend URL for Auth Client:", backendURL);
+console.log("[DEBUG] Env NEXT_PUBLIC_BACKEND_URL:", process.env.NEXT_PUBLIC_BACKEND_URL);
 
 // Better Auth needs the full path to auth endpoints
 const baseURL = `${backendURL}/api/auth`;
