@@ -73,3 +73,33 @@ export const PreviewTitle = styled.h4`
     font-size: 14px;
     color: #374151;
 `;
+
+export const SectionDivider = styled.div`
+    grid-column: span 12;
+    height: 1px;
+    background-color: #e5e7eb;
+    margin: 10px 0;
+`;
+
+export const LocalizedSection = styled.div`
+    grid-column: span 12;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 20px;
+`;
+
+export const LocaleSelector = styled.div`
+    grid-column: span 12;
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+`;
+
+export const LocaleLabel = styled.span`
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+    margin-right: 8px;
+`;

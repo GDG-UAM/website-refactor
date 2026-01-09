@@ -4,7 +4,7 @@ export const Wrapper = styled.div`
     position: relative;
 `;
 
-export const Label = styled.label<{ $shrink: boolean; $disabled?: boolean }>`
+export const Label = styled.label<{ $shrink: boolean; $disabled?: boolean; $error?: boolean }>`
     position: absolute;
     left: 0;
     top: 0;
@@ -31,15 +31,16 @@ export const Label = styled.label<{ $shrink: boolean; $disabled?: boolean }>`
         `
     font-weight: 500;
   `}
+    ${({ $error }) => $error && `color: var(--google-red);`}
 `;
 
 // Surface for overlayed rendering
-export const Surface = styled.div<{ $disabled?: boolean }>`
+export const Surface = styled.div<{ $disabled?: boolean; $error?: boolean }>`
     position: relative;
     margin-top: 10px; /* Space for the floating label */
     border-radius: 4px;
 
-    ${({ $disabled }) =>
+    ${({ $disabled, $error }) =>
         !$disabled &&
         `
     &:focus-within ${Label} {
@@ -78,11 +79,11 @@ export const Overlay = styled.div<{ $disabled?: boolean }>`
     line-height: 1.4375em;
 `;
 
-export const TextArea = styled.textarea`
+export const TextArea = styled.textarea<{ $error?: boolean }>`
     width: 100%;
     padding: 10.5px 14px;
     border-radius: 4px;
-    border: 1px solid var(--google-extra-light-gray);
+    border: 1px solid ${({ $error }) => ($error ? "var(--google-red)" : "var(--google-extra-light-gray)")};
     background-color: transparent;
     color: transparent; /* show text via Overlay */
     caret-color: var(--foreground);
@@ -96,7 +97,7 @@ export const TextArea = styled.textarea`
     z-index: 2;
 
     &:hover {
-        border-color: rgba(0, 0, 0, 0.87);
+        border-color: ${({ $error }) => ($error ? "var(--google-red)" : "rgba(0, 0, 0, 0.87)")};
     }
 
     &:focus:not(:disabled) {

@@ -1,18 +1,41 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { TextField, Switch, FormControlLabel, MenuItem } from "@mui/material";
 import { usePermissions } from "#/providers/PermissionsProvider";
-import { Form, Actions, FieldWrapper, HelpText, PreviewContainer, PreviewTitle, FormHeader, FormTitle, LockWarning } from "./AdminFormBuilder.styles";
-import { SaveButton, CancelButton } from "#/components/Buttons";
+import {
+    Form,
+    Actions,
+    FieldWrapper,
+    HelpText,
+    PreviewContainer,
+    PreviewTitle,
+    FormHeader,
+    FormTitle,
+    LockWarning,
+    SectionDivider,
+    LocalizedSection,
+    LocaleSelector,
+    LocaleLabel
+} from "./AdminFormBuilder.styles";
+import { SaveButton, CancelButton, PlainButton } from "#/components/Buttons";
+import { newErrorToast } from "#/components/Toast";
 import * as m from "#/paraglide/messages";
+import { locales } from "#/paraglide/runtime";
 import CustomMarkdownTextArea from "#/components/markdown/CustomMarkdownTextArea";
 import RenderMarkdown from "#/components/markdown/RenderMarkdown";
+import { AdminUserSelector } from "./AdminUserSelector";
+
+const getShortLanguageName = (locale: string) => {
+    const langKey = `navbar.lang.manualLanguages.${locale}` as keyof typeof m;
+    const fullLangName = typeof m[langKey] === "function" ? (m[langKey] as Function)() : locale.toUpperCase();
+    return (fullLangName as string).split(" (")[0];
+};
 
 export type FieldConfig<T> = {
     name: keyof T & string;
     label: string;
-    type: "text" | "number" | "switch" | "select" | "multiline" | "url" | "date" | "datetime" | "markdown";
+    type: "text" | "number" | "switch" | "select" | "multiline" | "url" | "date" | "datetime" | "markdown" | "user-selector";
     required?: boolean;
     options?: { label: string; value: any }[];
     helperText?: string;
@@ -29,6 +52,7 @@ interface AdminFormBuilderProps<T> {
     resource: string;
     action: "create" | "update";
     fields: FieldConfig<T>[];
+    localizedFields?: FieldConfig<T>[];
     data: T;
     onChange: (data: T) => void;
     onSubmit: (data: T) => void;
@@ -47,6 +71,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
     resource,
     action,
     fields,
+    localizedFields,
     data,
     onChange,
     onSubmit,
@@ -60,17 +85,58 @@ export function AdminFormBuilder<T extends Record<string, any>>({
     title
 }: AdminFormBuilderProps<T>) {
     const { ability } = usePermissions();
+    const [activeLocale, setActiveLocale] = useState<(typeof locales)[number]>(locales[0]);
+    const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
+
     const subject = resourceId ? `${resource}.${resourceId}` : resource;
     const canUpdateResource = action === "update" ? ability.canUpdateAnyField(subject, data) : true;
     const isActuallyDisabled = disabled || (action === "update" && !canUpdateResource);
 
-    // Use translations if available, otherwise fallback
-    const t = (key: string) => key;
+    const isFieldMissing = (f: FieldConfig<T>, val: any) => {
+        return f.required && (val === undefined || val === null || val === "" || (Array.isArray(val) && val.length === 0));
+    };
+
+    const getBaseLabel = (l: string) => l.split(" (")[0];
+    const missingFieldGroups: Record<string, string[]> = {};
+
+    fields.forEach((f) => {
+        if (isFieldMissing(f, data[f.name])) {
+            const base = getBaseLabel(f.label);
+            if (!missingFieldGroups[base]) missingFieldGroups[base] = [];
+        }
+    });
+
+    localizedFields?.forEach((f) => {
+        if (!f.required) return;
+        const base = getBaseLabel(f.label);
+        locales.forEach((locale) => {
+            const val = data[f.name]?.[locale];
+            if (!val || (typeof val === "string" && val.trim() === "")) {
+                if (!missingFieldGroups[base]) missingFieldGroups[base] = [];
+                missingFieldGroups[base].push(getShortLanguageName(locale));
+            }
+        });
+    });
+
+    const formattedMissingItems = Object.entries(missingFieldGroups).map(([label, langs]) => {
+        if (langs.length === 0) return label;
+        return `${label} (${langs.join(", ")})`;
+    });
+
+    const isFormValid = formattedMissingItems.length === 0;
+
+    const saveButtonTooltip = isActuallyDisabled
+        ? m["admin.form.view_only_warning"]()
+        : !isFormValid
+          ? m["admin.form.required_fields_error"]({ fields: formattedMissingItems.join(", ") })
+          : "";
 
     const handleSubmit = () => {
+        if (!isFormValid) return;
+
         // Filter out data that the user doesn't have permission to modify
         const finalData = { ...data };
-        fields.forEach((field) => {
+        [...fields, ...(localizedFields || [])].forEach((field) => {
             const canEdit = ability.can(action, resourceId ? `${resource}.${resourceId}` : resource, { field: field.name });
             if (!canEdit) {
                 delete finalData[field.name];
@@ -80,18 +146,53 @@ export function AdminFormBuilder<T extends Record<string, any>>({
         onSubmit(finalData);
     };
 
-    const renderField = (field: FieldConfig<T>) => {
+    const renderField = (field: FieldConfig<T>, isLocalized = false) => {
         const subject = resourceId ? `${resource}.${resourceId}` : resource;
         const canEdit = ability.can(action, subject, { field: field.name }) && !field.disabled;
-        const value = data[field.name];
+
+        let value = data[field.name];
+        if (isLocalized) {
+            value = (value && typeof value === "object" ? value[activeLocale] : "") || "";
+        }
+
+        const handleFieldChange = (val: any) => {
+            if (!touchedFields.has(field.name)) {
+                const newTouched = new Set(touchedFields);
+                newTouched.add(field.name);
+                setTouchedFields(newTouched);
+            }
+            if (isLocalized) {
+                const currentLocalizedValue = (data[field.name] && typeof data[field.name] === "object" ? { ...data[field.name] } : {}) as Record<string, any>;
+                onChange({
+                    ...data,
+                    [field.name]: {
+                        ...currentLocalizedValue,
+                        [activeLocale]: val
+                    }
+                });
+            } else {
+                onChange({ ...data, [field.name]: val });
+            }
+        };
+
+        const isFieldValid = !isFieldMissing(field, value);
+        const showError = field.required && !isFieldValid && touchedFields.has(field.name);
 
         const commonProps = {
-            label: field.label,
+            label: isLocalized ? `${field.label} (${getShortLanguageName(activeLocale)})` : field.label,
             fullWidth: true,
             disabled: !canEdit || submitting || isActuallyDisabled,
             required: field.required,
             placeholder: field.placeholder,
-            size: "small" as const
+            size: "small" as const,
+            error: showError,
+            onBlur: () => {
+                if (!touchedFields.has(field.name)) {
+                    const newTouched = new Set(touchedFields);
+                    newTouched.add(field.name);
+                    setTouchedFields(newTouched);
+                }
+            }
         };
 
         const renderInput = () => {
@@ -102,7 +203,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             control={
                                 <Switch
                                     checked={!!value}
-                                    onChange={(e) => onChange({ ...data, [field.name]: e.target.checked })}
+                                    onChange={(e) => handleFieldChange(e.target.checked)}
                                     disabled={!canEdit || submitting || isActuallyDisabled}
                                 />
                             }
@@ -112,7 +213,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
 
                 case "select":
                     return (
-                        <TextField {...commonProps} select value={value || ""} onChange={(e) => onChange({ ...data, [field.name]: e.target.value })}>
+                        <TextField {...commonProps} select value={value || ""} onChange={(e) => handleFieldChange(e.target.value)}>
                             {field.options?.map((opt) => (
                                 <MenuItem key={opt.value} value={opt.value}>
                                     {opt.label}
@@ -125,30 +226,29 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                     return (
                         <>
                             <CustomMarkdownTextArea
-                                label={field.label}
+                                label={commonProps.label}
                                 value={value || ""}
-                                onChange={(val) => onChange({ ...data, [field.name]: val })}
+                                onChange={(val) => handleFieldChange(val)}
                                 placeholder={field.placeholder}
                                 minRows={field.rows || 10}
                                 disabled={submitting || isActuallyDisabled || !canEdit}
+                                error={showError}
+                                onBlur={commonProps.onBlur}
+                                required={field.required}
                             />
                             {value && !isActuallyDisabled && (
                                 <PreviewContainer>
-                                    <PreviewTitle>Preview</PreviewTitle>
+                                    <PreviewTitle>Preview ({getShortLanguageName(activeLocale)})</PreviewTitle>
                                     <RenderMarkdown markdown={value} />
                                 </PreviewContainer>
                             )}
                         </>
                     );
+                case "user-selector":
+                    return <AdminUserSelector {...commonProps} value={value || []} onChange={(val) => handleFieldChange(val)} />;
                 case "multiline":
                     return (
-                        <TextField
-                            {...commonProps}
-                            multiline
-                            rows={field.rows || 3}
-                            value={value || ""}
-                            onChange={(e) => onChange({ ...data, [field.name]: e.target.value })}
-                        />
+                        <TextField {...commonProps} multiline rows={field.rows || 3} value={value || ""} onChange={(e) => handleFieldChange(e.target.value)} />
                     );
 
                 case "date":
@@ -171,7 +271,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                                           : "text"
                             }
                             value={value ?? ""}
-                            onChange={(e) => onChange({ ...data, [field.name]: e.target.value })}
+                            onChange={(e) => handleFieldChange(e.target.value)}
                             inputProps={{
                                 pattern: field.pattern,
                                 style: { fontFamily: field.fontFamily }
@@ -183,7 +283,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
         };
 
         return (
-            <FieldWrapper key={field.name} $gridColumn={field.gridColumn}>
+            <FieldWrapper key={`${field.name}_${isLocalized ? activeLocale : "base"}`} $gridColumn={field.gridColumn}>
                 {renderInput()}
                 {field.type !== "switch" && field.helperText && <HelpText>{field.helperText}</HelpText>}
             </FieldWrapper>
@@ -205,15 +305,48 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                     )}
                 </FormHeader>
             )}
-            {fields.map(renderField)}
+
+            {fields.map((f) => renderField(f))}
+
+            {localizedFields && localizedFields.length > 0 && (
+                <>
+                    <SectionDivider />
+                    <LocaleSelector>
+                        <LocaleLabel>{m["admin.form.languages"]?.()}</LocaleLabel>
+                        {locales.map((locale) => {
+                            const shortLangName = getShortLanguageName(locale);
+
+                            return (
+                                <PlainButton
+                                    key={locale}
+                                    type="button"
+                                    slim
+                                    color={activeLocale === locale ? "primary" : "default"}
+                                    onClick={() => setActiveLocale(locale)}
+                                >
+                                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                        <img
+                                            src={`https://hatscripts.github.io/circle-flags/flags/language/${locale}.svg`}
+                                            alt={`${locale} flag`}
+                                            style={{ width: 18, height: 18, borderRadius: "50%" }}
+                                        />
+                                        <span>{shortLangName}</span>
+                                    </div>
+                                </PlainButton>
+                            );
+                        })}
+                    </LocaleSelector>
+                    <LocalizedSection>{localizedFields.map((f) => renderField(f, true))}</LocalizedSection>
+                </>
+            )}
 
             <Actions>
-                <SaveButton onClick={handleSubmit} disabled={submitting || isActuallyDisabled}>
-                    {submitting ? savingLabel || "Saving..." : submitLabel || "Save"}
+                <SaveButton onClick={handleSubmit} disabled={submitting || isActuallyDisabled || !isFormValid} tooltip={saveButtonTooltip}>
+                    {submitting ? savingLabel || m["admin.form.saving"]() : submitLabel || m["admin.form.save"]()}
                 </SaveButton>
                 {onCancel && (
                     <CancelButton onClick={onCancel} disabled={submitting}>
-                        {cancelLabel || "Cancel"}
+                        {cancelLabel || m["admin.form.cancel"]()}
                     </CancelButton>
                 )}
                 {footerActions}

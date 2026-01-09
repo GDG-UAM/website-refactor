@@ -143,8 +143,7 @@ export function AdminEventsPage() {
             options: [
                 { label: "All", value: "all" },
                 { label: "Draft", value: "draft" },
-                { label: "Published", value: "published" },
-                { label: "Deleted", value: "deleted" }
+                { label: "Published", value: "published" }
             ]
         },
         {

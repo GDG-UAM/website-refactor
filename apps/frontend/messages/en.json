@@ -590,7 +590,84 @@
   "admin": {
     "pageTitle": "Admin Dashboard",
     "form": {
-      "view_only_warning": "This form is in view-only mode."
+      "view_only_warning": "This form is in view-only mode.",
+      "languages": "Languages:",
+      "required_fields_error": "Please fill in all required fields: {fields}",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel"
+    },
+    "blog": {
+      "authors": "Authors"
+    },
+    "userSelector": {
+      "searching": "Searching...",
+      "noResults": "No users found"
+    },
+    "articles": {
+      "status": {
+        "url_only": "URL Only",
+        "draft": "Draft",
+        "published": "Published",
+        "deleted": "Deleted"
+      },
+      "form": {
+        "title": "Title",
+        "date": "Published Date",
+        "status": "Status",
+        "slug": "Slug",
+        "excerpt": "Excerpt",
+        "content": "Content"
+      },
+      "list": {
+        "reload": "Reload",
+        "search": "Search articles...",
+        "noArticles": "No articles found.",
+        "noResults": "No articles match your search.",
+        "showDeleted": "Show deleted articles",
+        "all": "All",
+        "sort": "Sort",
+        "sort_newest": "Newest",
+        "sort_oldest": "Oldest",
+        "sort_views": "Views",
+        "columns": {
+          "status": "Status",
+          "views": "Views"
+        },
+        "toasts": {
+          "reloaded": "Articles list reloaded",
+          "loadError": "Failed to load articles",
+          "deleteSuccess": "Article deleted successfully",
+          "deleteError": "Failed to delete article",
+          "restoreSuccess": "Article restored successfully",
+          "restoreError": "Failed to restore article"
+        }
+      },
+      "toasts": {
+        "created": "Article created successfully",
+        "updated": "Article updated successfully",
+        "createError": "Failed to create article",
+        "updateError": "Failed to update article",
+        "loadError": "Failed to load article data"
+      },
+      "blog": {
+        "title": "Blog Management",
+        "listTitle": "Blog Articles",
+        "create": "Create Blog Post",
+        "edit": "Edit Blog Post",
+        "breadcrumbs": {
+          "new": "New Blog Post"
+        }
+      },
+      "newsletter": {
+        "title": "Newsletter Management",
+        "listTitle": "Newsletter Articles",
+        "create": "Create Newsletter",
+        "edit": "Edit Newsletter",
+        "breadcrumbs": {
+          "new": "New Newsletter"
+        }
+      }
     },
     "pageDescription": "Manage events, articles, permissions, feature flags, and giveaways in the admin dashboard. Ensure smooth operations and community engagement.",
     "title": "Admin",
@@ -692,7 +769,7 @@
         "status": "Status",
         "url": "Registration URL (External)",
         "blogUrl": "External Blog URL",
-        "markdownContent": "Content (Markdown)",
+        "markdownContent": "Content",
         "save": "Save Event",
         "cancel": "Cancel",
         "saving": "Saving..."

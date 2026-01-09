@@ -6,8 +6,8 @@ import { Mention, Avatar, UserLink } from "./UserMention.styles";
 import { m } from "#/paraglide/messages";
 import { usePermissions } from "#/providers/PermissionsProvider";
 
-async function getMention(userId: string) {
-    const { data } = await api.users.mentions({ id: userId }).get();
+async function getMention(userId: string, isAdmin?: boolean) {
+    const { data } = await api.users.mentions({ id: userId }).get({ query: { ignoreBlogMentions: isAdmin } });
     return data;
 }
 
@@ -34,10 +34,10 @@ export default React.memo(function UserMention({ userId, isAdmin, authorFormat }
 
         const fetchData = async () => {
             try {
-                const data = await getMention(userId);
+                const apiData = await getMention(userId, isAdmin);
 
                 if (!ignore) {
-                    setData(data);
+                    setData(apiData);
                     setLoading(false);
                 }
                 return;
@@ -61,13 +61,13 @@ export default React.memo(function UserMention({ userId, isAdmin, authorFormat }
     if (loading) return <Mention $authorFormat={authorFormat}>{m["mentions.loading"]()}</Mention>;
 
     // Deleted user (empty object)
-    if (data && Object.keys(data).length === 0) return <Mention $authorFormat={authorFormat}>{m["mentions.deleted"]()}</Mention>;
+    if (!data) return <Mention $authorFormat={authorFormat}>{m["mentions.deleted"]()}</Mention>;
 
     // Restricted: id present but no name
     if (data && data._id && !data.name) return <Mention $authorFormat={authorFormat}>{m["mentions.restricted"]()}</Mention>;
 
     // Displayable user
-    if (data && data._id && data.name) {
+    if (data && data._id && data.name && data.image) {
         const showImage = Boolean(data.image);
         const canSee = can("read", `users.${data._id}`);
         const linkable = data.showProfilePublicly || canSee;

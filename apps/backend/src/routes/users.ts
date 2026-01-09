@@ -106,14 +106,21 @@ export const userRoutes = new Elysia({ prefix: "/users" })
     )
     .get(
         "/mentions/:id",
-        async ({ params: { id }, set }) => {
+        async ({ params: { id }, query: { ignoreBlogMentions }, set, ability }) => {
             try {
                 const { userRepository } = db.getRepositories();
                 const user = await userRepository.findById(id);
 
-                if (!user || !user.allowMentionBlog) {
+                if (!user) {
                     set.status = 404;
                     return { error: "User not found" };
+                }
+
+                if (
+                    !user.allowMentionBlog &&
+                    !(ignoreBlogMentions && (ability.can("read", `users.${user._id.toString()}`) || ability.can("read", `admin.users.${user._id.toString()}`)))
+                ) {
+                    return { _id: user._id.toString() }; // Found but disallows blog mentions
                 }
 
                 return {
@@ -131,12 +138,15 @@ export const userRoutes = new Elysia({ prefix: "/users" })
             params: t.Object({
                 id: t.String()
             }),
+            query: t.Object({
+                ignoreBlogMentions: t.Optional(t.Boolean({ default: false }))
+            }),
             response: {
                 200: t.Object({
                     _id: t.String(),
-                    name: t.String(),
-                    image: t.String(),
-                    showProfilePublicly: t.Boolean()
+                    name: t.Optional(t.String()),
+                    image: t.Optional(t.String()),
+                    showProfilePublicly: t.Optional(t.Boolean())
                 }),
                 500: t.Object({ error: t.String() })
             }

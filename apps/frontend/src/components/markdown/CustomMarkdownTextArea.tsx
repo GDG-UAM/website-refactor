@@ -158,7 +158,10 @@ export default function CustomMarkdownTextArea({
     label,
     minRows = 10,
     placeholder,
-    disabled
+    disabled,
+    error,
+    onBlur,
+    required
 }: {
     value: string;
     onChange: (val: string) => void;
@@ -166,6 +169,9 @@ export default function CustomMarkdownTextArea({
     minRows?: number;
     placeholder?: string;
     disabled?: boolean;
+    error?: boolean;
+    onBlur?: () => void;
+    required?: boolean;
 }) {
     const [dropdownMode, setDropdownMode] = useState<DropdownMode>(null);
     const [q, setQ] = useState("");
@@ -788,9 +794,10 @@ export default function CustomMarkdownTextArea({
 
     return (
         <Wrapper ref={wrapRef}>
-            <Surface $disabled={disabled}>
-                <Label $shrink={isFocused || !!value} $disabled={disabled}>
+            <Surface $disabled={disabled} $error={error}>
+                <Label $shrink={isFocused || !!value} $disabled={disabled} $error={error}>
                     {label}
+                    {required && error ? <span style={{ color: "var(--google-red)", marginLeft: "4px" }}>*</span> : " *"}
                 </Label>
                 <Overlay ref={overlayRef} aria-hidden style={{ width: overlayWidth, letterSpacing: "normal" }} $disabled={disabled}>
                     {segments.map((seg, idx) => {
@@ -830,16 +837,20 @@ export default function CustomMarkdownTextArea({
                     ref={taRef}
                     value={value}
                     onChange={(e) => {
-                        const newVal = sanitizeEmbeds(value, e.target.value, allEmbedsRegex);
-                        onChange(newVal);
+                        const nextValue = sanitizeEmbeds(value, e.target.value, allEmbedsRegex);
+                        onChange(nextValue);
                     }}
                     onKeyUp={onKeyUp}
                     onKeyDown={onKeyDown}
-                    onFocus={() => !disabled && setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
-                    rows={minRows}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => {
+                        setIsFocused(false);
+                        onBlur?.();
+                    }}
                     placeholder={placeholder}
+                    rows={minRows}
                     disabled={disabled}
+                    $error={error}
                 />
             </Surface>
             {dropdownMode === "mention" && (

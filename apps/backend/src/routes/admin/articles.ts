@@ -2,24 +2,7 @@ import { Elysia, t } from "elysia";
 import db from "../../lib/db";
 import { permissionsPlugin } from "../../plugins/permissions";
 import type { ArticleType, ArticleStatus } from "../../repositories/types";
-
-const AdminArticleSchema = t.Object({
-    _id: t.String(),
-    type: t.Union([t.Literal("blog"), t.Literal("newsletter")]),
-    title: t.Record(t.String(), t.String()),
-    slug: t.String(),
-    excerpt: t.Optional(t.Record(t.String(), t.String())),
-    content: t.Record(t.String(), t.String()),
-    coverImage: t.Optional(t.String()),
-    coverImageBlurHash: t.Optional(t.String()),
-    coverImageWidth: t.Optional(t.Number()),
-    coverImageHeight: t.Optional(t.Number()),
-    status: t.String(),
-    authors: t.Array(t.String()),
-    views: t.Number(),
-    publishedAt: t.Optional(t.Nullable(t.Date())),
-    createdBy: t.String()
-});
+import type { ArticleSortTypes } from "../../repositories/ArticleRepository";
 
 const CreateArticleSchema = t.Object({
     type: t.Union([t.Literal("blog"), t.Literal("newsletter")]),
@@ -30,41 +13,73 @@ const CreateArticleSchema = t.Object({
     coverImage: t.Optional(t.String()),
     status: t.Union([t.Literal("draft"), t.Literal("published"), t.Literal("url_only")]),
     authors: t.Array(t.String()),
-    publishedAt: t.Optional(t.Date())
+    publishedAt: t.Optional(t.Nullable(t.Date())),
+    isActive: t.Optional(t.Boolean())
+});
+
+const AdminArticleSchema = t.Object({
+    _id: t.String(),
+    type: t.Union([t.Literal("blog"), t.Literal("newsletter")]),
+    title: t.Record(t.String(), t.String()),
+    slug: t.String(),
+    excerpt: t.Optional(t.Record(t.String(), t.String())),
+    content: t.Record(t.String(), t.String()),
+    coverImage: t.Optional(t.String()),
+    coverImageBlurHash: t.Optional(t.Nullable(t.String())),
+    coverImageWidth: t.Optional(t.Nullable(t.Number())),
+    coverImageHeight: t.Optional(t.Nullable(t.Number())),
+    status: t.Union([t.Literal("draft"), t.Literal("published"), t.Literal("url_only")]),
+    authors: t.Array(t.String()),
+    views: t.Number(),
+    publishedAt: t.Optional(t.Nullable(t.Date())),
+    isActive: t.Boolean(),
+    createdBy: t.String(),
+    createdAt: t.Date(),
+    updatedAt: t.Date()
 });
 
 export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
     .use(permissionsPlugin)
     .get(
         "/",
-        async ({ query: { type, status, q, page, pageSize, sort }, ability, set }) => {
-            if (ability.cannot("read", "articles")) {
+        async ({ query: { type, status, search, page, pageSize, sort, includeInactive }, ability, set }) => {
+            const articleType = type as ArticleType;
+            if (ability.cannot("read", `admin.articles.${articleType}`)) {
                 set.status = 403;
                 return { error: "Forbidden" };
             }
 
             const { articleRepository } = db.getRepositories();
+            const shouldIncludeInactive = includeInactive && ability.can("manage", `admin.articles.${articleType}`);
+
             const data = await articleRepository.list({
-                type: type as ArticleType,
+                type: articleType,
                 status: status as ArticleStatus,
-                search: q,
+                search: search,
                 page,
                 pageSize,
-                sort: sort || "newest",
-                includeInactive: false
+                sort: (sort as ArticleSortTypes) || "newest",
+                includeInactive: shouldIncludeInactive
             });
 
             return {
                 ...data,
-                items: data.items.map((item) => {
-                    return {
-                        ...item,
-                        _id: item._id.toString()
-                    };
-                })
+                items: data.items.map((item) => ({
+                    ...item,
+                    _id: item._id.toString()
+                }))
             };
         },
         {
+            query: t.Object({
+                type: t.Union([t.Literal("blog"), t.Literal("newsletter")]),
+                status: t.Optional(t.Union([t.Literal("draft"), t.Literal("published"), t.Literal("url_only")])),
+                search: t.Optional(t.String()),
+                page: t.Optional(t.Number({ default: 1, minimum: 1 })),
+                pageSize: t.Optional(t.Number({ default: 50, minimum: 1, maximum: 100 })),
+                sort: t.Optional(t.Union([t.Literal("newest"), t.Literal("oldest"), t.Literal("views")], { default: "newest" })),
+                includeInactive: t.Optional(t.Boolean())
+            }),
             response: {
                 200: t.Object({
                     items: t.Array(AdminArticleSchema),
@@ -73,27 +88,19 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
                     pageSize: t.Number()
                 }),
                 403: t.Object({ error: t.String() })
-            },
-            query: t.Object({
-                type: t.Optional(t.Union([t.Literal("newsletter"), t.Literal("blog")])),
-                status: t.Optional(t.String()),
-                q: t.Optional(t.String()),
-                page: t.Optional(t.Number({ default: 1, minimum: 1 })),
-                pageSize: t.Optional(t.Number({ default: 50, minimum: 1, maximum: 100 })),
-                sort: t.Optional(t.Union([t.Literal("newest"), t.Literal("oldest")], { default: "newest" }))
-            })
+            }
         }
     )
     .post(
         "/",
         async ({ body, ability, user, set }) => {
-            if (ability.cannot("create", "articles")) {
+            if (ability.cannot("create", `admin.articles.${body.type}`)) {
                 set.status = 403;
                 return { error: "Forbidden" };
             }
 
             const { articleRepository } = db.getRepositories();
-            const article = await articleRepository.create(body, user!.id);
+            const article = await articleRepository.create(body as any, user!.id);
             return {
                 ...article,
                 _id: article._id.toString()
@@ -110,11 +117,6 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
     .get(
         "/:id",
         async ({ params: { id }, ability, set }) => {
-            if (ability.cannot("read", `articles.${id}`)) {
-                set.status = 403;
-                return { error: "Forbidden" };
-            }
-
             const { articleRepository } = db.getRepositories();
             const article = await articleRepository.findByIdForEdit(id);
 
@@ -123,34 +125,46 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
                 return { error: "Not found" };
             }
 
+            if (ability.cannot("read", `admin.articles.${article.type}.${id}`)) {
+                set.status = 403;
+                return { error: "Forbidden" };
+            }
+
             return {
                 ...article,
                 _id: article._id.toString()
             };
         },
         {
+            params: t.Object({ id: t.String() }),
             response: {
                 200: AdminArticleSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
-            },
-            params: t.Object({ id: t.String() })
+            }
         }
     )
     .patch(
         "/:id",
         async ({ params: { id }, body, ability, set }) => {
+            const { articleRepository } = db.getRepositories();
+            const article = await articleRepository.findById(id, { includeInactive: true });
+
+            if (!article) {
+                set.status = 404;
+                return { error: "Not found" };
+            }
+
             // Granular permission check
-            const fields = Object.keys(body);
+            const fields = Object.keys(body as object);
             for (const field of fields) {
-                if (ability.cannot("update", `articles.${id}.${field}`)) {
+                if (ability.cannot("update", `admin.articles.${article.type}.${id}`, { field })) {
                     set.status = 403;
                     return { error: `Forbidden: Cannot update field ${field}` };
                 }
             }
 
-            const { articleRepository } = db.getRepositories();
-            const updated = await articleRepository.update(id, body);
+            const updated = await articleRepository.update(id, body as any);
 
             if (!updated) {
                 set.status = 404;
@@ -163,24 +177,31 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
             };
         },
         {
+            params: t.Object({ id: t.String() }),
+            body: t.Partial(CreateArticleSchema),
             response: {
                 200: AdminArticleSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
-            },
-            params: t.Object({ id: t.String() }),
-            body: t.Partial(CreateArticleSchema)
+            }
         }
     )
     .delete(
         "/:id",
         async ({ params: { id }, ability, set }) => {
-            if (ability.cannot("delete", `articles.${id}`)) {
+            const { articleRepository } = db.getRepositories();
+            const article = await articleRepository.findById(id, { includeInactive: true });
+
+            if (!article) {
+                set.status = 404;
+                return { error: "Not found" };
+            }
+
+            if (ability.cannot("delete", `admin.articles.${article.type}.${id}`)) {
                 set.status = 403;
                 return { error: "Forbidden" };
             }
 
-            const { articleRepository } = db.getRepositories();
             const success = await articleRepository.delete(id);
 
             if (!success) {
@@ -191,11 +212,11 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
             return { success: true };
         },
         {
+            params: t.Object({ id: t.String() }),
             response: {
                 200: t.Object({ success: t.Boolean() }),
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
-            },
-            params: t.Object({ id: t.String() })
+            }
         }
     );
