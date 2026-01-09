@@ -15,5 +15,6 @@ COPY . .
 RUN bun x turbo run build --filter=backend
 
 EXPOSE 3000
+
 # Run directly with Bun
-CMD ["bun", "run", "apps/backend/src/index.ts"]
+CMD ["bun", "run", "apps/backend/src/server.ts"]

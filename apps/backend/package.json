@@ -2,7 +2,8 @@
     "name": "backend",
     "version": "1.0.50",
     "scripts": {
-        "dev": "bun run --watch src/index.ts",
+        "dev": "bun run --watch src/server.ts",
+        "start": "bun run src/server.ts",
         "type-check": "tsc --noEmit",
         "lint": "eslint ."
     },
@@ -28,5 +29,5 @@
         "eslint": "^9.39.2",
         "typescript-eslint": "^8.51.0"
     },
-    "module": "src/index.js"
+    "module": "src/index.ts"
 }
