@@ -96,8 +96,14 @@ const app = new Elysia({ prefix: "/api" })
     .use(articlesRoutes)
     .use(miscRoutes)
     .use(linksRoutes)
-    .use(hackathonRoutes)
-    .listen(process.env.PORT || 3000);
+    .use(hackathonRoutes);
+
+try {
+    app.listen(process.env.PORT || 3000);
+    console.log("Server started on port", process.env.PORT || 3000);
+} catch (error) {
+    console.error("Failed to start server:", error);
+}
 
 export type App = typeof app;
 export default app;
