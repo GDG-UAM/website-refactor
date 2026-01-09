@@ -6,3 +6,4 @@ export { articlesRoutes } from "./articles";
 export { eventsRoutes } from "./events";
 export { miscRoutes } from "./misc";
 export { linksRoutes } from "./links";
+export { hackathonRoutes } from "./hackathons";

@@ -5,7 +5,6 @@ import { useSession } from "#/providers/SessionProvider";
 import { useRouter } from "next/navigation";
 import type { AppAbility, Actions } from "@gdg-uam/permissions";
 import { canUser, cannotUser } from "@gdg-uam/permissions";
-
 import { buildAbilityForUser, Permission } from "#/lib/permissions/utils";
 
 interface PermissionContextType {

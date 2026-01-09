@@ -3,5 +3,11 @@ import { adminArticlesRoutes } from "./articles";
 import { adminEventsRoutes } from "./events";
 import { adminLinksRoutes } from "./links";
 import { adminUsersRoutes } from "./users";
+import { adminHackathonsRoutes } from "./hackathons";
 
-export const adminRoutes = new Elysia({ prefix: "/admin" }).use(adminArticlesRoutes).use(adminEventsRoutes).use(adminLinksRoutes).use(adminUsersRoutes);
+export const adminRoutes = new Elysia({ prefix: "/admin" })
+    .use(adminArticlesRoutes)
+    .use(adminEventsRoutes)
+    .use(adminLinksRoutes)
+    .use(adminUsersRoutes)
+    .use(adminHackathonsRoutes);

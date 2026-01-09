@@ -31,12 +31,13 @@ export function BreadcrumbsProvider({ children }: { children: React.ReactNode })
     }, []);
 
     // Sort by href length or depth to ensure root is always first
+    // Items without href (current page) should be last
     const items = useMemo(() => {
         return Object.values(registry)
             .flat()
             .sort((a, b) => {
-                const depthA = a.href?.split("/").length || 0;
-                const depthB = b.href?.split("/").length || 0;
+                const depthA = a.href ? a.href.split("/").length : Infinity;
+                const depthB = b.href ? b.href.split("/").length : Infinity;
                 return depthA - depthB;
             });
     }, [registry]);

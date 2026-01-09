@@ -157,15 +157,17 @@ export function AdminLinksPage() {
                             ariaLabel="Copy link URL"
                             iconSize={20}
                         />
-                        {row.isActive &&
-                        (ability.can("update", `admin.links.${row._id!}`) ||
-                            ability.can("update", "admin.links") ||
-                            ability.canUpdateAnyField(`admin.links.${row._id!}`, row)) ? (
-                            <EditButton onClick={() => router.push(`/admin/links/${row._id!}`)} ariaLabel="Edit link" iconSize={20} />
+                        {row.isActive && ability.canUpdateAnyField(`admin.links.${row._id}`, row) ? (
+                            <EditButton onClick={() => router.push(`/admin/links/${row._id}`)} ariaLabel="Edit link" iconSize={20} />
                         ) : (
-                            <ViewButton onClick={() => router.push(`/admin/links/${row._id!}`)} ariaLabel="View link" iconSize={20} />
+                            <ViewButton
+                                onClick={() => router.push(`/admin/links/${row._id}`)}
+                                ariaLabel="View link"
+                                iconSize={20}
+                                disabled={ability.cannot("read", `admin.links.${row._id}`)}
+                            />
                         )}
-                        {ability.can("manage", `admin.links.${row._id!}`) && !row.isActive ? (
+                        {ability.can("manage", `admin.links.${row._id}`) && !row.isActive ? (
                             <RestoreButton onClick={() => handleRestore(row._id!)} ariaLabel="Restore link" iconSize={20} />
                         ) : (
                             <DeleteButton

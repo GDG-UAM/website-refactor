@@ -29,7 +29,7 @@ export class Ability {
     }
 
     canUpdateAnyField(subject: string, data: any, options?: { ignore?: string[] }): boolean {
-        if (this.can("update", subject)) return true;
+        // if (this.can("update", subject)) return true;
         if (!data || typeof data !== "object") return false;
 
         const ignore = options?.ignore || ["_id", "isActive", "createdAt", "updatedAt", "createdBy", "__v"];
@@ -124,17 +124,16 @@ export class Ability {
 
             // "reads are not restricted by fields"
             // If checking "read", we ignore the 'field' or 'fields' constraint in the rule
-            if (action === "read") {
-                const filteredConditions = { ...rule.conditions };
-                delete (filteredConditions as any).field;
-                delete (filteredConditions as any).fields;
 
-                // If no conditions left, it's a field-only constraint, allow read
+            if (["read", "create", "delete"].includes(action)) {
+                const filteredConditions = { ...rule.conditions };
+                delete filteredConditions.field;
+                delete filteredConditions.fields;
+
                 if (Object.keys(filteredConditions).length === 0) {
                     return true;
                 }
 
-                // If data is missing but there are non-field conditions, fail
                 if (!checkData) return false;
 
                 return matchCondition(checkData, filteredConditions);

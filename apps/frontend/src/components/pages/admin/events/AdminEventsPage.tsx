@@ -199,13 +199,15 @@ export function AdminEventsPage() {
                 }
                 rowActions={(row) => (
                     <>
-                        {row.isActive &&
-                        (ability.can("update", `admin.events.${row._id}`) ||
-                            ability.can("update", "admin.events") ||
-                            ability.canUpdateAnyField(`admin.events.${row._id}`, row)) ? (
+                        {row.isActive && ability.canUpdateAnyField(`admin.events.${row._id}`, row) ? (
                             <EditButton onClick={() => router.push(`/admin/events/${row._id}`)} ariaLabel="Edit event" iconSize={20} />
                         ) : (
-                            <ViewButton onClick={() => router.push(`/admin/events/${row._id}`)} ariaLabel="View event" iconSize={20} />
+                            <ViewButton
+                                onClick={() => router.push(`/admin/events/${row._id}`)}
+                                ariaLabel="View event"
+                                iconSize={20}
+                                disabled={ability.cannot("read", `admin.events.${row._id}`)}
+                            />
                         )}
                         {ability.can("manage", `admin.events.${row._id}`) && !row.isActive ? (
                             <RestoreButton onClick={() => handleRestore(row._id)} ariaLabel="Restore event" iconSize={20} />

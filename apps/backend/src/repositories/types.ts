@@ -229,3 +229,120 @@ export const LinksListResponseSchema = t.Object({
     page: t.Number(),
     pageSize: t.Number()
 });
+
+// ==================== Hackathon Types ====================
+
+export const CarouselElementSchema = t.Object({
+    id: t.String(),
+    type: t.Union([t.Literal("container"), t.Literal("text"), t.Literal("qr"), t.Literal("image"), t.Literal("spacer")]),
+    props: t.Object({
+        content: t.Optional(t.Nullable(t.String())),
+        variant: t.Optional(t.Nullable(t.Union([t.Literal("h1"), t.Literal("h2"), t.Literal("h3"), t.Literal("body")]))),
+        color: t.Optional(t.Nullable(t.String())),
+        align: t.Optional(t.Nullable(t.Union([t.Literal("left"), t.Literal("center"), t.Literal("right")]))),
+        fontSize: t.Optional(t.Nullable(t.String())),
+        fontWeight: t.Optional(t.Nullable(t.String())),
+        direction: t.Optional(t.Nullable(t.Union([t.Literal("row"), t.Literal("column")]))),
+        gap: t.Optional(t.Nullable(t.Number())),
+        alignItems: t.Optional(t.Nullable(t.Union([t.Literal("flex-start"), t.Literal("center"), t.Literal("flex-end"), t.Literal("stretch")]))),
+        justifyContent: t.Optional(
+            t.Nullable(t.Union([t.Literal("flex-start"), t.Literal("center"), t.Literal("flex-end"), t.Literal("space-between"), t.Literal("space-around")]))
+        ),
+        flex: t.Optional(t.Nullable(t.Number())),
+        padding: t.Optional(t.Nullable(t.String())),
+        value: t.Optional(t.Nullable(t.String())),
+        size: t.Optional(t.Nullable(t.Number())),
+        cornerSize: t.Optional(t.Nullable(t.Number())),
+        cornerColor: t.Optional(t.Nullable(t.String())),
+        logoUrl: t.Optional(t.Nullable(t.String())),
+        logoSize: t.Optional(t.Nullable(t.Number())),
+        url: t.Optional(t.Nullable(t.String())),
+        alt: t.Optional(t.Nullable(t.String())),
+        height: t.Optional(t.Nullable(t.String())),
+        width: t.Optional(t.Nullable(t.String())),
+        objectFit: t.Optional(t.Nullable(t.Union([t.Literal("contain"), t.Literal("cover")]))),
+        grow: t.Optional(t.Nullable(t.Number())),
+        heightPx: t.Optional(t.Nullable(t.Number())),
+        widthPx: t.Optional(t.Nullable(t.Number()))
+    }),
+    children: t.Optional(t.Nullable(t.Array(t.Any()))) // Using Any to avoid infinite recursion inference issues in some contexts
+});
+
+export const AdminHackathonIntermissionSchema = t.Object({
+    organizerLogoUrl: t.Optional(t.Nullable(t.String())),
+    schedule: t.Array(
+        t.Object({
+            startTime: t.String(),
+            endTime: t.Optional(t.Nullable(t.String())),
+            title: t.String()
+        })
+    ),
+    carousel: t.Array(
+        t.Object({
+            id: t.String(),
+            duration: t.Number(),
+            hidden: t.Optional(t.Boolean()),
+            root: CarouselElementSchema,
+            label: t.Optional(t.Nullable(t.String()))
+        })
+    ),
+    sponsors: t.Array(
+        t.Object({
+            name: t.String(),
+            logoUrl: t.String(),
+            tier: t.Number()
+        })
+    )
+});
+
+export const HackathonSchema = t.Object({
+    _id: t.Optional(t.Any()), // ObjectId string or ObjectId
+    title: t.String({ minLength: 1 }),
+    slug: t.String({ minLength: 1 }),
+    date: t.Union([t.Date(), t.String()]),
+    endDate: t.Optional(t.Nullable(t.Union([t.Date(), t.String()]))),
+    location: t.Optional(t.Nullable(t.String())),
+    intermission: t.Optional(t.Nullable(AdminHackathonIntermissionSchema)),
+    certificateDefaults: t.Optional(
+        t.Nullable(
+            t.Object({
+                title: t.Optional(t.Nullable(t.String())),
+                signatures: t.Array(
+                    t.Object({
+                        name: t.Optional(t.String()),
+                        role: t.Optional(t.String()),
+                        imageUrl: t.Optional(t.String())
+                    })
+                )
+            })
+        )
+    ),
+    isActive: t.Optional(t.Boolean({ default: true })),
+    createdBy: t.Optional(t.String()),
+    createdAt: t.Optional(t.Date()),
+    updatedAt: t.Optional(t.Date())
+});
+
+export type AdminHackathonIntermission = typeof AdminHackathonIntermissionSchema.static;
+
+export interface Hackathon {
+    _id: ObjectId;
+    title: string;
+    slug: string;
+    date: Date;
+    endDate?: Date | null;
+    location?: string | null;
+    intermission?: AdminHackathonIntermission | null;
+    certificateDefaults?: {
+        title?: string | null;
+        signatures: {
+            name?: string;
+            role?: string;
+            imageUrl?: string;
+        }[];
+    } | null;
+    isActive: boolean;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
+}

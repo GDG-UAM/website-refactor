@@ -52,7 +52,7 @@ function LanguageSwitcher({ onCloseMobileNav, initialLocale }: Props) {
     const { data: session } = useSession();
     const { active: aiActive, supported: aiSupported, enable: enableAi, disable, targetLang: aiTarget, isBusy: aiBusy } = useAITranslation();
     const [langOpen, setLangOpen] = useState(false);
-    const [displayLocale, setDisplayLocale] = useState((initialLocale as any) || locale);
+    const [displayLocale, setDisplayLocale] = useState(initialLocale || locale);
     const [isMounted, setIsMounted] = useState(false);
     const [search, setSearch] = useState("");
     const [aiPickerOpen, setAiPickerOpen] = useState(false);

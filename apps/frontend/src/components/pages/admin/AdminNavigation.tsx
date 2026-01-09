@@ -32,16 +32,21 @@ export default function AdminContent({ title, categories }: AdminContentProps) {
 
                 <Grid>
                     {categories.map((category) => (
-                        <Category key={category.title}>
+                        <Category key={"category-" + category.title}>
                             <CategoryTitle>{category.title}</CategoryTitle>
-                            <ButtonList>
+                            <ButtonList key={"button-list-" + category.title}>
                                 {category.buttons.map((button) =>
                                     button.openLinkHref ? (
-                                        <ButtonRow>
-                                            <AdminNavigationButton key={button.href} type={button.type} disabled={button.disabled}>
+                                        <ButtonRow key={button.href + "-" + button.openLinkHref}>
+                                            <AdminNavigationButton
+                                                key={button.href}
+                                                onClick={() => handleNavigation(button.href)}
+                                                type={button.type}
+                                                disabled={button.disabled}
+                                            >
                                                 {button.label}
                                             </AdminNavigationButton>
-                                            <OpenLinkButton href={button.openLinkHref} color="secondary" />
+                                            <OpenLinkButton key={button.openLinkHref} href={button.openLinkHref} color="secondary" />
                                         </ButtonRow>
                                     ) : (
                                         <AdminNavigationButton

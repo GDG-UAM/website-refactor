@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect, ReactNode } from "react";
-import styled from "styled-components";
 import { TextField, MenuItem } from "@mui/material";
 import { ReloadButton, BackButton, NextButton } from "#/components/Buttons";
 import { AdminTableColumn } from "./AdminTableFactories";
-import { Wrapper, Card, TableWrapper, Controls, Table, Footer, PaginationControls, RowActions } from "./AdminTable.styles";
+import { Wrapper, Card, TableWrapper, Controls, Table, Footer, PaginationControls, RowActions, LoadingSpinner } from "./AdminTable.styles";
 
 export interface AdminTableFilter {
     key: string;
@@ -42,25 +41,6 @@ interface AdminTableProps<T> {
     noResultsMessage?: string;
     footerInfo?: ReactNode;
 }
-
-const LoadingSpinner = styled.div`
-    width: 36px;
-    height: 36px;
-    border: 4px solid var(--loading-border);
-    border-top: 4px solid var(--loading-border-top);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-`;
 
 export function AdminTable<T extends { _id?: string | { toString: () => string } }>({
     columns,

@@ -146,7 +146,7 @@ export function AdminArticlesFormPage({ type, id, initialData }: AdminArticlesFo
 
             let result;
             if (isEdit) {
-                result = await api.admin.articles({ id }).patch(payload as any);
+                result = await api.admin.articles({ id }).patch(payload);
             } else {
                 result = await api.admin.articles.post(payload as any);
             }

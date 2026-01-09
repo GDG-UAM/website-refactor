@@ -1,12 +1,8 @@
 import React from "react";
-import styled from "styled-components";
 import { Dialog, DialogTitle, DialogContent, Breakpoint } from "@mui/material";
 import { CancelButton } from "#/components/Buttons";
 import { CustomButtonColor } from "./_buttons/CustomButton";
-
-const ModalContent = styled.div`
-    padding: 20px;
-`;
+import { ModalContent } from "./Modal.styles";
 
 interface ModalProps {
     isOpen: boolean;

@@ -1,11 +1,5 @@
 import { OpenSocialButton } from "./Buttons";
-import styled from "styled-components";
-
-const SocialsContainer = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-`;
+import { SocialsContainer } from "./Socials.styles";
 
 export const Socials: React.FC = () => {
     return (

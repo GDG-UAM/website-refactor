@@ -19,12 +19,14 @@ import {
     LocaleLabel
 } from "./AdminFormBuilder.styles";
 import { SaveButton, CancelButton, PlainButton } from "#/components/Buttons";
-import { newErrorToast } from "#/components/Toast";
 import * as m from "#/paraglide/messages";
 import { locales } from "#/paraglide/runtime";
 import CustomMarkdownTextArea from "#/components/markdown/CustomMarkdownTextArea";
 import RenderMarkdown from "#/components/markdown/RenderMarkdown";
 import { AdminUserSelector } from "./AdminUserSelector";
+import { AdminScheduleField } from "./fields/AdminScheduleField";
+import { AdminSponsorsField } from "./fields/AdminSponsorsField";
+import { AdminCarouselField } from "./fields/AdminCarouselField";
 
 const getShortLanguageName = (locale: string) => {
     const langKey = `navbar.lang.manualLanguages.${locale}` as keyof typeof m;
@@ -35,7 +37,20 @@ const getShortLanguageName = (locale: string) => {
 export type FieldConfig<T> = {
     name: keyof T & string;
     label: string;
-    type: "text" | "number" | "switch" | "select" | "multiline" | "url" | "date" | "datetime" | "markdown" | "user-selector";
+    type:
+        | "text"
+        | "number"
+        | "switch"
+        | "select"
+        | "multiline"
+        | "url"
+        | "date"
+        | "datetime"
+        | "markdown"
+        | "user-selector"
+        | "schedule"
+        | "sponsors"
+        | "carousel";
     required?: boolean;
     options?: { label: string; value: any }[];
     helperText?: string;
@@ -251,6 +266,14 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                         <TextField {...commonProps} multiline rows={field.rows || 3} value={value || ""} onChange={(e) => handleFieldChange(e.target.value)} />
                     );
 
+                case "schedule":
+                    return <AdminScheduleField {...commonProps} value={value || []} onChange={(val) => handleFieldChange(val)} />;
+
+                case "sponsors":
+                    return <AdminSponsorsField {...commonProps} value={value || []} onChange={(val) => handleFieldChange(val)} />;
+
+                case "carousel":
+                    return <AdminCarouselField {...commonProps} value={value || []} onChange={(val) => handleFieldChange(val)} />;
                 case "date":
                 case "datetime":
                 case "number":

@@ -220,10 +220,15 @@ export function AdminArticlesPage({ type }: AdminArticlesPageProps) {
                 }
                 rowActions={(row) => (
                     <>
-                        {row.isActive && (ability.can("update", `admin.articles.${type}.${row._id}`) || ability.can("update", `admin.articles.${type}`)) ? (
+                        {row.isActive && ability.canUpdateAnyField(`admin.articles.${type}.${row._id}`, row) ? (
                             <EditButton onClick={() => router.push(`/admin/${type}/${row._id}`)} ariaLabel="Edit article" iconSize={20} />
                         ) : (
-                            <ViewButton onClick={() => router.push(`/admin/${type}/${row._id}`)} ariaLabel="View article" iconSize={20} />
+                            <ViewButton
+                                onClick={() => router.push(`/admin/${type}/${row._id}`)}
+                                ariaLabel="View article"
+                                iconSize={20}
+                                disabled={ability.cannot("read", `admin.articles.${type}.${row._id}`)}
+                            />
                         )}
                         {canManage && !row.isActive ? (
                             <RestoreButton onClick={() => handleRestore(row._id)} ariaLabel="Restore article" iconSize={20} />

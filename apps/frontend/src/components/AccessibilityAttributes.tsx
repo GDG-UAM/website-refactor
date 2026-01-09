@@ -1,24 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import styled from "styled-components";
 import { useSettings } from "#/providers/SettingsProvider";
 import { useSession } from "#/providers/SessionProvider";
 import { AccessibilityButton } from "#/components/Buttons";
 import Modal from "#/components/Modal";
 import AccesibilitySection from "#/components/pages/settings/sections/AccesibilitySection";
 import type { UserSettings } from "#/providers/SettingsProvider";
-
-const FABContainer = styled.div`
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    z-index: 1000;
-
-    @media (max-width: 768px) {
-        display: none;
-    }
-`;
+import { FABContainer } from "./AccessibilityAttributes.styles";
 
 /**
  * Applies accessibility settings as data attributes on the document element.

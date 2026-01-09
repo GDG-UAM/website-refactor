@@ -1,6 +1,6 @@
 import { MongoClient, Db, Document, Collection } from "mongodb";
-import { UserRepository, PermissionRepository, ArticleRepository, EventRepository, LinkRepository } from "../repositories";
-import type { User, PermissionTemplate, Article, Event, Link } from "../repositories/types";
+import { UserRepository, PermissionRepository, ArticleRepository, EventRepository, LinkRepository, HackathonRepository } from "../repositories";
+import type { User, PermissionTemplate, Article, Event, Link, Hackathon } from "../repositories/types";
 
 interface MongoClientCache {
     client: MongoClient | null;
@@ -14,6 +14,7 @@ interface RepositoryCache {
     articleRepository: ArticleRepository | null;
     eventRepository: EventRepository | null;
     linkRepository: LinkRepository | null;
+    hackathonRepository: HackathonRepository | null;
 }
 
 // Extend the global object to include mongo client cache
@@ -30,7 +31,8 @@ const repositoryCache: RepositoryCache =
         permissionRepository: null,
         articleRepository: null,
         eventRepository: null,
-        linkRepository: null
+        linkRepository: null,
+        hackathonRepository: null
     });
 
 // MongoDB Client for Better Auth - lazy initialization
@@ -74,7 +76,8 @@ async function initializeRepositories(): Promise<void> {
         repositoryCache.permissionRepository &&
         repositoryCache.articleRepository &&
         repositoryCache.eventRepository &&
-        repositoryCache.linkRepository
+        repositoryCache.linkRepository &&
+        repositoryCache.hackathonRepository
     ) {
         return; // Already initialized
     }
@@ -87,6 +90,7 @@ async function initializeRepositories(): Promise<void> {
     const articleCollection = db.collection<Article>("articles");
     const eventCollection = db.collection<Event>("events");
     const linkCollection = db.collection<Link>("links");
+    const hackathonCollection = db.collection<Hackathon>("hackathons");
 
     // Create permission repository first (no dependencies)
     const permissionRepo = new PermissionRepository(templateCollection);
@@ -98,6 +102,7 @@ async function initializeRepositories(): Promise<void> {
     const articleRepo = new ArticleRepository(articleCollection);
     const eventRepo = new EventRepository(eventCollection);
     const linkRepo = new LinkRepository(linkCollection);
+    const hackathonRepo = new HackathonRepository(hackathonCollection);
 
     // Cache repositories
     repositoryCache.userRepository = userRepo;
@@ -105,6 +110,7 @@ async function initializeRepositories(): Promise<void> {
     repositoryCache.articleRepository = articleRepo;
     repositoryCache.eventRepository = eventRepo;
     repositoryCache.linkRepository = linkRepo;
+    repositoryCache.hackathonRepository = hackathonRepo;
 
     // Create indexes
     await Promise.all([
@@ -112,7 +118,8 @@ async function initializeRepositories(): Promise<void> {
         permissionRepo.createIndexes(),
         articleRepo.createIndexes(),
         eventRepo.createIndexes(),
-        linkRepo.createIndexes()
+        linkRepo.createIndexes(),
+        hackathonRepo.createIndexes()
     ]);
 }
 
@@ -130,7 +137,8 @@ export function getRepositories() {
         !repositoryCache.permissionRepository ||
         !repositoryCache.articleRepository ||
         !repositoryCache.eventRepository ||
-        !repositoryCache.linkRepository
+        !repositoryCache.linkRepository ||
+        !repositoryCache.hackathonRepository
     ) {
         throw new Error("Repositories not initialized. Call dbConnect() first.");
     }
@@ -140,7 +148,8 @@ export function getRepositories() {
         permissionRepository: repositoryCache.permissionRepository,
         articleRepository: repositoryCache.articleRepository,
         eventRepository: repositoryCache.eventRepository,
-        linkRepository: repositoryCache.linkRepository
+        linkRepository: repositoryCache.linkRepository,
+        hackathonRepository: repositoryCache.hackathonRepository
     };
 }
 

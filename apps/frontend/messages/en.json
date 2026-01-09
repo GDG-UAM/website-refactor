@@ -782,6 +782,163 @@
         "loadError": "Failed to load event data"
       }
     },
+    "hackathons": {
+      "title": "Hackathons",
+      "page": {
+        "title": "Hackathon Management",
+        "createTitle": "Create New Hackathon",
+        "editTitle": "Edit Hackathon"
+      },
+      "list": {
+        "reload": "Reload",
+        "create": "Create Hackathon",
+        "search": "Search hackathons...",
+        "noHackathons": "No hackathons found.",
+        "noResults": "No hackathons match your search.",
+        "showDeleted": "Show deleted hackathons",
+        "columns": {
+          "status": "Status"
+        },
+        "toasts": {
+          "reloaded": "Hackathons list reloaded",
+          "loadError": "Failed to load hackathons",
+          "deleteSuccess": "Hackathon deleted successfully",
+          "deleteError": "Failed to delete hackathon",
+          "restoreSuccess": "Hackathon restored successfully",
+          "restoreError": "Failed to restore hackathon"
+        }
+      },
+      "form": {
+        "title": "Hackathon Title",
+        "slug": "Slug",
+        "date": "Start Date",
+        "endDate": "End Date",
+        "location": "Location",
+        "save": "Save Hackathon",
+        "cancel": "Cancel",
+        "saving": "Saving..."
+      },
+      "toasts": {
+        "created": "Hackathon created successfully",
+        "updated": "Hackathon updated successfully",
+        "createError": "Failed to create hackathon",
+        "updateError": "Failed to update hackathon",
+        "loadError": "Failed to load hackathon data"
+      },
+      "breadcrumbs": {
+        "new": "New Hackathon",
+        "intermission": "Intermission",
+        "certificates": "Certificates",
+        "tracks": "Tracks",
+        "teams": "Teams",
+        "selection": "Selection Event"
+      },
+      "navigation": {
+        "categories": {
+          "tracks": "Track Management",
+          "teams": "Team Management",
+          "intermission": "Intermission Info",
+          "certificates": "Certificates Settings"
+        },
+        "tracks": "Track Management",
+        "selection": "Selection Event",
+        "teams": "Team Management",
+        "intermission": "Intermission Info",
+        "certificates": "Certificates Settings"
+      },
+      "intermission": {
+        "sections": {
+          "general": "General Settings",
+          "schedule": "Event Schedule",
+          "carousel": "Carousel Slides",
+          "sponsors": "Sponsors Management",
+          "carouselEditor": "Slide Content Editor",
+          "layoutTree": "Layout Tree",
+          "properties": "Element Properties"
+        },
+        "fields": {
+          "organizerLogoUrl": "Organizer Logo URL",
+          "startTime": "Start",
+          "endTime": "End",
+          "title": "Activity Title",
+          "actions": "Actions",
+          "sponsorName": "Sponsor Name",
+          "logoUrl": "Logo URL",
+          "tier": "Tier Level",
+          "carouselLabel": "Slide Name",
+          "carouselDuration": "Duration (s)",
+          "direction": "Stack Direction",
+          "gap": "Gap (px)",
+          "alignItems": "Cross Alignment",
+          "justifyContent": "Main Alignment",
+          "padding": "Padding (px/%)",
+          "content": "Text Content",
+          "variant": "Text Style",
+          "fontSize": "Font Size",
+          "fontWeight": "Font Weight",
+          "alignment": "Text Alignment",
+          "color": "Text Color",
+          "qrValue": "QR Link/Data",
+          "size": "QR Size",
+          "cornerSize": "Corner Size",
+          "cornerColor": "Corner Color",
+          "imageUrl": "Image URL",
+          "height": "Image Height",
+          "objectFit": "Object Fit",
+          "flexGrow": "Flex Grow",
+          "flexBasis": "Flex Basis (px/%)",
+          "logoSize": "Logo Size"
+        },
+        "actions": {
+          "addActivity": "Add Activity",
+          "addSponsor": "Add Sponsor",
+          "addSlide": "Add Slide",
+          "show": "Show",
+          "hide": "Hide",
+          "done": "Done",
+          "cancel": "Cancel"
+        },
+        "helpers": {
+          "organizerLogo": "This logo appears in the top corner of the intermission screen.",
+          "noSchedule": "No activities defined for this hackathon.",
+          "noCarousel": "No slides in the carousel. Add one to start.",
+          "noSponsors": "No sponsors defined.",
+          "addChild": "Add element inside this container:",
+          "flexBasis": "Override the default size of this element.",
+          "selectElement": "Select an element from the tree to edit its properties.",
+          "noImage": "[No Image URL]",
+          "googleColors": "Use #4285F4, #EA4335, #FBBC04, #34A853 for GDG vibes!",
+          "recommendedSize": "Recommended: 25-30% of QR size."
+        },
+        "elementTypes": {
+          "slide": "Slide",
+          "container": "Layout Container",
+          "text": "Text Element",
+          "qr": "QR Code",
+          "image": "Image Element",
+          "spacer": "Flexible Spacer"
+        },
+        "values": {
+          "hidden": "HIDDEN",
+          "column": "Vertical (Column)",
+          "row": "Horizontal (Row)",
+          "start": "Start",
+          "center": "Center",
+          "end": "End",
+          "stretch": "Stretch",
+          "spaceBetween": "Space Between",
+          "spaceAround": "Space Around",
+          "h1": "Hero Title (H1)",
+          "h2": "Section Title (H2)",
+          "h3": "Subtitle (H3)",
+          "body": "Body Text",
+          "left": "Left",
+          "right": "Right",
+          "contain": "Contain (Full)",
+          "cover": "Cover (Fill)"
+        }
+      }
+    },
     "breadcrumbs": {
       "admin": "Admin",
       "blog": "Blog",
@@ -822,6 +979,17 @@
         "hackathon-intermission": "Intermission",
         "hackathon-certificates": "Certificates"
       }
+    }
+  },
+  "hackathon": {
+    "intermission": {
+      "pageTitle": "Intermission Page",
+      "pageDescription": "Intermission Page for a Hackathon hosted by GDG UAM",
+      "mobile": {
+        "title": "View Unavailable",
+        "description": "The intermission page is only available on PC displays."
+      },
+      "scheduleTitle": "Event Schedule"
     }
   }
 }
