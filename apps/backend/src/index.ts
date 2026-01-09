@@ -95,7 +95,8 @@ const app = new Elysia({ prefix: "/api" })
     .use(articlesRoutes)
     .use(miscRoutes)
     .use(linksRoutes)
-    .use(hackathonRoutes);
+    .use(hackathonRoutes)
+    .listen({ port: process.env.PORT || 3000 });
 
 export type App = typeof app;
 export default app;

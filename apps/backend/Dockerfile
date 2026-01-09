@@ -4,17 +4,14 @@ WORKDIR /app
 # Install dependencies
 COPY package.json bun.lock turbo.json ./
 COPY apps/backend/package.json ./apps/backend/
-COPY apps/frontend/package.json ./apps/frontend/
 COPY packages/permissions/package.json ./packages/permissions/
 RUN bun install --frozen-lockfile
 
-# Copy source
+# Copy source code
 COPY . .
 
-# Build (if you have a build step, otherwise skip)
-RUN bun x turbo run build --filter=backend
-
+# Expose backend port
 EXPOSE 3000
 
-# Run directly with Bun
-CMD ["bun", "run", "apps/backend/src/index.ts"]
+# Start backend directly
+CMD ["bun", "run", "start"]
