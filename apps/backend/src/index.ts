@@ -87,4 +87,4 @@ const app = new Elysia({ prefix: "/api" })
     .use(hackathonRoutes);
 
 export type App = typeof app;
-export default app;
+export { app };
