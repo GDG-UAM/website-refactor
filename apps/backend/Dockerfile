@@ -12,7 +12,7 @@ RUN bun install --frozen-lockfile
 COPY . .
 
 # Expose backend port
-EXPOSE 3000
+EXPOSE 3001
 
 # Start backend directly
 CMD ["bun", "run", "--cwd", "apps/backend", "start"]
