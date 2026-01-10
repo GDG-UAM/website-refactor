@@ -7,10 +7,10 @@ export const FieldContainer = styled.div`
     width: 100%;
 `;
 
-export const FieldLabel = styled.h2`
+export const FieldLabel = styled.h2<{ $disabled?: boolean }>`
     font-size: 1.5rem;
     font-weight: 700;
-    color: #1a1a1a;
+    color: ${(props) => (props.$disabled ? "#9ca3af" : "#1a1a1a")};
     margin: 0;
 `;
 
@@ -45,7 +45,7 @@ export const FieldTableWrapper = styled.div`
     }
 `;
 
-export const FieldTable = styled.table`
+export const FieldTable = styled.table<{ $disabled?: boolean }>`
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
@@ -64,10 +64,23 @@ export const FieldTable = styled.table`
         text-align: left;
         border-bottom-width: 2px;
         white-space: nowrap;
-        background: var(--markdown-thead-bg, var(--color-gray-100));
+        background: ${(props) => (props.$disabled ? "#f9fafb" : "var(--markdown-thead-bg, var(--color-gray-100))")};
+        color: ${(props) => (props.$disabled ? "#9ca3af" : "inherit")};
     }
 
     @media (max-width: 768px) {
         min-width: 700px;
     }
+`;
+
+export const ActionRow = styled.div`
+    display: flex;
+    gap: 4px;
+`;
+
+export const EmptyState = styled.div`
+    padding: 24px;
+    text-align: center;
+    color: #666;
+    font-size: 0.875rem;
 `;

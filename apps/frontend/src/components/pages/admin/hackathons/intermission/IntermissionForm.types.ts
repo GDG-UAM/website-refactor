@@ -60,10 +60,3 @@ export interface IntermissionData {
     carousel: CarouselSlide[];
     sponsors: SponsorEntry[];
 }
-
-export interface PermissionedIntermissionData {
-    "intermission.organizerLogoUrl"?: string | null;
-    "intermission.schedule": ScheduleEntry[];
-    "intermission.carousel": CarouselSlide[];
-    "intermission.sponsors": SponsorEntry[];
-}

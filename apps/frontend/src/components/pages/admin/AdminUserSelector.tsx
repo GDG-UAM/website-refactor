@@ -31,9 +31,9 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
     onBlur,
     roles = DEFAULT_ROLES,
     label,
-    disabled,
-    error,
-    required,
+    disabled = false,
+    error = false,
+    required = false,
     placeholder
 }) => {
     const [q, setQ] = useState("");
@@ -51,7 +51,6 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
                 if (showDropdown) {
                     setShowDropdown(false);
                     setQ(""); // Ignore remaining text
-                    onBlur?.();
                 }
             }
         };
@@ -178,7 +177,7 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
             </Label>
             <Control $disabled={disabled} $error={error} $focused={showDropdown} onClick={() => !disabled && inputRef.current?.focus()}>
                 {selectedUsers.map((user) => (
-                    <Chip key={user._id}>
+                    <Chip key={user._id} $disabled={disabled}>
                         {user.image && <Avatar src={user.image} alt={user.name} />}
                         <ChipLabel title={user.name}>{user.displayName || user.name}</ChipLabel>
                         {!disabled && <RemoveButton onClick={(e) => handleRemove(user._id, e)}>×</RemoveButton>}
@@ -193,6 +192,11 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
                         setHighlightedIndex(0);
                     }}
                     onFocus={() => !disabled && setShowDropdown(true)}
+                    onBlur={(e) => {
+                        if (!e.relatedTarget || !wrapperRef.current?.contains(e.relatedTarget as Node)) {
+                            onBlur?.();
+                        }
+                    }}
                     onKeyDown={handleKeyDown}
                     disabled={disabled}
                     placeholder={value.length === 0 ? placeholder : ""}

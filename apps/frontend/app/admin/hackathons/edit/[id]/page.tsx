@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminHackathonsFormPage } from "#/components/pages/admin/hakathons/AdminHackathonsFormPage";
+import { AdminHackathonsFormPage } from "#/components/pages/admin/hackathons/AdminHackathonsFormPage";
 import { api } from "#/lib/eden";
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";

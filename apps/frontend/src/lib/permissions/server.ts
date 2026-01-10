@@ -73,3 +73,14 @@ export async function ensurePermission(action: Actions, subject: string, data?: 
 
     return { session, ability };
 }
+
+/**
+ * Server-side utility to check if user can manage a resource.
+ * Returns true if user has manage permissions, false otherwise.
+ */
+export async function canManageResource(resource: string): Promise<boolean> {
+    const session = await getServerSession();
+    const { ability } = buildAbilityForUser(session?.data?.user);
+
+    return ability.can("manage", resource);
+}

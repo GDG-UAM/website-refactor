@@ -47,8 +47,7 @@ export const Control = styled.div<{ $disabled?: boolean; $error?: boolean; $focu
     cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "text")};
 
     &:hover {
-        border-color: ${({ $disabled, $focused, $error }) =>
-            $disabled ? "rgba(0, 0, 0, 0.38)" : $focused ? "var(--google-blue)" : $error ? "var(--google-red)" : "rgba(0, 0, 0, 0.87)"};
+        border-color: ${({ $disabled, $focused }) => ($disabled ? "rgba(0, 0, 0, 0.38)" : $focused ? "var(--google-blue)" : "rgba(0, 0, 0, 0.87)")};
     }
 `;
 
@@ -69,15 +68,15 @@ export const Input = styled.input`
     }
 `;
 
-export const Chip = styled.div`
+export const Chip = styled.div<{ $disabled?: boolean }>`
     display: flex;
     align-items: center;
     gap: 6px;
-    background-color: #f3f4f6;
+    background-color: ${({ $disabled }) => ($disabled ? "var(--color-gray-100)" : "var(--color-gray-200)")};
     border-radius: 16px;
     padding: 2px 4px 2px 2px;
     font-size: 13px;
-    color: var(--foreground);
+    color: ${({ $disabled }) => ($disabled ? "#6b7280" : "var(--foreground)")};
     user-select: none;
     height: 24px;
 `;
@@ -104,14 +103,14 @@ export const RemoveButton = styled.button`
     border: none;
     cursor: pointer;
     padding: 0;
-    color: #9ca3af;
+    color: #4b5563;
     border-radius: 50%;
     width: 16px;
     height: 16px;
 
     &:hover {
-        color: #6b7280;
-        background-color: rgba(0, 0, 0, 0.05);
+        color: #1f2937;
+        background-color: rgba(0, 0, 0, 0.1);
     }
 `;
 

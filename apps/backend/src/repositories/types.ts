@@ -270,28 +270,34 @@ export const CarouselElementSchema = t.Object({
 
 export const AdminHackathonIntermissionSchema = t.Object({
     organizerLogoUrl: t.Optional(t.Nullable(t.String())),
-    schedule: t.Array(
-        t.Object({
-            startTime: t.String(),
-            endTime: t.Optional(t.Nullable(t.String())),
-            title: t.String()
-        })
+    schedule: t.Optional(
+        t.Array(
+            t.Object({
+                startTime: t.String(),
+                endTime: t.Optional(t.Nullable(t.String())),
+                title: t.String()
+            })
+        )
     ),
-    carousel: t.Array(
-        t.Object({
-            id: t.String(),
-            duration: t.Number(),
-            hidden: t.Optional(t.Boolean()),
-            root: CarouselElementSchema,
-            label: t.Optional(t.Nullable(t.String()))
-        })
+    carousel: t.Optional(
+        t.Array(
+            t.Object({
+                id: t.String(),
+                duration: t.Number(),
+                hidden: t.Optional(t.Boolean()),
+                root: CarouselElementSchema,
+                label: t.Optional(t.Nullable(t.String()))
+            })
+        )
     ),
-    sponsors: t.Array(
-        t.Object({
-            name: t.String(),
-            logoUrl: t.String(),
-            tier: t.Number()
-        })
+    sponsors: t.Optional(
+        t.Array(
+            t.Object({
+                name: t.String(),
+                logoUrl: t.String(),
+                tier: t.Number()
+            })
+        )
     )
 });
 
@@ -317,7 +323,7 @@ export const HackathonSchema = t.Object({
             })
         )
     ),
-    isActive: t.Optional(t.Boolean({ default: true })),
+    isActive: t.Optional(t.Boolean()),
     createdBy: t.Optional(t.String()),
     createdAt: t.Optional(t.Date()),
     updatedAt: t.Optional(t.Date())
@@ -341,6 +347,37 @@ export interface Hackathon {
             imageUrl?: string;
         }[];
     } | null;
+    isActive: boolean;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export const TrackSchema = t.Object({
+    _id: t.Optional(t.Any()),
+    hackathonId: t.String(),
+    name: t.String({ minLength: 1 }),
+    judges: t.Array(t.String()),
+    rubric: t.Array(
+        t.Object({
+            name: t.String({ minLength: 1 }),
+            weight: t.Number({ minimum: 0 })
+        })
+    ),
+    isActive: t.Optional(t.Boolean()),
+    createdBy: t.Optional(t.String()),
+    createdAt: t.Optional(t.Date()),
+    updatedAt: t.Optional(t.Date())
+});
+
+export interface Track {
+    _id: ObjectId;
+    hackathonId: ObjectId;
+    name: string;
+    judges: string[];
+    rubric: {
+        name: string;
+        weight: number;
+    }[];
     isActive: boolean;
     createdBy: string;
     createdAt: Date;

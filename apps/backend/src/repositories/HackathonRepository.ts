@@ -45,6 +45,22 @@ export class HackathonRepository {
             updates.endDate = input.endDate ? new Date(input.endDate) : null;
         }
 
+        // Support partial updates for intermission
+        if (input.intermission) {
+            for (const [key, value] of Object.entries(input.intermission)) {
+                updates[`intermission.${key}`] = value;
+            }
+            delete updates.intermission;
+        }
+
+        // Support partial updates for certificateDefaults
+        if (input.certificateDefaults) {
+            for (const [key, value] of Object.entries(input.certificateDefaults)) {
+                updates[`certificateDefaults.${key}`] = value;
+            }
+            delete updates.certificateDefaults;
+        }
+
         const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
         return result;

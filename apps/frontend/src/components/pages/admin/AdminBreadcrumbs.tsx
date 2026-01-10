@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import React from "react";
-import { Nav, List, Crumb, Sep } from "./AdminBreadcrumbs.styles";
+import { Nav, List, Crumb, Sep, WarningContainer, CrumbAlign, CrumbAlignLink } from "./AdminBreadcrumbs.styles";
+import { Tooltip } from "@mui/material";
 
 import { useBreadcrumbs, BreadcrumbItem } from "#/providers/BreadcrumbsProvider";
 
@@ -21,12 +21,30 @@ export default function AdminBreadcrumbs({ items: propsItems, className, style }
     return (
         <Nav aria-label="breadcrumb" className={className} style={style}>
             <List>
-                {items.map((it, i) => (
-                    <Crumb key={`${it.label}-${i}`}>
-                        {it.href && i !== last ? <Link href={it.href}>{it.label}</Link> : <span>{it.label}</span>}
-                        {i !== last && <Sep>/</Sep>}
-                    </Crumb>
-                ))}
+                {items.map((it, i) => {
+                    const isLink = it.href && i !== last;
+                    const content = (
+                        <>
+                            {it.warning && (
+                                <Tooltip title={typeof it.warning === "string" ? it.warning : ""} arrow>
+                                    <WarningContainer>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="currentColor">
+                                            <path d="m40-120 440-760 440 760H40Zm138-80h604L480-720 178-200Zm302-40q17 0 28.5-11.5T520-280q0-17-11.5-28.5T480-320q-17 0-28.5 11.5T440-280q0 17 11.5 28.5T480-240Zm-40-120h80v-200h-80v200Zm40-100Z" />
+                                        </svg>
+                                    </WarningContainer>
+                                </Tooltip>
+                            )}
+                            {it.label}
+                        </>
+                    );
+
+                    return (
+                        <Crumb key={`${it.label}-${i}`}>
+                            {isLink ? <CrumbAlignLink href={it.href!}>{content}</CrumbAlignLink> : <CrumbAlign>{content}</CrumbAlign>}
+                            {i !== last && <Sep>/</Sep>}
+                        </Crumb>
+                    );
+                })}
             </List>
         </Nav>
     );

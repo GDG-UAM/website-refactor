@@ -1,4 +1,4 @@
-import { AdminHackathonsPage } from "#/components/pages/admin/hakathons/AdminHackathonsPage";
+import { AdminHackathonsPage } from "#/components/pages/admin/hackathons/AdminHackathonsPage";
 
 export default function Page() {
     return <AdminHackathonsPage />;

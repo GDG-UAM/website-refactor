@@ -1,6 +1,6 @@
 "use client";
 
-import { AdminIntermissionFormPage } from "#/components/pages/admin/hakathons/intermission/AdminIntermissionFormPage";
+import { AdminIntermissionFormPage } from "#/components/pages/admin/hackathons/intermission/AdminIntermissionFormPage";
 import { api } from "#/lib/eden";
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";

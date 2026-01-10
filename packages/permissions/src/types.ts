@@ -89,7 +89,7 @@ export class Ability {
                 // Reverse hierarchical match: ruleSubject is a child of subject
                 // e.g., ruleSubject "admin.links" matches subject "admin" ONLY for action "read"
                 // This allows the user to "read" the parent container if they have access to something inside.
-                if (action === "read" && ruleSubject.startsWith(`${subject}.`)) {
+                if (!rule.inverted && action === "read" && ruleSubject.startsWith(`${subject}.`)) {
                     subjectMatches = true;
                     break;
                 }
@@ -152,70 +152,7 @@ export class Ability {
     }
 
     hasSectionPermissions(section: string): boolean {
-        // Find matching rules
-        const denyRules = this.rules.filter((rule) => rule.inverted);
-        const allowRules = this.rules.filter((rule) => !rule.inverted);
-
-        // Check if there is any ALLOW rule that covers this section or any sub-resource of it
-        let isSectionAllowed = false;
-        for (const rule of allowRules) {
-            const subjects = Array.isArray(rule.subject) ? rule.subject : [rule.subject];
-            
-            if (subjects.includes("all")) {
-                isSectionAllowed = true;
-                break;
-            }
-
-            for (const subj of subjects) {
-                // Case 1: Subj matches exactly, is a child of the section, or is a parent of the section
-                // e.g., subj="admin" allows section="admin.users" (parent matches child)
-                // e.g., subj="admin.users" allows section="admin" (child matches parent context)
-                if (subj === section || subj.startsWith(`${section}.`) || section.startsWith(`${subj}.`)) {
-                    isSectionAllowed = true;
-                    break;
-                }
-
-                // Case 2: Subj covers the section via wildcard (e.g., subj="admin.*", section="admin.users")
-                if (subj.includes("*") || subj.includes("{")) {
-                    const { parsePattern, matchesPattern } = require("./parser");
-                    const pattern = parsePattern(subj);
-                    const targetPath = section.split(".");
-                    if (matchesPattern(pattern.segments, targetPath)) {
-                        isSectionAllowed = true;
-                        break;
-                    }
-                }
-            }
-            if (isSectionAllowed) break;
-        }
-
-        if (!isSectionAllowed) return false;
-
-        // A section is completely denied ONLY if there's a deny rule for the section itself or its parent
-        // (If only a sub-resource is denied, the section as a whole still has some allowed parts)
-        for (const rule of denyRules) {
-            const subjects = Array.isArray(rule.subject) ? rule.subject : [rule.subject];
-            if (subjects.includes("all")) return false; // Everything denied
-
-            for (const subj of subjects) {
-                // Deny rule for the exact section or a parent prefix
-                if (subj === section || section.startsWith(`${subj}.`)) {
-                    return false;
-                }
-
-                // Deny rule covers the section via wildcard
-                if (subj.includes("*") || subj.includes("{")) {
-                    const { parsePattern, matchesPattern } = require("./parser");
-                    const pattern = parsePattern(subj);
-                    const targetPath = section.split(".");
-                    if (matchesPattern(pattern.segments, targetPath)) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-        return true;
+        return this.can("read", section);
     }
 
     getRules(): PermissionRule[] {

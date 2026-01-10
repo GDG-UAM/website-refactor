@@ -1,6 +1,14 @@
 import { MongoClient, Db, Document, Collection } from "mongodb";
-import { UserRepository, PermissionRepository, ArticleRepository, EventRepository, LinkRepository, HackathonRepository } from "../repositories";
-import type { User, PermissionTemplate, Article, Event, Link, Hackathon } from "../repositories/types";
+import {
+    UserRepository,
+    PermissionRepository,
+    ArticleRepository,
+    EventRepository,
+    LinkRepository,
+    HackathonRepository,
+    TrackRepository
+} from "../repositories";
+import type { User, PermissionTemplate, Article, Event, Link, Hackathon, Track } from "../repositories/types";
 
 interface MongoClientCache {
     client: MongoClient | null;
@@ -15,6 +23,7 @@ interface RepositoryCache {
     eventRepository: EventRepository | null;
     linkRepository: LinkRepository | null;
     hackathonRepository: HackathonRepository | null;
+    trackRepository: TrackRepository | null;
 }
 
 // Extend the global object to include mongo client cache
@@ -32,7 +41,8 @@ const repositoryCache: RepositoryCache =
         articleRepository: null,
         eventRepository: null,
         linkRepository: null,
-        hackathonRepository: null
+        hackathonRepository: null,
+        trackRepository: null
     });
 
 // MongoDB Client for Better Auth - lazy initialization
@@ -77,7 +87,8 @@ async function initializeRepositories(): Promise<void> {
         repositoryCache.articleRepository &&
         repositoryCache.eventRepository &&
         repositoryCache.linkRepository &&
-        repositoryCache.hackathonRepository
+        repositoryCache.hackathonRepository &&
+        repositoryCache.trackRepository
     ) {
         return; // Already initialized
     }
@@ -91,6 +102,7 @@ async function initializeRepositories(): Promise<void> {
     const eventCollection = db.collection<Event>("events");
     const linkCollection = db.collection<Link>("links");
     const hackathonCollection = db.collection<Hackathon>("hackathons");
+    const trackCollection = db.collection<Track>("tracks");
 
     // Create permission repository first (no dependencies)
     const permissionRepo = new PermissionRepository(templateCollection);
@@ -103,6 +115,7 @@ async function initializeRepositories(): Promise<void> {
     const eventRepo = new EventRepository(eventCollection);
     const linkRepo = new LinkRepository(linkCollection);
     const hackathonRepo = new HackathonRepository(hackathonCollection);
+    const trackRepo = new TrackRepository(trackCollection);
 
     // Cache repositories
     repositoryCache.userRepository = userRepo;
@@ -111,6 +124,7 @@ async function initializeRepositories(): Promise<void> {
     repositoryCache.eventRepository = eventRepo;
     repositoryCache.linkRepository = linkRepo;
     repositoryCache.hackathonRepository = hackathonRepo;
+    repositoryCache.trackRepository = trackRepo;
 
     // Create indexes
     await Promise.all([
@@ -119,7 +133,8 @@ async function initializeRepositories(): Promise<void> {
         articleRepo.createIndexes(),
         eventRepo.createIndexes(),
         linkRepo.createIndexes(),
-        hackathonRepo.createIndexes()
+        hackathonRepo.createIndexes(),
+        trackRepo.createIndexes()
     ]);
 }
 
@@ -138,7 +153,8 @@ export function getRepositories() {
         !repositoryCache.articleRepository ||
         !repositoryCache.eventRepository ||
         !repositoryCache.linkRepository ||
-        !repositoryCache.hackathonRepository
+        !repositoryCache.hackathonRepository ||
+        !repositoryCache.trackRepository
     ) {
         throw new Error("Repositories not initialized. Call dbConnect() first.");
     }
@@ -149,7 +165,8 @@ export function getRepositories() {
         articleRepository: repositoryCache.articleRepository,
         eventRepository: repositoryCache.eventRepository,
         linkRepository: repositoryCache.linkRepository,
-        hackathonRepository: repositoryCache.hackathonRepository
+        hackathonRepository: repositoryCache.hackathonRepository,
+        trackRepository: repositoryCache.trackRepository
     };
 }
 

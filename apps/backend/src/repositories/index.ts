@@ -5,3 +5,4 @@ export * from "./ArticleRepository";
 export * from "./EventRepository";
 export * from "./LinkRepository";
 export * from "./HackathonRepository";
+export * from "./TrackRepository";

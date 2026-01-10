@@ -1,5 +1,5 @@
 import { getHackathon } from "#/lib/hackathons-server";
-import { AdminTracksPage } from "#/components/pages/admin/hackathons/tracks/AdminTracksPage";
+import { AdminTrackFormPage } from "#/components/pages/admin/hackathons/tracks/AdminTrackFormPage";
 import { notFound } from "next/navigation";
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
@@ -8,5 +8,5 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 
     if (!hackathon) return notFound();
 
-    return <AdminTracksPage hackathonId={id} hackathon={hackathon as any} />;
+    return <AdminTrackFormPage hackathonId={id} hackathon={hackathon as any} />;
 }

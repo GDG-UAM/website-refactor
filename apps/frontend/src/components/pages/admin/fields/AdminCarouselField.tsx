@@ -7,14 +7,15 @@ import {
     UpButton,
     DownButton,
     EditButton,
+    InspectButton,
     HideButton,
     ViewButton,
     SaveButton,
     CancelButton,
     CollapsableMenuButton
 } from "#/components/Buttons";
-import { CarouselSlide } from "../hakathons/intermission/IntermissionForm.types";
-import { CarouselEditor } from "../hakathons/intermission/CarouselEditor";
+import { CarouselSlide } from "../hackathons/intermission/IntermissionForm.types";
+import { CarouselEditor } from "../hackathons/intermission/CarouselEditor";
 import Modal from "#/components/Modal";
 import * as m from "#/paraglide/messages";
 import { FieldContainer, FieldLabel, FieldHeader } from "./AdminFieldTable.styles";
@@ -41,9 +42,19 @@ interface AdminCarouselFieldProps {
     error?: boolean;
     onBlur?: () => void;
     required?: boolean;
+    inspectMode?: boolean;
 }
 
-export const AdminCarouselField: React.FC<AdminCarouselFieldProps> = ({ value = [], onChange, label, disabled, error, onBlur, required }) => {
+export const AdminCarouselField: React.FC<AdminCarouselFieldProps> = ({
+    value = [],
+    onChange,
+    label,
+    disabled,
+    error,
+    onBlur,
+    required,
+    inspectMode = false
+}) => {
     const [editingIdx, setEditingIdx] = useState<number | null>(null);
     const [mobileActionsIdx, setMobileActionsIdx] = useState<number | null>(null);
 
@@ -95,7 +106,7 @@ export const AdminCarouselField: React.FC<AdminCarouselFieldProps> = ({ value = 
         <FieldContainer>
             <FieldHeader>
                 {label && (
-                    <FieldLabel>
+                    <FieldLabel $disabled={disabled}>
                         {label} {required && <span style={{ color: "var(--google-red)" }}>*</span>}
                     </FieldLabel>
                 )}
@@ -137,7 +148,11 @@ export const AdminCarouselField: React.FC<AdminCarouselFieldProps> = ({ value = 
                                     iconSize={20}
                                 />
                             )}
-                            <EditButton onClick={() => setEditingIdx(idx)} disabled={disabled} iconSize={20} />
+                            {inspectMode ? (
+                                <InspectButton onClick={() => setEditingIdx(idx)} iconSize={20} />
+                            ) : (
+                                <EditButton onClick={() => setEditingIdx(idx)} disabled={disabled} iconSize={20} />
+                            )}
                             <DeleteButton onClick={() => removeSlide(idx)} disabled={disabled} confirmationDuration={1000} iconSize={20} />
                         </ActionRow>
 
@@ -152,18 +167,25 @@ export const AdminCarouselField: React.FC<AdminCarouselFieldProps> = ({ value = 
 
             <Modal
                 isOpen={editingIdx !== null}
+                onClose={disabled || inspectMode ? () => setEditingIdx(null) : undefined}
                 title={m["admin.hackathons.intermission.sections.carouselEditor"]()}
                 width="lg"
-                buttons={[
-                    <SaveButton key="done" onClick={() => setEditingIdx(null)}>
-                        {m["admin.hackathons.intermission.actions.done"]()}
-                    </SaveButton>,
-                    <CancelButton key="cancel" onClick={() => setEditingIdx(null)}>
-                        {m["admin.hackathons.intermission.actions.cancel"]()}
-                    </CancelButton>
-                ]}
+                buttons={
+                    disabled || inspectMode
+                        ? undefined
+                        : [
+                              <SaveButton key="done" onClick={() => setEditingIdx(null)} disabled={disabled || inspectMode}>
+                                  {m["admin.hackathons.intermission.actions.done"]()}
+                              </SaveButton>,
+                              <CancelButton key="cancel" onClick={() => setEditingIdx(null)}>
+                                  {m["admin.hackathons.intermission.actions.cancel"]()}
+                              </CancelButton>
+                          ]
+                }
             >
-                {editingIdx !== null && <CarouselEditor slide={value[editingIdx]} onChange={(slide) => updateSlide(editingIdx, slide)} />}
+                {editingIdx !== null && (
+                    <CarouselEditor slide={value[editingIdx]} onChange={(slide) => updateSlide(editingIdx, slide)} readOnly={inspectMode} />
+                )}
             </Modal>
             <Modal
                 isOpen={mobileActionsIdx !== null}
@@ -232,18 +254,32 @@ export const AdminCarouselField: React.FC<AdminCarouselFieldProps> = ({ value = 
                             </HideButton>
                         )}
 
-                        <EditButton
-                            onClick={() => {
-                                setEditingIdx(mobileActionsIdx);
-                                setMobileActionsIdx(null);
-                            }}
-                            disabled={disabled}
-                            iconSize={24}
-                            fullWidth
-                            justify="flex-start"
-                        >
-                            {m["buttons.edit"]()}
-                        </EditButton>
+                        {inspectMode ? (
+                            <InspectButton
+                                onClick={() => {
+                                    setEditingIdx(mobileActionsIdx);
+                                    setMobileActionsIdx(null);
+                                }}
+                                iconSize={24}
+                                fullWidth
+                                justify="flex-start"
+                            >
+                                {m["buttons.inspect"]()}
+                            </InspectButton>
+                        ) : (
+                            <EditButton
+                                onClick={() => {
+                                    setEditingIdx(mobileActionsIdx);
+                                    setMobileActionsIdx(null);
+                                }}
+                                disabled={disabled}
+                                iconSize={24}
+                                fullWidth
+                                justify="flex-start"
+                            >
+                                {m["buttons.edit"]()}
+                            </EditButton>
+                        )}
 
                         <DeleteButton
                             onClick={() => {

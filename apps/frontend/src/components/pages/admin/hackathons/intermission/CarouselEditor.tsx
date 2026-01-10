@@ -44,7 +44,8 @@ const createNewElement = (type: CarouselElementType): CarouselElement => ({
 export const CarouselEditor: React.FC<{
     slide: CarouselSlide;
     onChange: (slide: CarouselSlide) => void;
-}> = ({ slide, onChange }) => {
+    readOnly?: boolean;
+}> = ({ slide, onChange, readOnly = false }) => {
     const [selectedId, setSelectedId] = useState<string | null>(slide.root.id);
 
     const findElement = (root: CarouselElement, id: string): CarouselElement | null => {
@@ -163,9 +164,9 @@ export const CarouselEditor: React.FC<{
                     </ElementSub>
                 </ElementContent>
                 <ActionBox>
-                    <UpButton iconSize={20} onClick={() => moveElement(element.id, "up")} disabled={isFirst} />
-                    <DownButton iconSize={20} onClick={() => moveElement(element.id, "down")} disabled={isLast} />
-                    {element.id !== slide.root.id && <DeleteButton iconSize={20} onClick={() => removeElement(element.id)} />}
+                    <UpButton iconSize={20} onClick={() => moveElement(element.id, "up")} disabled={readOnly || isFirst} />
+                    <DownButton iconSize={20} onClick={() => moveElement(element.id, "down")} disabled={readOnly || isLast} />
+                    {element.id !== slide.root.id && <DeleteButton iconSize={20} onClick={() => removeElement(element.id)} disabled={readOnly} />}
                 </ActionBox>
             </TreeItem>
             {element.children?.map((child: CarouselElement, idx: number) => renderTree(child, depth + 1, idx === 0, idx === element.children!.length - 1))}
@@ -181,6 +182,7 @@ export const CarouselEditor: React.FC<{
                     onChange={(e) => onChange({ ...slide, label: e.target.value })}
                     size="small"
                     fullWidth
+                    disabled={readOnly}
                 />
                 <TextField
                     label={m["admin.hackathons.intermission.fields.carouselDuration"]()}
@@ -189,6 +191,7 @@ export const CarouselEditor: React.FC<{
                     onChange={(e) => onChange({ ...slide, duration: parseInt(e.target.value) })}
                     size="small"
                     sx={{ width: { xs: "100%", sm: 120 } }}
+                    disabled={readOnly}
                 />
             </SlideConfigRow>
 
@@ -210,7 +213,7 @@ export const CarouselEditor: React.FC<{
                         <PropSection>
                             {selectedElement.type === "container" && (
                                 <>
-                                    <FormControl fullWidth size="small">
+                                    <FormControl fullWidth size="small" disabled={readOnly}>
                                         <InputLabel>{m["admin.hackathons.intermission.fields.direction"]()}</InputLabel>
                                         <Select
                                             value={selectedElement.props.direction || "column"}
@@ -228,8 +231,9 @@ export const CarouselEditor: React.FC<{
                                         size="small"
                                         value={selectedElement.props.gap}
                                         onChange={(e) => handlePropChange(selectedElement.id, "gap", parseInt(e.target.value))}
+                                        disabled={readOnly}
                                     />
-                                    <FormControl fullWidth size="small">
+                                    <FormControl fullWidth size="small" disabled={readOnly}>
                                         <InputLabel>{m["admin.hackathons.intermission.fields.alignItems"]()}</InputLabel>
                                         <Select
                                             value={selectedElement.props.alignItems || "stretch"}
@@ -242,7 +246,7 @@ export const CarouselEditor: React.FC<{
                                             <MenuItem value="stretch">{m["admin.hackathons.intermission.values.stretch"]()}</MenuItem>
                                         </Select>
                                     </FormControl>
-                                    <FormControl fullWidth size="small">
+                                    <FormControl fullWidth size="small" disabled={readOnly}>
                                         <InputLabel>{m["admin.hackathons.intermission.fields.justifyContent"]()}</InputLabel>
                                         <Select
                                             value={selectedElement.props.justifyContent || "flex-start"}
@@ -262,27 +266,30 @@ export const CarouselEditor: React.FC<{
                                         size="small"
                                         value={selectedElement.props.padding || ""}
                                         onChange={(e) => handlePropChange(selectedElement.id, "padding", e.target.value)}
+                                        disabled={readOnly}
                                     />
-                                    <div>
-                                        <SmallLabel>{m["admin.hackathons.intermission.helpers.addChild"]()}</SmallLabel>
-                                        <AddButtonsRow>
-                                            <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "text")}>
-                                                {m["admin.hackathons.intermission.elementTypes.text"]()}
-                                            </AddButton>
-                                            <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "qr")}>
-                                                {m["admin.hackathons.intermission.elementTypes.qr"]()}
-                                            </AddButton>
-                                            <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "image")}>
-                                                {m["admin.hackathons.intermission.elementTypes.image"]()}
-                                            </AddButton>
-                                            <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "container")}>
-                                                {m["admin.hackathons.intermission.elementTypes.container"]()}
-                                            </AddButton>
-                                            <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "spacer")}>
-                                                {m["admin.hackathons.intermission.elementTypes.spacer"]()}
-                                            </AddButton>
-                                        </AddButtonsRow>
-                                    </div>
+                                    {!readOnly && (
+                                        <div>
+                                            <SmallLabel>{m["admin.hackathons.intermission.helpers.addChild"]()}</SmallLabel>
+                                            <AddButtonsRow>
+                                                <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "text")}>
+                                                    {m["admin.hackathons.intermission.elementTypes.text"]()}
+                                                </AddButton>
+                                                <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "qr")}>
+                                                    {m["admin.hackathons.intermission.elementTypes.qr"]()}
+                                                </AddButton>
+                                                <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "image")}>
+                                                    {m["admin.hackathons.intermission.elementTypes.image"]()}
+                                                </AddButton>
+                                                <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "container")}>
+                                                    {m["admin.hackathons.intermission.elementTypes.container"]()}
+                                                </AddButton>
+                                                <AddButton iconSize={20} onClick={() => addElement(selectedElement.id, "spacer")}>
+                                                    {m["admin.hackathons.intermission.elementTypes.spacer"]()}
+                                                </AddButton>
+                                            </AddButtonsRow>
+                                        </div>
+                                    )}
                                 </>
                             )}
 
@@ -296,8 +303,9 @@ export const CarouselEditor: React.FC<{
                                         size="small"
                                         value={selectedElement.props.content}
                                         onChange={(e) => handlePropChange(selectedElement.id, "content", e.target.value)}
+                                        disabled={readOnly}
                                     />
-                                    <FormControl fullWidth size="small">
+                                    <FormControl fullWidth size="small" disabled={readOnly}>
                                         <InputLabel>{m["admin.hackathons.intermission.fields.variant"]()}</InputLabel>
                                         <Select
                                             value={selectedElement.props.variant || "body"}
@@ -317,6 +325,7 @@ export const CarouselEditor: React.FC<{
                                         placeholder="e.g. 1.2rem, 24px"
                                         value={selectedElement.props.fontSize || ""}
                                         onChange={(e) => handlePropChange(selectedElement.id, "fontSize", e.target.value)}
+                                        disabled={readOnly}
                                     />
                                     <TextField
                                         label={m["admin.hackathons.intermission.fields.fontWeight"]()}
@@ -325,8 +334,9 @@ export const CarouselEditor: React.FC<{
                                         placeholder="e.g. 400, 700, bold"
                                         value={selectedElement.props.fontWeight || ""}
                                         onChange={(e) => handlePropChange(selectedElement.id, "fontWeight", e.target.value)}
+                                        disabled={readOnly}
                                     />
-                                    <FormControl fullWidth size="small">
+                                    <FormControl fullWidth size="small" disabled={readOnly}>
                                         <InputLabel>{m["admin.hackathons.intermission.fields.alignment"]()}</InputLabel>
                                         <Select
                                             value={selectedElement.props.align || "left"}
@@ -345,6 +355,7 @@ export const CarouselEditor: React.FC<{
                                         placeholder="e.g. #000, rgba(0,0,0,0.8)"
                                         value={selectedElement.props.color || ""}
                                         onChange={(e) => handlePropChange(selectedElement.id, "color", e.target.value)}
+                                        disabled={readOnly}
                                     />
                                 </>
                             )}
@@ -357,6 +368,7 @@ export const CarouselEditor: React.FC<{
                                         size="small"
                                         value={selectedElement.props.value}
                                         onChange={(e) => handlePropChange(selectedElement.id, "value", e.target.value)}
+                                        disabled={readOnly}
                                     />
                                     <PropRow>
                                         <TextField
@@ -366,6 +378,7 @@ export const CarouselEditor: React.FC<{
                                             size="small"
                                             value={selectedElement.props.size}
                                             onChange={(e) => handlePropChange(selectedElement.id, "size", parseInt(e.target.value))}
+                                            disabled={readOnly}
                                         />
                                         <TextField
                                             label={m["admin.hackathons.intermission.fields.cornerSize"]()}
@@ -374,6 +387,7 @@ export const CarouselEditor: React.FC<{
                                             size="small"
                                             value={selectedElement.props.cornerSize}
                                             onChange={(e) => handlePropChange(selectedElement.id, "cornerSize", parseInt(e.target.value))}
+                                            disabled={readOnly}
                                         />
                                     </PropRow>
                                     <div>
@@ -384,6 +398,7 @@ export const CarouselEditor: React.FC<{
                                             placeholder="e.g. #4285F4"
                                             value={selectedElement.props.cornerColor || ""}
                                             onChange={(e) => handlePropChange(selectedElement.id, "cornerColor", e.target.value)}
+                                            disabled={readOnly}
                                         />
                                         <HelperText>{m["admin.hackathons.intermission.helpers.googleColors"]()}</HelperText>
                                     </div>
@@ -394,6 +409,7 @@ export const CarouselEditor: React.FC<{
                                         placeholder="https://..."
                                         value={selectedElement.props.logoUrl || ""}
                                         onChange={(e) => handlePropChange(selectedElement.id, "logoUrl", e.target.value)}
+                                        disabled={readOnly}
                                     />
                                     <div>
                                         <TextField
@@ -403,6 +419,7 @@ export const CarouselEditor: React.FC<{
                                             size="small"
                                             value={selectedElement.props.logoSize || 25}
                                             onChange={(e) => handlePropChange(selectedElement.id, "logoSize", parseInt(e.target.value))}
+                                            disabled={readOnly}
                                         />
                                         <HelperText>{m["admin.hackathons.intermission.helpers.recommendedSize"]()}</HelperText>
                                     </div>
@@ -417,6 +434,7 @@ export const CarouselEditor: React.FC<{
                                         size="small"
                                         value={selectedElement.props.url}
                                         onChange={(e) => handlePropChange(selectedElement.id, "url", e.target.value)}
+                                        disabled={readOnly}
                                     />
                                     <TextField
                                         label={m["admin.hackathons.intermission.fields.height"]()}
@@ -425,8 +443,9 @@ export const CarouselEditor: React.FC<{
                                         placeholder="e.g. 200px, 50%"
                                         value={selectedElement.props.height || ""}
                                         onChange={(e) => handlePropChange(selectedElement.id, "height", e.target.value)}
+                                        disabled={readOnly}
                                     />
-                                    <FormControl fullWidth size="small">
+                                    <FormControl fullWidth size="small" disabled={readOnly}>
                                         <InputLabel>{m["admin.hackathons.intermission.fields.objectFit"]()}</InputLabel>
                                         <Select
                                             value={selectedElement.props.objectFit || "contain"}
@@ -448,6 +467,7 @@ export const CarouselEditor: React.FC<{
                                     size="small"
                                     value={selectedElement.props.grow}
                                     onChange={(e) => handlePropChange(selectedElement.id, "grow", parseInt(e.target.value))}
+                                    disabled={readOnly}
                                 />
                             )}
 
@@ -462,6 +482,7 @@ export const CarouselEditor: React.FC<{
                                     placeholder="Auto"
                                     value={selectedElement.props.flex ?? ""}
                                     onChange={(e) => handlePropChange(selectedElement.id, "flex", e.target.value ? parseInt(e.target.value) : undefined)}
+                                    disabled={readOnly}
                                 />
                                 <HelperText>{m["admin.hackathons.intermission.helpers.flexBasis"]()}</HelperText>
                             </div>

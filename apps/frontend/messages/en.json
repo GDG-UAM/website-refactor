@@ -81,7 +81,8 @@
         "openGdgCommunity": "Open GDG Community",
         "addOpenBadge": "Add OpenBadge",
         "accessibility": "Accessibility options",
-        "restore": "Restore"
+        "restore": "Restore",
+        "inspect": "Inspect"
     },
     "footer": {
         "quickLinks": "Quick Links",
@@ -617,8 +618,10 @@
         "status": "Status",
         "slug": "Slug",
         "excerpt": "Excerpt",
-        "content": "Content"
+        "content": "Content",
+        "deletedWarning": "This article has been deleted"
       },
+
       "list": {
         "reload": "Reload",
         "search": "Search articles...",
@@ -714,8 +717,10 @@
         "descriptionHelp": "Optional notes about this link.",
         "save": "Save Link",
         "cancel": "Cancel",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "deletedWarning": "This link has been deleted"
       },
+
       "toasts": {
         "created": "Link created successfully",
         "updated": "Link updated successfully",
@@ -772,8 +777,10 @@
         "markdownContent": "Content",
         "save": "Save Event",
         "cancel": "Cancel",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "deletedWarning": "This event has been deleted"
       },
+
       "toasts": {
         "created": "Event created successfully",
         "updated": "Event updated successfully",
@@ -816,7 +823,8 @@
         "location": "Location",
         "save": "Save Hackathon",
         "cancel": "Cancel",
-        "saving": "Saving..."
+        "saving": "Saving...",
+        "deletedWarning": "This hackathon has been deleted"
       },
       "toasts": {
         "created": "Hackathon created successfully",
@@ -887,7 +895,11 @@
           "objectFit": "Object Fit",
           "flexGrow": "Flex Grow",
           "flexBasis": "Flex Basis (px/%)",
-          "logoSize": "Logo Size"
+          "logoSize": "Logo Size",
+          "errors": {
+            "scheduleMissing": "Some activities are missing required info",
+            "sponsorMissing": "Some sponsors are missing required info"
+          }
         },
         "actions": {
           "addActivity": "Add Activity",
@@ -937,6 +949,66 @@
           "contain": "Contain (Full)",
           "cover": "Cover (Fill)"
         }
+      },
+      "certificates": {
+        "sections": {
+          "general": "Certificate Settings",
+          "signatures": "Default Signatures"
+        },
+        "fields": {
+          "title": "Certificate Title Override",
+          "signatureName": "Name",
+          "signatureRole": "Role",
+          "signatureImageUrl": "Signature Image URL",
+          "errors": {
+            "signatureMissing": "Some signatures are missing required info"
+          }
+        },
+        "actions": {
+          "addSignature": "Add Signature"
+        },
+        "helpers": {
+          "titleOverride": "The current hackathon name is: {name}. Use this field to override the title on the certificates."
+        }
+      },
+      "tracks": {
+        "title": "Hackathon Tracks",
+        "sections": {
+          "general": "General Information",
+          "rubric": "Scoring Rubric"
+        },
+        "list": {
+          "reload": "Reload",
+          "search": "Search tracks...",
+          "showDeleted": "Show deleted tracks",
+          "noTracks": "No tracks found.",
+          "noResults": "No tracks match your search."
+        },
+        "fields": {
+          "name": "Track Name",
+          "judges": "Judges",
+          "rubricName": "Criterion Name",
+          "rubricWeight": "Weight (points)",
+          "errors": {
+            "rubricMissing": "Some rubric items are missing required info"
+          }
+        },
+        "actions": {
+          "addTrack": "Add Track",
+          "addCriterion": "Add Criterion",
+          "createTrack": "Create Track",
+          "editTrack": "Edit Track"
+        },
+        "toasts": {
+            "created": "Track created successfully",
+            "updated": "Track updated successfully",
+            "deleted": "Track deleted successfully",
+            "error": "An error occurred while managing tracks"
+        },
+        "breadcrumbs": {
+          "new": "New Track"
+        },
+        "deletedWarning": "This track has been deleted"
       }
     },
     "breadcrumbs": {

@@ -256,5 +256,17 @@ describe("Ability", () => {
             expect(ability.hasSectionPermissions("admin")).toBe(true);
             expect(ability.hasSectionPermissions("admin.secrets")).toBe(false);
         });
+
+        it("should return true if only a previous section is denied", () => {
+            const builder = new AbilityBuilder();
+            builder.can("manage", "admin.hackathons.123.intermission");
+            builder.cannot("update", "admin.hackathons.123");
+            const ability = builder.build();
+            // Allowed since hasSectionPermissions only cares about read permissions, which are necessary to get to a sub-resource
+            expect(ability.hasSectionPermissions("admin.hackathons.123")).toBe(true);
+            // Directly allowed
+            expect(ability.hasSectionPermissions("admin.hackathons.123.intermission")).toBe(true);
+            expect(ability.hasSectionPermissions("admin.hackathons.123.other")).toBe(false);
+        });
     });
 });

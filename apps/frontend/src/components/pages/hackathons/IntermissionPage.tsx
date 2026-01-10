@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
-import { IntermissionData } from "#/components/pages/admin/hakathons/intermission/IntermissionForm.types";
+import { IntermissionData } from "#/components/pages/admin/hackathons/intermission/IntermissionForm.types";
 import { api } from "#/lib/eden";
 import * as m from "#/paraglide/messages";
 import { CarouselRenderer } from "./CarouselRenderer";
@@ -102,14 +102,14 @@ export default function IntermissionPage({ slug, initialData }: { slug: string; 
         const ws = api.hackathons({ slug }).intermission.ws.subscribe();
 
         ws.on("message", (event: { data: unknown }) => {
-            const updatedData = event.data as IntermissionData;
+            const updatedData = event.data as Partial<IntermissionData>;
             if (updatedData.carousel) {
                 updatedData.carousel = updatedData.carousel.map((slide) => ({
                     ...slide,
                     duration: slide.hidden ? 0 : slide.duration
                 }));
             }
-            setData(updatedData);
+            setData((prev) => ({ ...prev, ...updatedData }));
             setCarouselIndex(0);
             setDataVersion((v) => v + 1);
         });

@@ -24,8 +24,7 @@ import { locales } from "#/paraglide/runtime";
 import CustomMarkdownTextArea from "#/components/markdown/CustomMarkdownTextArea";
 import RenderMarkdown from "#/components/markdown/RenderMarkdown";
 import { AdminUserSelector } from "./AdminUserSelector";
-import { AdminScheduleField } from "./fields/AdminScheduleField";
-import { AdminSponsorsField } from "./fields/AdminSponsorsField";
+import { AdminTableField } from "./fields/AdminTableField";
 import { AdminCarouselField } from "./fields/AdminCarouselField";
 
 const getShortLanguageName = (locale: string) => {
@@ -37,22 +36,13 @@ const getShortLanguageName = (locale: string) => {
 export type FieldConfig<T> = {
     name: keyof T & string;
     label: string;
-    type:
-        | "text"
-        | "number"
-        | "switch"
-        | "select"
-        | "multiline"
-        | "url"
-        | "date"
-        | "datetime"
-        | "markdown"
-        | "user-selector"
-        | "schedule"
-        | "sponsors"
-        | "carousel";
+    type: "text" | "number" | "switch" | "select" | "multiline" | "url" | "date" | "datetime" | "markdown" | "user-selector" | "carousel" | "table";
     required?: boolean;
     options?: { label: string; value: any }[];
+    roles?: ("user" | "team" | "organizer")[];
+    columns?: any[];
+    addButtonLabel?: string;
+    emptyMessage?: string;
     helperText?: string;
     placeholder?: string;
     rows?: number;
@@ -60,6 +50,7 @@ export type FieldConfig<T> = {
     fontFamily?: string;
     disabled?: boolean;
     gridColumn?: string;
+    validate?: (value: any) => string | boolean;
 };
 
 interface AdminFormBuilderProps<T> {
@@ -138,13 +129,27 @@ export function AdminFormBuilder<T extends Record<string, any>>({
         return `${label} (${langs.join(", ")})`;
     });
 
-    const isFormValid = formattedMissingItems.length === 0;
+    const validationErrors: string[] = [];
+    [...fields, ...(localizedFields || [])].forEach((f) => {
+        if (f.validate) {
+            const result = f.validate(data[f.name]);
+            if (typeof result === "string") {
+                validationErrors.push(`${f.label}: ${result}`);
+            } else if (result === false) {
+                validationErrors.push(`${f.label}: Invalid value`);
+            }
+        }
+    });
+
+    const isFormValid = formattedMissingItems.length === 0 && validationErrors.length === 0;
 
     const saveButtonTooltip = isActuallyDisabled
         ? m["admin.form.view_only_warning"]()
-        : !isFormValid
+        : formattedMissingItems.length > 0
           ? m["admin.form.required_fields_error"]({ fields: formattedMissingItems.join(", ") })
-          : "";
+          : validationErrors.length > 0
+            ? validationErrors.join("\n")
+            : "";
 
     const handleSubmit = () => {
         if (!isFormValid) return;
@@ -191,7 +196,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
         };
 
         const isFieldValid = !isFieldMissing(field, value);
-        const showError = field.required && !isFieldValid && touchedFields.has(field.name);
+        const showError = !!(field.required && !isFieldValid && touchedFields.has(field.name));
 
         const commonProps = {
             label: isLocalized ? `${field.label} (${getShortLanguageName(activeLocale)})` : field.label,
@@ -260,20 +265,34 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                         </>
                     );
                 case "user-selector":
-                    return <AdminUserSelector {...commonProps} value={value || []} onChange={(val) => handleFieldChange(val)} />;
+                    return <AdminUserSelector {...commonProps} value={value || []} roles={field.roles} onChange={(val) => handleFieldChange(val)} />;
                 case "multiline":
                     return (
                         <TextField {...commonProps} multiline rows={field.rows || 3} value={value || ""} onChange={(e) => handleFieldChange(e.target.value)} />
                     );
 
-                case "schedule":
-                    return <AdminScheduleField {...commonProps} value={value || []} onChange={(val) => handleFieldChange(val)} />;
-
-                case "sponsors":
-                    return <AdminSponsorsField {...commonProps} value={value || []} onChange={(val) => handleFieldChange(val)} />;
+                case "table":
+                    return (
+                        <AdminTableField
+                            {...commonProps}
+                            value={value || []}
+                            onChange={(val) => handleFieldChange(val)}
+                            columns={field.columns || []}
+                            addButtonLabel={field.addButtonLabel}
+                            emptyMessage={field.emptyMessage}
+                            subject={subject}
+                        />
+                    );
 
                 case "carousel":
-                    return <AdminCarouselField {...commonProps} value={value || []} onChange={(val) => handleFieldChange(val)} />;
+                    return (
+                        <AdminCarouselField
+                            {...commonProps}
+                            value={value || []}
+                            onChange={(val) => handleFieldChange(val)}
+                            inspectMode={disabled && ability.canUpdateAnyField(`admin.hackathons.${resourceId}.intermission.carousel`, { carousel: value })}
+                        />
+                    );
                 case "date":
                 case "datetime":
                 case "number":
@@ -294,7 +313,10 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                                           : "text"
                             }
                             value={value ?? ""}
-                            onChange={(e) => handleFieldChange(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                handleFieldChange(field.type === "number" ? (val === "" ? 0 : Number(val)) : val);
+                            }}
                             inputProps={{
                                 pattern: field.pattern,
                                 style: { fontFamily: field.fontFamily }

@@ -5,6 +5,7 @@ import React, { createContext, useContext, useState, useCallback, useMemo } from
 export type BreadcrumbItem = {
     label: string;
     href?: string;
+    warning?: string | boolean;
 };
 
 interface BreadcrumbsContextType {

@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Link from "next/link";
 
 export const Nav = styled.nav`
     width: 100%;
@@ -33,4 +34,25 @@ export const Crumb = styled.li`
 
 export const Sep = styled.span`
     color: #9ca3af;
+`;
+
+export const WarningContainer = styled.span`
+    display: inline-flex;
+    align-items: center;
+    margin-right: 4px;
+
+    svg {
+        height: 18px;
+        width: 18px;
+    }
+`;
+
+export const CrumbAlign = styled.span`
+    display: inline-flex;
+    align-items: center;
+`;
+
+export const CrumbAlignLink = styled(Link)`
+    display: inline-flex;
+    align-items: center;
 `;

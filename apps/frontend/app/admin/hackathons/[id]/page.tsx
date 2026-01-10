@@ -46,7 +46,7 @@ export default async function AdminPage({ params }: { params: Promise<{ id: stri
                             label: m["admin.hackathons.navigation.certificates"](),
                             type: "hackathon-certificates",
                             href: `/admin/hackathons/${hackathon._id}/certificates`,
-                            disabled: !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.certificates`))
+                            disabled: !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.certificateDefaults`))
                         }
                     ]
                 },

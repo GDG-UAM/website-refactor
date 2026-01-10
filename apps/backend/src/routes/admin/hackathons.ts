@@ -4,6 +4,7 @@ import { permissionsPlugin } from "../../plugins/permissions";
 import { HackathonSchema } from "../../repositories/types";
 import type { HackathonSortTypes, HackathonInput } from "../../repositories/HackathonRepository";
 import { websocketsPlugin } from "../../plugins/websockets";
+import { adminHackathonRoutes } from "./hackathon";
 
 const AdminHackathonResponseSchema = t.Object({
     _id: t.String(),
@@ -22,6 +23,7 @@ const AdminHackathonResponseSchema = t.Object({
 
 export const adminHackathonsRoutes = new Elysia({ prefix: "/hackathons" })
     .use(permissionsPlugin)
+    .use(adminHackathonRoutes)
     .get(
         "/",
         async ({ query: { search, page, pageSize, sort, includeInactive }, ability, set }) => {
@@ -128,9 +130,23 @@ export const adminHackathonsRoutes = new Elysia({ prefix: "/hackathons" })
             // Granular permission check
             const fields = Object.keys(body);
             for (const field of fields) {
-                if (ability.cannot("update", `admin.hackathons.${id}`, { field })) {
-                    set.status = 403;
-                    return { error: `Forbidden: Cannot update field ${field}` };
+                if (field === "intermission" || field === "certificateDefaults") {
+                    // Special granularity for intermission and certificateDefaults sub-fields
+                    const subFields = body[field as "intermission" | "certificateDefaults"];
+                    if (subFields && typeof subFields === "object") {
+                        for (const subField of Object.keys(subFields as object)) {
+                            if (ability.cannot("update", `admin.hackathons.${id}.${field}`, { field: subField })) {
+                                set.status = 403;
+                                return { error: `Forbidden: Cannot update ${field} field ${subField}` };
+                            }
+                        }
+                    }
+                } else {
+                    // Check general field permission
+                    if (ability.cannot("update", `admin.hackathons.${id}`, { field })) {
+                        set.status = 403;
+                        return { error: `Forbidden: Cannot update field ${field}` };
+                    }
                 }
             }
 

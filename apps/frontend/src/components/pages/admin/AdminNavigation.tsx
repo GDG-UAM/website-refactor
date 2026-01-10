@@ -46,7 +46,7 @@ export default function AdminContent({ title, categories }: AdminContentProps) {
                                             >
                                                 {button.label}
                                             </AdminNavigationButton>
-                                            <OpenLinkButton key={button.openLinkHref} href={button.openLinkHref} color="secondary" />
+                                            <OpenLinkButton key={button.openLinkHref} href={button.openLinkHref} color="secondary" disabled={button.disabled} />
                                         </ButtonRow>
                                     ) : (
                                         <AdminNavigationButton

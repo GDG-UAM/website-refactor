@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "#/lib/eden";
 import { AdminTable } from "#/components/pages/admin/AdminTable";
 import { textColumn, chipColumn, customColumn } from "#/components/pages/admin/AdminTableFactories";
-import { AddButton, EditButton, DeleteButton, RestoreButton, ViewButton, ManageButton } from "#/components/Buttons";
+import { AddButton, EditButton, DeleteButton, RestoreButton, ViewButton, ManageButton, InspectButton } from "#/components/Buttons";
 import { newErrorToast, newInfoToast, newSuccessToast } from "#/components/Toast";
 import { usePermissions } from "#/providers/PermissionsProvider";
 import { FormControlLabel, Checkbox } from "@mui/material";
@@ -172,28 +172,33 @@ export function AdminHackathonsPage() {
                 }
                 rowActions={(row) => (
                     <>
-                        <ManageButton
-                            onClick={() => router.push(`/admin/hackathons/${row._id}`)}
-                            ariaLabel="Manage hackathon"
-                            iconSize={20}
-                            disabled={!row.isActive || ability.cannot("read", `admin.hackathons.${row._id}`)}
-                        />
+                        {row.isActive ? (
+                            <ManageButton
+                                onClick={() => router.push(`/admin/hackathons/${row._id}`)}
+                                iconSize={20}
+                                disabled={ability.cannot("read", `admin.hackathons.${row._id}`)}
+                            />
+                        ) : (
+                            <InspectButton
+                                onClick={() => router.push(`/admin/hackathons/${row._id}`)}
+                                iconSize={20}
+                                disabled={ability.cannot("read", `admin.hackathons.${row._id}`)}
+                            />
+                        )}
                         {row.isActive && ability.canUpdateAnyField(`admin.hackathons.${row._id}`, row) ? (
-                            <EditButton onClick={() => router.push(`/admin/hackathons/edit/${row._id}`)} ariaLabel="Edit hackathon" iconSize={20} />
+                            <EditButton onClick={() => router.push(`/admin/hackathons/edit/${row._id}`)} iconSize={20} />
                         ) : (
                             <ViewButton
                                 onClick={() => router.push(`/admin/hackathons/edit/${row._id}`)}
-                                ariaLabel="View hackathon"
                                 iconSize={20}
                                 disabled={ability.cannot("read", `admin.hackathons.${row._id}`)}
                             />
                         )}
                         {ability.can("manage", `admin.hackathons.${row._id}`) && !row.isActive ? (
-                            <RestoreButton onClick={() => handleRestore(row._id)} ariaLabel="Restore hackathon" iconSize={20} />
+                            <RestoreButton onClick={() => handleRestore(row._id)} iconSize={20} />
                         ) : (
                             <DeleteButton
                                 onClick={() => handleDelete(row._id)}
-                                ariaLabel="Delete hackathon"
                                 iconSize={20}
                                 disabled={!row.isActive || ability.cannot("delete", `admin.hackathons.${row._id}`)}
                             />

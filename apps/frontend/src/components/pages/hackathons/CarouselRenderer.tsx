@@ -2,7 +2,7 @@
 
 import React from "react";
 import { CustomQRCode } from "#/components/CustomQRCode";
-import { CarouselElement } from "#/components/pages/admin/hakathons/intermission/IntermissionForm.types";
+import { CarouselElement } from "#/components/pages/admin/hackathons/intermission/IntermissionForm.types";
 import { ElementContainer, TextElement, ImageElement, SpacerElement } from "./CarouselRenderer.styles";
 
 export const CarouselRenderer: React.FC<{ element: CarouselElement }> = ({ element }) => {
