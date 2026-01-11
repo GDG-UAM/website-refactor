@@ -152,7 +152,7 @@ export function AdminArticlesPage({ type }: AdminArticlesPageProps) {
                 m["admin.articles.list.columns.status"](),
                 (r) => (r.isActive ? r.status : "deleted"),
                 (status) => m[`admin.articles.status.${status}`](),
-                (status) => (status === "published" ? "success" : status === "deleted" ? "error" : "warning"),
+                (status) => (status === "published" ? "success" : status === "deleted" ? "error" : status === "url_only" ? "secondary" : "warning"),
                 "filled"
             )
         ],

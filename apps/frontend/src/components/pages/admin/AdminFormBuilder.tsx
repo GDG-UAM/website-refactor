@@ -312,7 +312,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                                           ? "number"
                                           : "text"
                             }
-                            value={value ?? ""}
+                            value={field.type === "date" && typeof value === "string" ? value.split("T")[0] : (value ?? "")}
                             onChange={(e) => {
                                 const val = e.target.value;
                                 handleFieldChange(field.type === "number" ? (val === "" ? 0 : Number(val)) : val);

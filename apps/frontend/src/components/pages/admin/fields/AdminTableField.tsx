@@ -215,7 +215,11 @@ export function AdminTableField<T extends Record<string, any>>({
                                                                   ? "number"
                                                                   : "text"
                                                     }
-                                                    value={row[col.name] ?? ""}
+                                                    value={
+                                                        col.type === "date" && typeof row[col.name] === "string"
+                                                            ? row[col.name].split("T")[0]
+                                                            : (row[col.name] ?? "")
+                                                    }
                                                     onChange={(e) => {
                                                         const val = e.target.value;
                                                         updateRow(idx, {
