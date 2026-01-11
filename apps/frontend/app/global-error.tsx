@@ -1,9 +1,14 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { ErrorContainer, ErrorTitle, ErrorMessage } from "./global-error.styles";
+import * as Sentry from "@sentry/nextjs";
 
 export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
+    useEffect(() => {
+        Sentry.captureException(error);
+    }, [error]);
+
     // Fallback i18n without NextIntl context (global error can render outside providers)
     const locale = useMemo(() => {
         if (typeof document === "undefined") return "es";
