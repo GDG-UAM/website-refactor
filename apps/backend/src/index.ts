@@ -103,6 +103,7 @@ const app = new Elysia({ prefix: "/api" })
     .use(miscRoutes)
     .use(linksRoutes)
     .use(hackathonRoutes)
+    .get("/health", () => ({ status: "ok" }))
     .listen({ port: parseInt(process.env.BACKEND_PORT || "3001") });
 
 export type App = typeof app;
