@@ -11,15 +11,6 @@ import { initSentry, Sentry } from "./sentry";
 
 initSentry();
 
-db.connect()
-    .then(async () => {
-        console.log("[Server] Database connected");
-        await initializeDefaults();
-    })
-    .catch((err) => {
-        console.error("[Server] Failed to initialize:", err);
-    });
-
 const betterAuthView = (context: Context) => {
     const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
     if (BETTER_AUTH_ACCEPT_METHODS.includes(context.request.method)) {
@@ -115,8 +106,23 @@ const app = new Elysia({ prefix: "/api" })
                 200: t.Object({ status: t.Literal("ok") })
             }
         }
-    )
-    .listen({ port: parseInt(process.env.BACKEND_PORT || "3001") });
+    );
+
+async function startServer() {
+    try {
+        await db.connect();
+        console.log("[Server] Database connected");
+        await initializeDefaults();
+
+        app.listen({ port: parseInt(process.env.BACKEND_PORT || "3001") });
+        console.log(`[Server] Listening on port ${process.env.BACKEND_PORT || "3001"}`);
+    } catch (err) {
+        console.error("[Server] Failed to initialize:", err);
+        process.exit(1);
+    }
+}
+
+startServer();
 
 export type App = typeof app;
 export default app;
