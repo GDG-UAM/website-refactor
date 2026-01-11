@@ -7,6 +7,9 @@ import { auth } from "./lib/auth";
 import { adminRoutes, settingsRoutes, userRoutes, contactRoutes, eventsRoutes, articlesRoutes, miscRoutes, linksRoutes, hackathonRoutes } from "./routes";
 import db from "./lib/db";
 import { initializeDefaults } from "./lib/init";
+import { initSentry, Sentry } from "./sentry";
+
+initSentry();
 
 db.connect()
     .then(async () => {
@@ -28,6 +31,10 @@ const betterAuthView = (context: Context) => {
 };
 
 const app = new Elysia({ prefix: "/api" })
+    .onError(({ error }) => {
+        Sentry.captureException(error);
+        console.error(error);
+    })
     .use(
         cors({
             origin: process.env.FRONTEND_URL || "http://localhost:3001",

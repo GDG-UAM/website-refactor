@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import path from "path";
 import { paraglide } from "@inlang/paraglide-next/plugin";
+import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
     output: "standalone",
@@ -24,10 +25,20 @@ const nextConfig: NextConfig = {
     outputFileTracingRoot: path.join(__dirname, "../../")
 };
 
-export default paraglide({
+const config = paraglide({
     paraglide: {
         project: "./project.inlang",
         outdir: "./src/paraglide"
     },
     ...nextConfig
+});
+
+export default withSentryConfig(config, {
+    silent: true,
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+    widenClientFileUpload: true,
+    tunnelRoute: "/monitoring",
+    disableLogger: true,
+    automaticVercelMonitors: true
 });
