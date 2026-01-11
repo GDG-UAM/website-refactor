@@ -18,10 +18,10 @@ const containerVariants = {
 } as const;
 
 const rowVariants = {
-    hidden: { opacity: 0, x: -10 },
+    hidden: { opacity: 0, y: 10 },
     visible: {
         opacity: 1,
-        x: 0,
+        y: 0,
         transition: {
             type: "spring",
             stiffness: 400,
@@ -30,7 +30,7 @@ const rowVariants = {
     },
     exit: {
         opacity: 0,
-        x: 10,
+        y: 10,
         transition: {
             duration: 0.2
         }
@@ -88,15 +88,29 @@ export function AdminTable<T extends { _id?: string | { toString: () => string }
     noResultsMessage = "No results match your search"
 }: AdminTableProps<T>) {
     const [internalReloading, setInternalReloading] = useState(false);
+    const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+    const [prevPage, setPrevPage] = useState(pagination?.page || 1);
+    const [direction, setDirection] = useState(0);
+
     const showPagination = pagination && pagination.total > pagination.pageSize;
     const totalPages = pagination ? Math.ceil(pagination.total / pagination.pageSize) : 1;
 
-    // Sync internal reloading state with parent loading state
+    // Sync internal reloading state and track pagination direction
     useEffect(() => {
         if (!loading) {
             setInternalReloading(false);
+            if (data.length > 0) {
+                setHasLoadedOnce(true);
+            }
         }
-    }, [loading]);
+
+        if (pagination && pagination.page !== prevPage) {
+            setDirection(pagination.page > prevPage ? 1 : -1);
+            setPrevPage(pagination.page);
+        } else if (!pagination) {
+            setDirection(0);
+        }
+    }, [loading, data.length, pagination?.page, prevPage, pagination]);
 
     const handleReload = () => {
         if (onReload) {
@@ -105,11 +119,26 @@ export function AdminTable<T extends { _id?: string | { toString: () => string }
         }
     };
 
-    const showSpinner = (loading && data.length === 0) || internalReloading;
+    const showSpinner = (loading && !hasLoadedOnce) || internalReloading;
+
+    const pageVariants = {
+        enter: (d: number) => ({
+            x: d > 0 ? 50 : d < 0 ? -50 : 0,
+            opacity: 0
+        }),
+        center: {
+            x: 0,
+            opacity: 1
+        },
+        exit: (d: number) => ({
+            x: d > 0 ? -50 : d < 0 ? 50 : 0,
+            opacity: 0
+        })
+    };
 
     return (
-        <Wrapper initial="hidden" animate="visible" variants={containerVariants} layout>
-            <Controls variants={rowVariants}>
+        <Wrapper>
+            <Controls>
                 {onReload && <ReloadButton onClick={handleReload}>{reloadLabel || "Reload"}</ReloadButton>}
                 {headerActions}
                 {filters?.map((filter) => (
@@ -141,71 +170,88 @@ export function AdminTable<T extends { _id?: string | { toString: () => string }
                 )}
             </Controls>
 
-            <Card variants={rowVariants}>
-                {showSpinner ? (
-                    <div style={{ padding: "40px", textAlign: "center" }}>
-                        <LoadingSpinner />
-                    </div>
-                ) : data.length === 0 ? (
-                    <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>
-                        {search?.value || (filters && filters.some((f) => f.value && f.value !== "all" && f.value !== "")) ? noResultsMessage : emptyMessage}
-                    </div>
-                ) : (
-                    <TableWrapper>
-                        <Table>
-                            <thead>
-                                <tr>
-                                    {columns.map((col) => (
-                                        <th
-                                            key={col.key}
-                                            style={{
-                                                textAlign: col.align || "left",
-                                                width: col.width
-                                            }}
-                                        >
-                                            {col.header}
-                                        </th>
-                                    ))}
-                                    {rowActions && <th style={{ textAlign: "right" }}></th>}
-                                </tr>
-                            </thead>
-                            <motion.tbody>
-                                <AnimatePresence mode="popLayout">
-                                    {data.map((item, idx) => (
-                                        <motion.tr
-                                            key={item._id?.toString() || idx}
-                                            variants={rowVariants}
-                                            initial="hidden"
-                                            animate="visible"
-                                            exit="exit"
-                                            layout
-                                        >
+            <Card style={{ position: "relative", overflow: "hidden" }}>
+                <AnimatePresence mode="popLayout" custom={direction} initial={false}>
+                    <motion.div
+                        key={pagination?.page || "single-page"}
+                        custom={direction}
+                        variants={pageVariants}
+                        initial="enter"
+                        animate="center"
+                        exit="exit"
+                        transition={{
+                            x: { type: "spring", stiffness: 300, damping: 30 },
+                            opacity: { duration: 0.2 }
+                        }}
+                    >
+                        {showSpinner ? (
+                            <div style={{ padding: "40px", textAlign: "center" }}>
+                                <LoadingSpinner />
+                            </div>
+                        ) : data.length === 0 ? (
+                            <div style={{ padding: "40px", textAlign: "center", color: "#666" }}>
+                                {search?.value || (filters && filters.some((f) => f.value && f.value !== "all" && f.value !== ""))
+                                    ? noResultsMessage
+                                    : emptyMessage}
+                            </div>
+                        ) : (
+                            <TableWrapper>
+                                <Table>
+                                    <thead>
+                                        <tr>
                                             {columns.map((col) => (
-                                                <td
+                                                <th
                                                     key={col.key}
                                                     style={{
-                                                        textAlign: col.align || "left"
+                                                        textAlign: col.align || "left",
+                                                        width: col.width
                                                     }}
                                                 >
-                                                    {col.render(item)}
-                                                </td>
+                                                    {col.header}
+                                                </th>
                                             ))}
-                                            {rowActions && (
-                                                <td>
-                                                    <RowActions>{rowActions(item)}</RowActions>
-                                                </td>
-                                            )}
-                                        </motion.tr>
-                                    ))}
-                                </AnimatePresence>
-                            </motion.tbody>
-                        </Table>
-                    </TableWrapper>
-                )}
+                                            {rowActions && <th style={{ textAlign: "right", width: "1px", whiteSpace: "nowrap" }}></th>}
+                                        </tr>
+                                    </thead>
+                                    <motion.tbody>
+                                        <AnimatePresence>
+                                            {data.map((item, idx) => (
+                                                <motion.tr
+                                                    key={item._id?.toString() || idx}
+                                                    variants={rowVariants}
+                                                    initial="hidden"
+                                                    animate="visible"
+                                                    exit="exit"
+                                                    layout="position"
+                                                >
+                                                    {columns.map((col) => (
+                                                        <td
+                                                            key={col.key}
+                                                            style={{
+                                                                textAlign: col.align || "left"
+                                                            }}
+                                                        >
+                                                            {col.render(item)}
+                                                        </td>
+                                                    ))}
+                                                    {rowActions && (
+                                                        <td style={{ width: "1px", whiteSpace: "nowrap" }}>
+                                                            <RowActions>{rowActions(item)}</RowActions>
+                                                        </td>
+                                                    )}
+                                                </motion.tr>
+                                            ))}
+                                        </AnimatePresence>
+                                    </motion.tbody>
+                                </Table>
+                            </TableWrapper>
+                        )}
+                    </motion.div>
+                </AnimatePresence>
             </Card>
 
-            {!loading && (data.length > 0 || pagination) && (
-                <Footer variants={rowVariants}>
+            {(data.length > 0 || pagination) && (
+                <Footer>
                     <div>{pagination ? `Showing ${data.length} of ${pagination.total}` : `Showing ${data.length} items`}</div>
                     {showPagination && (
                         <PaginationControls>

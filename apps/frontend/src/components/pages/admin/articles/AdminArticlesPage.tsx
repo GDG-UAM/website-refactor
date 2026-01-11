@@ -167,20 +167,25 @@ export function AdminArticlesPage({ type }: AdminArticlesPageProps) {
     if (type === "blog") {
         statusOptions.push({ label: m["admin.articles.status.url_only"](), value: "url_only" });
     }
-
     const filters = [
         {
             key: "status",
             label: m["admin.articles.list.columns.status"](),
             value: statusFilter,
-            onChange: (val: string) => setStatusFilter(val as ArticleStatus | "all"),
+            onChange: (val: string) => {
+                setStatusFilter(val as ArticleStatus | "all");
+                setPage(1);
+            },
             options: statusOptions
         },
         {
             key: "sort",
             label: m["admin.articles.list.sort"](),
             value: sortFilter,
-            onChange: (val: string) => setSortFilter(val as ArticleSort),
+            onChange: (val: string) => {
+                setSortFilter(val as ArticleSort);
+                setPage(1);
+            },
             options: [
                 { label: m["admin.articles.list.sort_newest"](), value: "newest" },
                 { label: m["admin.articles.list.sort_oldest"](), value: "oldest" },
@@ -212,7 +217,15 @@ export function AdminArticlesPage({ type }: AdminArticlesPageProps) {
                         </AddButton>
                         {canManage && (
                             <FormControlLabel
-                                control={<Checkbox checked={includeInactive} onChange={(e) => setIncludeInactive(e.target.checked)} />}
+                                control={
+                                    <Checkbox
+                                        checked={includeInactive}
+                                        onChange={(e) => {
+                                            setIncludeInactive(e.target.checked);
+                                            setPage(1);
+                                        }}
+                                    />
+                                }
                                 label={m["admin.articles.list.showDeleted"]()}
                             />
                         )}
@@ -244,7 +257,10 @@ export function AdminArticlesPage({ type }: AdminArticlesPageProps) {
                 )}
                 search={{
                     value: search,
-                    onChange: setSearch,
+                    onChange: (val) => {
+                        setSearch(val);
+                        setPage(1);
+                    },
                     placeholder: m["admin.articles.list.search"]()
                 }}
                 emptyMessage={m["admin.articles.list.noArticles"]()}

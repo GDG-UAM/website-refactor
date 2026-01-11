@@ -156,7 +156,15 @@ export function AdminTracksPage({ hackathonId, hackathon }: AdminTracksPageProps
                         </AddButton>
                         {canManage && (
                             <FormControlLabel
-                                control={<Checkbox checked={includeInactive} onChange={(e) => setIncludeInactive(e.target.checked)} />}
+                                control={
+                                    <Checkbox
+                                        checked={includeInactive}
+                                        onChange={(e) => {
+                                            setIncludeInactive(e.target.checked);
+                                            setPage(1);
+                                        }}
+                                    />
+                                }
                                 label={m["admin.hackathons.tracks.list.showDeleted"]()}
                             />
                         )}
@@ -202,7 +210,10 @@ export function AdminTracksPage({ hackathonId, hackathon }: AdminTracksPageProps
                 }}
                 search={{
                     value: search,
-                    onChange: setSearch,
+                    onChange: (val) => {
+                        setSearch(val);
+                        setPage(1);
+                    },
                     placeholder: m["admin.hackathons.tracks.list.search"]()
                 }}
                 pagination={{

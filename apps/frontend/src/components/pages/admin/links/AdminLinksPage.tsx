@@ -181,7 +181,10 @@ export function AdminLinksPage() {
                 )}
                 search={{
                     value: search,
-                    onChange: setSearch,
+                    onChange: (val) => {
+                        setSearch(val);
+                        setPage(1);
+                    },
                     placeholder: m["admin.links.list.search"]()
                 }}
                 emptyMessage={m["admin.links.list.noLinks"]()}

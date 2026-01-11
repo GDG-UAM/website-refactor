@@ -139,7 +139,10 @@ export function AdminEventsPage() {
             key: "status",
             label: m["admin.events.list.columns.status"](),
             value: statusFilter,
-            onChange: (val: string) => setStatusFilter(val as EventStatus | "all"),
+            onChange: (val: string) => {
+                setStatusFilter(val as EventStatus | "all");
+                setPage(1);
+            },
             options: [
                 { label: "All", value: "all" },
                 { label: "Draft", value: "draft" },
@@ -150,7 +153,10 @@ export function AdminEventsPage() {
             key: "date",
             label: "Date",
             value: dateFilter,
-            onChange: (val: string) => setDateFilter(val as EventDateStatus | "all"),
+            onChange: (val: string) => {
+                setDateFilter(val as EventDateStatus | "all");
+                setPage(1);
+            },
             options: [
                 { label: "All", value: "all" },
                 { label: "Upcoming", value: "upcoming" },
@@ -161,7 +167,10 @@ export function AdminEventsPage() {
             key: "sort",
             label: "Sort",
             value: sortFilter,
-            onChange: (val: string) => setSortFilter(val as EventSort),
+            onChange: (val: string) => {
+                setSortFilter(val as EventSort);
+                setPage(1);
+            },
             options: [
                 { label: "Newest", value: "newest" },
                 { label: "Oldest", value: "oldest" },
@@ -191,7 +200,15 @@ export function AdminEventsPage() {
                         </AddButton>
                         {canManage && (
                             <FormControlLabel
-                                control={<Checkbox checked={includeInactive} onChange={(e) => setIncludeInactive(e.target.checked)} />}
+                                control={
+                                    <Checkbox
+                                        checked={includeInactive}
+                                        onChange={(e) => {
+                                            setIncludeInactive(e.target.checked);
+                                            setPage(1);
+                                        }}
+                                    />
+                                }
                                 label={m["admin.events.list.showDeleted"]()}
                             />
                         )}
@@ -223,7 +240,10 @@ export function AdminEventsPage() {
                 )}
                 search={{
                     value: search,
-                    onChange: setSearch,
+                    onChange: (val) => {
+                        setSearch(val);
+                        setPage(1);
+                    },
                     placeholder: m["admin.events.list.search"]()
                 }}
                 emptyMessage={m["admin.events.list.noEvents"]()}

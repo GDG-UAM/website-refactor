@@ -35,42 +35,16 @@ const AnimatedWord = ({ text, isGoogle = false }: { text: string; isGoogle?: boo
     </TitleWord>
 );
 
+let hasAnimatedInThisSession = false;
+
 export default function HomeHero({ joinHref = "https://gdguam.es/l/gdg-community", aboutHref = "/about", nextSectionId }: HomeHeroProps) {
-    const computedIsFirstLoad = (() => {
-        return true;
-        // if (typeof window === "undefined") return true;
-        // try {
-        //   const TAB_KEY = "homeHeroAnimatedThisTab";
-
-        //   let isReload = false;
-        //   try {
-        //     const nav = performance.getEntriesByType("navigation")[0] as
-        //       | PerformanceNavigationTiming
-        //       | undefined;
-        //     if (nav && nav.type === "reload") isReload = true;
-        //     const navLegacy = performance as unknown as { navigation?: { type?: number } };
-        //     if (!isReload && typeof navLegacy.navigation?.type === "number") {
-        //       isReload = navLegacy.navigation!.type === 1;
-        //     }
-        //   } catch {}
-
-        //   const seenThisTab = sessionStorage.getItem(TAB_KEY) === "true";
-
-        //   return isReload && !seenThisTab;
-        // } catch {
-        //   return false;
-        // }
-    })();
+    const [shouldAnimate] = React.useState(!hasAnimatedInThisSession);
 
     React.useEffect(() => {
-        if (typeof window === "undefined") return;
-        const TAB_KEY = "homeHeroAnimatedThisTab";
-        if (computedIsFirstLoad) {
-            try {
-                sessionStorage.setItem(TAB_KEY, "true");
-            } catch {}
+        if (shouldAnimate) {
+            hasAnimatedInThisSession = true;
         }
-    }, [computedIsFirstLoad]);
+    }, [shouldAnimate]);
 
     const scrollDown = () => {
         if (!nextSectionId) return;
@@ -89,7 +63,7 @@ export default function HomeHero({ joinHref = "https://gdguam.es/l/gdg-community
     };
 
     return (
-        <HeroRoot $suppressAnimation={!computedIsFirstLoad} role="region" aria-label="Hero principal">
+        <HeroRoot $suppressAnimation={!shouldAnimate} role="region" aria-label="Hero principal">
             <Container>
                 <Lockup>
                     <PillDots aria-hidden="true">

@@ -134,7 +134,10 @@ export function AdminHackathonsPage() {
             key: "sort",
             label: "Sort",
             value: sortFilter,
-            onChange: (val: string) => setSortFilter(val as HackathonSort),
+            onChange: (val: string) => {
+                setSortFilter(val as HackathonSort);
+                setPage(1);
+            },
             options: [
                 { label: "Newest", value: "newest" },
                 { label: "Oldest", value: "oldest" },
@@ -164,7 +167,15 @@ export function AdminHackathonsPage() {
                         </AddButton>
                         {canManage && (
                             <FormControlLabel
-                                control={<Checkbox checked={includeInactive} onChange={(e) => setIncludeInactive(e.target.checked)} />}
+                                control={
+                                    <Checkbox
+                                        checked={includeInactive}
+                                        onChange={(e) => {
+                                            setIncludeInactive(e.target.checked);
+                                            setPage(1);
+                                        }}
+                                    />
+                                }
                                 label={m["admin.hackathons.list.showDeleted"]()}
                             />
                         )}
@@ -207,7 +218,10 @@ export function AdminHackathonsPage() {
                 )}
                 search={{
                     value: search,
-                    onChange: setSearch,
+                    onChange: (val) => {
+                        setSearch(val);
+                        setPage(1);
+                    },
                     placeholder: m["admin.hackathons.list.search"]()
                 }}
                 emptyMessage={m["admin.hackathons.list.noHackathons"]()}

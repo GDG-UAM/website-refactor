@@ -62,7 +62,7 @@ const containerVariants = {
 } as const;
 
 const headerVariants = {
-    hidden: { y: -20, opacity: 0 },
+    hidden: { y: 20, opacity: 0 },
     visible: {
         y: 0,
         opacity: 1,
@@ -74,7 +74,7 @@ const headerVariants = {
 } as const;
 
 const sectionVariants = {
-    hidden: { y: 30, opacity: 0 },
+    hidden: { y: 20, opacity: 0 },
     visible: {
         y: 0,
         opacity: 1,
