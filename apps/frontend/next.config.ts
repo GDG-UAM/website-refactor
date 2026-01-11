@@ -38,7 +38,5 @@ export default withSentryConfig(config, {
     org: process.env.SENTRY_ORG,
     project: process.env.SENTRY_PROJECT,
     widenClientFileUpload: true,
-    tunnelRoute: "/monitoring",
-    disableLogger: true,
-    automaticVercelMonitors: true
+    tunnelRoute: "/monitoring"
 });

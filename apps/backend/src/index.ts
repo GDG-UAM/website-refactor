@@ -1,4 +1,4 @@
-import { Elysia, Context } from "elysia";
+import { Elysia, Context, t } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
 import { csrfPlugin } from "./plugins/csrf";
@@ -31,9 +31,11 @@ const betterAuthView = (context: Context) => {
 };
 
 const app = new Elysia({ prefix: "/api" })
-    .onError(({ error }) => {
-        Sentry.captureException(error);
-        console.error(error);
+    .onError(({ error, set }) => {
+        if (![403, 404].includes(set.status as number)) {
+            Sentry.captureException(error);
+            console.error(error);
+        }
     })
     .use(
         cors({
@@ -103,7 +105,17 @@ const app = new Elysia({ prefix: "/api" })
     .use(miscRoutes)
     .use(linksRoutes)
     .use(hackathonRoutes)
-    .get("/health", () => ({ status: "ok" }))
+    .get(
+        "/health",
+        () => {
+            return { status: "ok" as const };
+        },
+        {
+            response: {
+                200: t.Object({ status: t.Literal("ok") })
+            }
+        }
+    )
     .listen({ port: parseInt(process.env.BACKEND_PORT || "3001") });
 
 export type App = typeof app;

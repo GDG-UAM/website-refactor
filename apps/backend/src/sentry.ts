@@ -1,4 +1,4 @@
-import * as Sentry from "@sentry/bun";
+import * as Sentry from "@sentry/node";
 
 export const initSentry = () => {
     if (!process.env.SENTRY_DSN) {

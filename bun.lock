@@ -21,7 +21,7 @@
         "@elysiajs/swagger": "^1.3.1",
         "@gdg-uam/permissions": "workspace:*",
         "@getbrevo/brevo": "^3.0.1",
-        "@sentry/bun": "^10.32.1",
+        "@sentry/node": "^10.32.1",
         "better-auth": "^1.4.10",
         "blurhash": "^2.0.5",
         "elysia": "latest",
@@ -638,8 +638,6 @@
     "@sentry/babel-plugin-component-annotate": ["@sentry/babel-plugin-component-annotate@4.6.1", "", {}, "sha512-aSIk0vgBqv7PhX6/Eov+vlI4puCE0bRXzUG5HdCsHBpAfeMkI8Hva6kSOusnzKqs8bf04hU7s3Sf0XxGTj/1AA=="],
 
     "@sentry/browser": ["@sentry/browser@10.32.1", "", { "dependencies": { "@sentry-internal/browser-utils": "10.32.1", "@sentry-internal/feedback": "10.32.1", "@sentry-internal/replay": "10.32.1", "@sentry-internal/replay-canvas": "10.32.1", "@sentry/core": "10.32.1" } }, "sha512-NPNCXTZ05ZGTFyJdKNqjykpFm+urem0ebosILQiw3C4BxNVNGH4vfYZexyl6prRhmg91oB6GjVNiVDuJiap1gg=="],
-
-    "@sentry/bun": ["@sentry/bun@10.32.1", "", { "dependencies": { "@sentry/core": "10.32.1", "@sentry/node": "10.32.1" } }, "sha512-Ksfl+HemrWkVShGX2UU7QUXMp3apgjNWR6NxDroHvdbEKfvdfEWJ+fcK/i/xtd4z5lfUt66C1OCJLivQf/gj4Q=="],
 
     "@sentry/bundler-plugin-core": ["@sentry/bundler-plugin-core@4.6.1", "", { "dependencies": { "@babel/core": "^7.18.5", "@sentry/babel-plugin-component-annotate": "4.6.1", "@sentry/cli": "^2.57.0", "dotenv": "^16.3.1", "find-up": "^5.0.0", "glob": "^10.5.0", "magic-string": "0.30.8", "unplugin": "1.0.1" } }, "sha512-WPeRbnMXm927m4Kr69NTArPfI+p5/34FHftdCRI3LFPMyhZDzz6J3wLy4hzaVUgmMf10eLzmq2HGEMvpQmdynA=="],
 
