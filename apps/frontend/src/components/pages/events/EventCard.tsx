@@ -27,6 +27,19 @@ type EventCardProps = {
     onShare?: (e: EventItem) => void;
 };
 
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            type: "spring",
+            stiffness: 260,
+            damping: 20
+        }
+    }
+} as const;
+
 export function EventCard({ event, skeleton, onShare }: EventCardProps) {
     const href = !skeleton && event ? event.blogUrl || `/events/${event.slug}` : "#";
     const validBlogUrl = !event?.blogUrl || !event?.blogUrl.startsWith("#");
@@ -39,7 +52,12 @@ export function EventCard({ event, skeleton, onShare }: EventCardProps) {
     }, [event?.imageBlurHash]);
 
     return (
-        <Card $skeleton={skeleton}>
+        <Card
+            $skeleton={skeleton}
+            variants={itemVariants}
+            whileHover={!skeleton ? { scale: 1.02, boxShadow: "0 12px 40px rgba(0, 0, 0, 0.15)" } : {}}
+            whileTap={!skeleton ? { scale: 0.98 } : {}}
+        >
             <ImageWrapper $skeleton={skeleton}>
                 {!skeleton && event ? (
                     <Link href={href} aria-label={event.title} style={{ display: "block", width: "100%", height: "100%" }}>

@@ -4,6 +4,29 @@ import { AdminNavigationTypes, AdminNavigationButton, OpenLinkButton } from "#/c
 import { useRouter } from "next/navigation";
 import { Container, Content, Grid, Title, Category, CategoryTitle, ButtonList, ButtonRow } from "./AdminNavigation.styles";
 
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+} as const;
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            type: "spring",
+            stiffness: 300,
+            damping: 24
+        }
+    }
+} as const;
+
 interface AdminContentProps {
     title: string;
     categories: {
@@ -27,12 +50,12 @@ export default function AdminContent({ title, categories }: AdminContentProps) {
 
     return (
         <Container>
-            <Content>
+            <Content initial="hidden" animate="visible" variants={containerVariants}>
                 <Title>{title}</Title>
 
                 <Grid>
                     {categories.map((category) => (
-                        <Category key={"category-" + category.title}>
+                        <Category key={"category-" + category.title} variants={itemVariants}>
                             <CategoryTitle>{category.title}</CategoryTitle>
                             <ButtonList key={"button-list-" + category.title}>
                                 {category.buttons.map((button) =>

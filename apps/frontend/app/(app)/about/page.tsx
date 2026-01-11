@@ -8,46 +8,82 @@ import { api } from "#/lib/eden";
 import TeamList from "#/components/pages/about/TeamList";
 import { RichText } from "#/components/RichText";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 const PageContainer = styled.div`
     min-height: 100vh;
     padding: 40px 32px 80px;
 `;
 
-const ContentWrapper = styled.div`
+const ContentWrapper = styled(motion.div)`
     max-width: 1280px;
     margin: 0 auto;
 `;
 
-const Section = styled.section`
+const Section = styled(motion.section)`
     margin-bottom: 72px;
 `;
 
-const MainTitle = styled.h1`
+const MainTitle = styled(motion.h1)`
     font-size: 2rem;
     margin-bottom: 12px;
     margin-top: 0;
 `;
 
-const MainSubtitle = styled.h2`
+const MainSubtitle = styled(motion.h2)`
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 24px;
     color: var(--google-light-gray);
 `;
 
-const StyledParagraph = styled.p`
+const StyledParagraph = styled(motion.p)`
     font-size: 1.1rem;
     line-height: 1.7;
     color: var(--google-dark-gray);
     max-width: 900px;
 `;
 
-const Grid = styled.div`
+const Grid = styled(motion.div)`
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 24px;
 `;
+
+// Helper variants
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.15
+        }
+    }
+} as const;
+
+const headerVariants = {
+    hidden: { y: -20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            duration: 0.6,
+            ease: "easeOut"
+        }
+    }
+} as const;
+
+const sectionVariants = {
+    hidden: { y: 30, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            duration: 0.6,
+            ease: "easeOut"
+        }
+    }
+} as const;
 
 const SectionTitle = styled.h3`
     font-size: 1.75rem;
@@ -145,9 +181,9 @@ export default function AboutPage() {
 
     return (
         <PageContainer>
-            <ContentWrapper>
-                <MainTitle>{m["about.title"]()}</MainTitle>
-                <MainSubtitle data-no-ai-translate>
+            <ContentWrapper initial="hidden" animate="visible" variants={containerVariants}>
+                <MainTitle variants={headerVariants}>{m["about.title"]()}</MainTitle>
+                <MainSubtitle variants={headerVariants} data-no-ai-translate>
                     <RichText
                         text={m["about.subtitle"]()}
                         components={{
@@ -156,13 +192,13 @@ export default function AboutPage() {
                         }}
                     />
                 </MainSubtitle>
-                <StyledParagraph>{m["about.intro"]()}</StyledParagraph>
+                <StyledParagraph variants={headerVariants}>{m["about.intro"]()}</StyledParagraph>
 
                 <Divider />
 
-                <Section>
+                <Section initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
                     <SectionTitle style={{ color: "var(--google-blue)" }}>{m["about.missionTitle"]()}</SectionTitle>
-                    <Grid>
+                    <Grid variants={containerVariants}>
                         {Array.from({ length: 4 }, (_, index) => (
                             <InfoCard key={index} color={missionColors[index]}>
                                 {/* @ts-ignore */}
@@ -176,9 +212,9 @@ export default function AboutPage() {
 
                 <Divider />
 
-                <Section>
+                <Section initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
                     <SectionTitle style={{ color: "var(--google-red)" }}>{m["about.whatWeDoTitle"]()}</SectionTitle>
-                    <Grid>
+                    <Grid variants={containerVariants}>
                         {Array.from({ length: 4 }, (_, index) => (
                             <InfoCard key={index} color={whatWeDoColors[index]}>
                                 {/* @ts-ignore */}
@@ -192,14 +228,14 @@ export default function AboutPage() {
 
                 <Divider />
 
-                <Section>
+                <Section initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
                     <SectionTitle style={{ color: "var(--google-yellow)" }}>{m["about.visionTitle"]()}</SectionTitle>
                     <StyledParagraph>{m["about.vision"]()}</StyledParagraph>
                 </Section>
 
                 <Divider />
 
-                <Section>
+                <Section initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
                     <SectionTitle style={{ color: "var(--google-green)" }}>{m["about.historyTitle"]()}</SectionTitle>
                     <StyledParagraph>{m["about.history"]()}</StyledParagraph>
                     <Disclaimer
@@ -222,7 +258,7 @@ export default function AboutPage() {
 
                 <Divider />
 
-                <Section>
+                <Section initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
                     <SectionTitle style={{ color: "var(--google-red)" }}>{m["about.connectTitle"]()}</SectionTitle>
                     <StyledParagraph>{m["about.connect"]()}</StyledParagraph>
                     <SocialsContainer>
@@ -232,7 +268,7 @@ export default function AboutPage() {
 
                 <Divider />
 
-                <Section>
+                <Section initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.2 }} variants={sectionVariants}>
                     {/* Inline TeamSection with skeletons */}
                     <SectionTitle style={{ color: "var(--google-yellow)" }}>{m["about.teamTitle"]()}</SectionTitle>
                     <TeamContainer>

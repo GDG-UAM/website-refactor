@@ -1,22 +1,35 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Outer, LayoutShell, ContentPanel, Heading, Sub } from "./SettingsClient.styles";
 import SettingsSidebar, { SettingsCategory } from "#/components/pages/settings/SettingsSidebar";
 import * as m from "#/paraglide/messages";
-import dynamic from "next/dynamic";
 import { Box } from "@mui/material";
 import { useSettings } from "#/providers/SettingsProvider";
 
-// Lazy-load sections for better performance (client-only UI)
-const GeneralSection = dynamic(() => import("#/components/pages/settings/sections/GeneralSection"), { ssr: false });
-const ProfileSection = dynamic(() => import("#/components/pages/settings/sections/ProfileSection"), { ssr: false });
-const PrivacySection = dynamic(() => import("#/components/pages/settings/sections/PrivacySection"), { ssr: false });
-// const GamesSection = dynamic(() => import("#/components/pages/settings/sections/GamesSection"), { ssr: false });
-// const EventsSection = dynamic(() => import("#/components/pages/settings/sections/EventsSection"), { ssr: false });
-const NotificationsSection = dynamic(() => import("#/components/pages/settings/sections/NotificationSection"), { ssr: false });
-const AccessibilitySection = dynamic(() => import("#/components/pages/settings/sections/AccesibilitySection"), { ssr: false });
+import GeneralSection from "#/components/pages/settings/sections/GeneralSection";
+import ProfileSection from "#/components/pages/settings/sections/ProfileSection";
+import PrivacySection from "#/components/pages/settings/sections/PrivacySection";
+import NotificationsSection from "#/components/pages/settings/sections/NotificationSection";
+import AccessibilitySection from "#/components/pages/settings/sections/AccesibilitySection";
+
+import { motion, AnimatePresence } from "framer-motion";
+
+const variants = {
+    enter: (direction: number) => ({
+        y: direction > 0 ? 20 : -20,
+        opacity: 0
+    }),
+    center: {
+        y: 0,
+        opacity: 1
+    },
+    exit: (direction: number) => ({
+        y: direction > 0 ? -20 : 20,
+        opacity: 0
+    })
+};
 
 // ---------------- Root ----------------
 interface SettingsClientProps {
@@ -28,6 +41,7 @@ const SettingsClient: React.FC<SettingsClientProps> = ({ categories }) => {
     const visibleCategories = useMemo(() => categories.filter((c) => !c.hidden), [categories]);
     const restoredRef = useRef(false);
     const [active, setActive] = useState<string>("");
+    const [direction, setDirection] = useState(0);
     const router = useRouter();
     const searchParams = useSearchParams();
     const tabFromUrl = searchParams?.get("tab") || undefined;
@@ -49,6 +63,13 @@ const SettingsClient: React.FC<SettingsClientProps> = ({ categories }) => {
         } catch {}
         if (visibleCategories[0]) setActive(visibleCategories[0].id);
     }, [visibleCategories, tabFromUrl]);
+
+    const handleCategoryChange = (newId: string) => {
+        const newIndex = visibleCategories.findIndex((c) => c.id === newId);
+        const currentIndex = visibleCategories.findIndex((c) => c.id === active);
+        setDirection(newIndex > currentIndex ? 1 : -1);
+        setActive(newId);
+    };
 
     // persist to localStorage
     useEffect(() => {
@@ -102,17 +123,35 @@ const SettingsClient: React.FC<SettingsClientProps> = ({ categories }) => {
     return (
         <Outer>
             <LayoutShell>
-                <SettingsSidebar categories={visibleCategories} active={active} onChange={setActive} />
+                <SettingsSidebar categories={visibleCategories} active={active} onChange={handleCategoryChange} />
                 <ContentPanel>
                     <Heading>{m["settings.page.heading"]()}</Heading>
                     <Sub>{m["settings.page.subtitle"]()}</Sub>
                     {!activeCategory && <></>}
-                    {activeCategory && (
-                        <Box>
-                            <h2>{activeCategory.label}</h2>
-                            <Box mt={2}>{renderActive()}</Box>
-                        </Box>
-                    )}
+                    <div style={{ overflow: "hidden", margin: "-10px", padding: "10px", position: "relative" }}>
+                        <AnimatePresence mode="popLayout" custom={direction}>
+                            {activeCategory && (
+                                <motion.div
+                                    key={activeCategory.id}
+                                    custom={direction}
+                                    variants={variants}
+                                    initial="enter"
+                                    animate="center"
+                                    exit="exit"
+                                    transition={{
+                                        y: { type: "spring", stiffness: 300, damping: 30 },
+                                        opacity: { duration: 0.2 }
+                                    }}
+                                    style={{ transformOrigin: "top center", width: "calc(100% - 20px)" }}
+                                >
+                                    <Box>
+                                        <h2>{activeCategory.label}</h2>
+                                        <Box mt={2}>{renderActive()}</Box>
+                                    </Box>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </ContentPanel>
             </LayoutShell>
         </Outer>

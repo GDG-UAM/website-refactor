@@ -5,6 +5,8 @@ export const Right = styled.div`
     border-radius: 16px;
     padding: 18px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    position: relative;
 `;
 
 export const FormTitle = styled.h2`

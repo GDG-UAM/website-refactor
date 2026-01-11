@@ -1,12 +1,13 @@
 import styled from "styled-components";
+import { motion } from "framer-motion";
 
-export const Wrapper = styled.div`
+export const Wrapper = styled(motion.div)`
     display: grid;
     gap: 12px;
     padding: 12px;
 `;
 
-export const Card = styled.div`
+export const Card = styled(motion.div)`
     background: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 14px;
@@ -32,7 +33,7 @@ export const TableWrapper = styled.div`
     }
 `;
 
-export const Controls = styled.div`
+export const Controls = styled(motion.div)`
     display: flex;
     gap: 8px;
     align-items: center;
@@ -79,7 +80,7 @@ export const Table = styled.table`
     }
 `;
 
-export const Footer = styled.div`
+export const Footer = styled(motion.div)`
     display: flex;
     justify-content: space-between;
     align-items: center;

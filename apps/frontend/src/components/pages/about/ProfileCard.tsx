@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import styled, { keyframes, css } from "styled-components";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,7 +14,7 @@ const ProfileCardLink = styled(Link)`
     }
 `;
 
-const ProfileCardContainer = styled.div<{ $skeleton?: boolean }>`
+const ProfileCardContainer = styled(motion.div)<{ $skeleton?: boolean }>`
     background: var(--color-white);
     border-radius: 16px;
     padding: 24px;
@@ -23,27 +24,24 @@ const ProfileCardContainer = styled.div<{ $skeleton?: boolean }>`
     width: 200px;
     border: 2px solid transparent;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease,
-        border 0.3s ease;
-
-    ${({ $skeleton }) =>
-        !$skeleton &&
-        css`
-            &:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-            }
-        `}
 
     @media (max-width: 768px) {
         margin: 0;
-        &:hover {
-            transform: none;
-        }
     }
 `;
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            type: "spring",
+            stiffness: 260,
+            damping: 20
+        }
+    }
+} as const;
 
 const shimmer = keyframes`
   0% {
@@ -121,7 +119,13 @@ export default function ProfileCard({ id, name, image, showProfilePublicly, skel
 
     const content = (
         <>
-            <ProfileCardContainer $skeleton={skeleton} data-no-ai-translate>
+            <ProfileCardContainer
+                $skeleton={skeleton}
+                data-no-ai-translate
+                variants={itemVariants}
+                whileHover={!skeleton ? { y: -3, boxShadow: "0 8px 20px rgba(0, 0, 0, 0.08)" } : {}}
+                whileTap={!skeleton ? { scale: 0.98 } : {}}
+            >
                 <ProfileImageContainer $skeleton={skeleton}>
                     {skeleton ? null : <Image src={image || "/logo/196x196.webp"} alt={name || ""} fill sizes="72px" style={{ objectFit: "cover" }} />}
                 </ProfileImageContainer>

@@ -83,9 +83,6 @@ export const SectionDivider = styled.div`
 
 export const LocalizedSection = styled.div`
     grid-column: span 12;
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: 20px;
 `;
 
 export const LocaleSelector = styled.div`

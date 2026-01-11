@@ -12,7 +12,8 @@ import {
     RestrictedPill,
     ItemButton,
     IconSlot,
-    Label
+    Label,
+    ActiveIndicator
 } from "./SettingsSidebar.styles";
 import { CollapsableMenuButton } from "#/components/Buttons";
 import * as m from "#/paraglide/messages";
@@ -63,6 +64,7 @@ const SettingsSidebar: React.FC<SidebarProps> = ({ categories, active, onChange 
                                 aria-current={isActive ? "page" : undefined}
                                 onClick={() => handleSelect(cat.id)}
                             >
+                                {isActive && <ActiveIndicator layoutId="active-settings-tab" />}
                                 <IconSlot $active={isActive}>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960">
                                         <path d={cat.iconPath} />

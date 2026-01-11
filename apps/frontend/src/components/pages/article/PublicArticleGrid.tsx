@@ -1,7 +1,6 @@
 "use client";
 
 import { api } from "#/lib/eden";
-
 import { useEffect, useMemo, useState, useRef, useCallback } from "react";
 import { ArticleCard } from "./ArticleCard";
 import { GridViewButton, ListViewButton, SearchButton } from "#/components/Buttons";
@@ -10,6 +9,17 @@ import InputAdornment from "@mui/material/InputAdornment";
 import { Article, ArticleType, useArticles } from "#/providers/ArticlesProvider";
 import { PageWrapper, HeaderGrid, Title, Controls, Grid, ListContainer } from "./PublicArticleGrid.styles";
 import { m } from "#/paraglide/messages";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+} as const;
 
 export default function PublicArticleGrid({ type }: { type: ArticleType }) {
     const fetchOnType = true;
@@ -171,20 +181,25 @@ export default function PublicArticleGrid({ type }: { type: ArticleType }) {
             </HeaderGrid>
 
             {/* Preserve previous articles while loading; only show skeletons when we have none and are not searching */}
-            {isLoading && !query.trim() && viewLoaded && articles.length === 0 && view === "grid" && (
-                <Grid>
-                    {Array.from({ length: 6 }).map((_, i) => (
-                        <ArticleCard key={`skeleton-${i}`} skeleton />
+            <AnimatePresence mode="popLayout">
+                {isLoading &&
+                    !query.trim() &&
+                    viewLoaded &&
+                    articles.length === 0 &&
+                    (view === "grid" ? (
+                        <Grid as={motion.div} key="grid-skeleton" initial="hidden" animate="visible" variants={containerVariants}>
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <ArticleCard key={`skeleton-${i}`} skeleton />
+                            ))}
+                        </Grid>
+                    ) : (
+                        <ListContainer as={motion.div} key="list-skeleton" initial="hidden" animate="visible" variants={containerVariants}>
+                            {Array.from({ length: 3 }).map((_, i) => (
+                                <ArticleCard key={`skeleton-${i}`} skeleton />
+                            ))}
+                        </ListContainer>
                     ))}
-                </Grid>
-            )}
-            {isLoading && !query.trim() && viewLoaded && articles.length === 0 && view === "list" && (
-                <ListContainer>
-                    {Array.from({ length: 3 }).map((_, i) => (
-                        <ArticleCard key={`skeleton-${i}`} skeleton />
-                    ))}
-                </ListContainer>
-            )}
+            </AnimatePresence>
 
             {/* {error && <p style={{ color: "var(--google-error-red)" }}>Error: {error}</p>} */}
             {error && <p>{m[`${type}.noArticlesToShow`]()}</p>}
@@ -192,21 +207,35 @@ export default function PublicArticleGrid({ type }: { type: ArticleType }) {
             {!isLoading && !error && sorted.length === 0 && <p>{m[`${type}.noArticlesToShow`]()}</p>}
 
             {(!isLoading || query.trim()) && !error && viewLoaded && (
-                <>
+                <AnimatePresence mode="popLayout">
                     {view === "grid" ? (
-                        <Grid>
+                        <Grid
+                            as={motion.div}
+                            key={`grid-${type}-${query}`}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.05 }}
+                            variants={containerVariants}
+                        >
                             {sorted.map((article) => (
                                 <ArticleCard key={article.slug} article={article} type={type} />
                             ))}
                         </Grid>
                     ) : (
-                        <ListContainer>
+                        <ListContainer
+                            as={motion.div}
+                            key={`list-${type}-${query}`}
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ once: true, amount: 0.05 }}
+                            variants={containerVariants}
+                        >
                             {sorted.map((article) => (
                                 <ArticleCard key={article.slug} article={article} type={type} />
                             ))}
                         </ListContainer>
                     )}
-                </>
+                </AnimatePresence>
             )}
         </PageWrapper>
     );

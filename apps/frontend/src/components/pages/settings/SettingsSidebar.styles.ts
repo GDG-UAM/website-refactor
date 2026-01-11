@@ -135,10 +135,12 @@ export const RestrictedPill = styled.span<{ $active?: boolean }>`
         box-shadow 0.2s ease;
 `;
 
+import { motion } from "framer-motion";
+
 export const ItemButton = styled.button<{ $active?: boolean }>`
     appearance: none;
     border: none;
-    background: ${({ $active }) => ($active ? "var(--settings-sidebar-item-bg-active)" : "transparent")};
+    background: transparent;
     color: ${({ $active }) => ($active ? "var(--settings-sidebar-item-text-active)" : "var(--settings-sidebar-item-text-inactive)")};
     display: flex;
     align-items: center;
@@ -151,16 +153,29 @@ export const ItemButton = styled.button<{ $active?: boolean }>`
     font: inherit;
     font-size: 0.92rem;
     line-height: 1.1;
-    transition:
-        background-color 0.15s ease-in-out,
-        color 0.15s ease-in-out;
+    transition: color 0.15s ease-in-out;
+    position: relative;
+
     &:hover {
-        background: ${({ $active }) => ($active ? "var(--settings-sidebar-item-bg-hover-active)" : "var(--settings-sidebar-item-bg-hover-inactive)")};
+        background: ${({ $active }) => ($active ? "transparent" : "var(--settings-sidebar-item-bg-hover-inactive)")};
     }
     &:focus-visible {
         outline: none;
-        background: ${({ $active }) => ($active ? "var(--settings-sidebar-item-bg-hover-active)" : "var(--settings-sidebar-item-bg-hover-inactive)")};
+        background: ${({ $active }) => ($active ? "transparent" : "var(--settings-sidebar-item-bg-hover-inactive)")};
     }
+
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+`;
+
+export const ActiveIndicator = styled(motion.div)`
+    position: absolute;
+    inset: 0;
+    background: var(--settings-sidebar-item-bg-active);
+    border-radius: 10px;
+    z-index: 0;
 `;
 
 export const IconSlot = styled.span<{ $active?: boolean }>`

@@ -21,6 +21,7 @@ import {
 import { SaveButton, CancelButton, PlainButton } from "#/components/Buttons";
 import * as m from "#/paraglide/messages";
 import { locales } from "#/paraglide/runtime";
+import { motion, AnimatePresence } from "framer-motion";
 import CustomMarkdownTextArea from "#/components/markdown/CustomMarkdownTextArea";
 import RenderMarkdown from "#/components/markdown/RenderMarkdown";
 import { AdminUserSelector } from "./AdminUserSelector";
@@ -72,6 +73,21 @@ interface AdminFormBuilderProps<T> {
     title?: string;
 }
 
+const localeVariants = {
+    enter: (direction: number) => ({
+        x: direction > 0 ? 30 : -30,
+        opacity: 0
+    }),
+    center: {
+        x: 0,
+        opacity: 1
+    },
+    exit: (direction: number) => ({
+        x: direction > 0 ? -30 : 30,
+        opacity: 0
+    })
+} as const;
+
 export function AdminFormBuilder<T extends Record<string, any>>({
     id: resourceId,
     resource,
@@ -91,8 +107,24 @@ export function AdminFormBuilder<T extends Record<string, any>>({
     title
 }: AdminFormBuilderProps<T>) {
     const { ability } = usePermissions();
-    const [activeLocale, setActiveLocale] = useState<(typeof locales)[number]>(locales[0]);
+    const sortedLocales = [...locales].sort((a, b) => {
+        if (a === "es") return -1;
+        if (b === "es") return 1;
+        return 0;
+    });
+    const [activeLocale, setActiveLocale] = useState<(typeof locales)[number]>(sortedLocales[0]);
+    const [prevLocale, setPrevLocale] = useState<(typeof locales)[number]>(sortedLocales[0]);
     const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
+
+    const activeIndex = sortedLocales.indexOf(activeLocale);
+    const prevIndex = sortedLocales.indexOf(prevLocale);
+    const direction = activeIndex > prevIndex ? 1 : -1;
+
+    const handleLocaleChange = (newLocale: (typeof locales)[number]) => {
+        if (newLocale === activeLocale) return;
+        setPrevLocale(activeLocale);
+        setActiveLocale(newLocale);
+    };
 
     const subject = resourceId ? `${resource}.${resourceId}` : resource;
     const canUpdateResource = action === "update" ? ability.canUpdateAnyField(subject, data) : true;
@@ -115,7 +147,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
     localizedFields?.forEach((f) => {
         if (!f.required) return;
         const base = getBaseLabel(f.label);
-        locales.forEach((locale) => {
+        sortedLocales.forEach((locale) => {
             const val = data[f.name]?.[locale];
             if (!val || (typeof val === "string" && val.trim() === "")) {
                 if (!missingFieldGroups[base]) missingFieldGroups[base] = [];
@@ -358,7 +390,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                     <SectionDivider />
                     <LocaleSelector>
                         <LocaleLabel>{m["admin.form.languages"]?.()}</LocaleLabel>
-                        {locales.map((locale) => {
+                        {sortedLocales.map((locale) => {
                             const shortLangName = getShortLanguageName(locale);
 
                             return (
@@ -367,7 +399,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                                     type="button"
                                     slim
                                     color={activeLocale === locale ? "primary" : "default"}
-                                    onClick={() => setActiveLocale(locale)}
+                                    onClick={() => handleLocaleChange(locale)}
                                 >
                                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                                         <img
@@ -381,7 +413,30 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             );
                         })}
                     </LocaleSelector>
-                    <LocalizedSection>{localizedFields.map((f) => renderField(f, true))}</LocalizedSection>
+                    <LocalizedSection style={{ position: "relative" }}>
+                        <AnimatePresence mode="popLayout" custom={direction}>
+                            <motion.div
+                                key={activeLocale}
+                                custom={direction}
+                                variants={localeVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{
+                                    x: { type: "spring", stiffness: 350, damping: 30 },
+                                    opacity: { duration: 0.2 }
+                                }}
+                                style={{
+                                    width: "100%",
+                                    display: "grid",
+                                    gridTemplateColumns: "repeat(12, 1fr)",
+                                    gap: "30px"
+                                }}
+                            >
+                                {localizedFields.map((f) => renderField(f, true))}
+                            </motion.div>
+                        </AnimatePresence>
+                    </LocalizedSection>
                 </>
             )}
 

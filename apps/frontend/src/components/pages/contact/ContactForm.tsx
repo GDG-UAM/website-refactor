@@ -51,8 +51,28 @@ interface ContactFormProps {
     rightRef?: React.RefObject<HTMLDivElement>;
 }
 
+import { AnimatePresence, motion } from "framer-motion";
+
+const formVariants = {
+    enter: (direction: number) => ({
+        x: direction * 50,
+        opacity: 0
+    }),
+    center: {
+        zIndex: 1,
+        x: 0,
+        opacity: 1
+    },
+    exit: (direction: number) => ({
+        zIndex: 0,
+        x: direction * -50,
+        opacity: 0
+    })
+};
+
 export default function ContactForm({ gridRef, rightRef }: ContactFormProps) {
     const [mode, setMode] = useState<Mode>("personal");
+    const [direction, setDirection] = useState(0);
 
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
@@ -66,6 +86,12 @@ export default function ContactForm({ gridRef, rightRef }: ContactFormProps) {
     const [touchedOrgName, setTouchedOrgName] = useState(false);
 
     const [submitting, setSubmitting] = useState(false);
+
+    const handleModeChange = (newMode: Mode) => {
+        if (newMode === mode) return;
+        setDirection(newMode === "sponsor" ? 1 : -1);
+        setMode(newMode);
+    };
 
     // Update grid min-height based on right section height
     useEffect(() => {
@@ -148,7 +174,7 @@ export default function ContactForm({ gridRef, rightRef }: ContactFormProps) {
                     slim
                     style={{ fontSize: "0.95rem" }}
                     color={mode === "personal" ? "primary" : "default"}
-                    onClick={() => setMode("personal")}
+                    onClick={() => handleModeChange("personal")}
                 >
                     {m["contact.personal"]()}
                 </PlainButton>
@@ -157,163 +183,185 @@ export default function ContactForm({ gridRef, rightRef }: ContactFormProps) {
                     slim
                     style={{ fontSize: "0.95rem" }}
                     color={mode === "sponsor" ? "primary" : "default"}
-                    onClick={() => setMode("sponsor")}
+                    onClick={() => handleModeChange("sponsor")}
                 >
                     {m["contact.sponsor"]()}
                 </PlainButton>
             </Toggle>
 
-            <FormTitle>{mode === "personal" ? m["contact.formTitlePersonal"]() : m["contact.formTitleSponsor"]()}</FormTitle>
-            <StyledForm onSubmit={handleSubmit}>
-                {mode === "personal" ? (
-                    <>
-                        <div style={{ display: "flex", gap: 8 }}>
-                            <TextField
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
-                                onBlur={() => setTouchedName(true)}
-                                label={m["contact.fullName"]()}
-                                fullWidth
-                                required
-                                error={touchedName && personalInvalid.name}
-                                helperText={touchedName && personalInvalid.name ? m["contact.required"]() : " "}
-                                placeholder={m["contact.namePlaceholder"]()}
-                                slotProps={{
-                                    input: {
-                                        startAdornment: <Icon icon="user" />
+            <AnimatePresence mode="popLayout" custom={direction} initial={false}>
+                <motion.div
+                    key={mode}
+                    custom={direction}
+                    variants={formVariants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                        x: { type: "spring", stiffness: 350, damping: 30 },
+                        opacity: { duration: 0.2 }
+                    }}
+                    style={{ width: "100%" }}
+                >
+                    <FormTitle>{mode === "personal" ? m["contact.formTitlePersonal"]() : m["contact.formTitleSponsor"]()}</FormTitle>
+                    <StyledForm onSubmit={handleSubmit}>
+                        {mode === "personal" ? (
+                            <>
+                                <div style={{ display: "flex", gap: 8 }}>
+                                    <TextField
+                                        value={name}
+                                        onChange={(e) => setName(e.target.value)}
+                                        onBlur={() => setTouchedName(true)}
+                                        label={m["contact.fullName"]()}
+                                        fullWidth
+                                        required
+                                        error={touchedName && personalInvalid.name}
+                                        helperText={touchedName && personalInvalid.name ? m["contact.required"]() : " "}
+                                        placeholder={m["contact.namePlaceholder"]()}
+                                        slotProps={{
+                                            input: {
+                                                startAdornment: <Icon icon="user" />
+                                            }
+                                        }}
+                                    />
+                                </div>
+
+                                <TextField
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onBlur={() => setTouchedEmail(true)}
+                                    label={m["contact.email"]()}
+                                    type="email"
+                                    fullWidth
+                                    required
+                                    error={touchedEmail && personalInvalid.email}
+                                    helperText={
+                                        touchedEmail && personalInvalid.email
+                                            ? email.trim() === ""
+                                                ? m["contact.required"]()
+                                                : m["contact.validEmail"]()
+                                            : " "
                                     }
-                                }}
-                            />
+                                    placeholder={m["contact.emailPlaceholder"]()}
+                                    slotProps={{
+                                        input: {
+                                            startAdornment: <Icon icon="email" />
+                                        }
+                                    }}
+                                />
+
+                                <TextField
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    onBlur={() => setTouchedMessage(true)}
+                                    label={m["contact.message"]()}
+                                    multiline
+                                    rows={6}
+                                    fullWidth
+                                    required
+                                    error={touchedMessage && personalInvalid.message}
+                                    helperText={touchedMessage && personalInvalid.message ? m["contact.required"]() : " "}
+                                />
+                            </>
+                        ) : (
+                            <>
+                                <TextField
+                                    value={orgName}
+                                    onChange={(e) => setOrgName(e.target.value)}
+                                    onBlur={() => setTouchedOrgName(true)}
+                                    label={m["contact.organization"]()}
+                                    fullWidth
+                                    required
+                                    error={touchedOrgName && invalidOrgName}
+                                    helperText={touchedOrgName && invalidOrgName ? m["contact.required"]() : " "}
+                                    placeholder={m["contact.organizationPlaceholder"]()}
+                                    slotProps={{
+                                        input: {
+                                            startAdornment: <Icon icon="organization" />
+                                        }
+                                    }}
+                                />
+                                <TextField
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    onBlur={() => setTouchedName(true)}
+                                    label={m["contact.fullName"]()}
+                                    fullWidth
+                                    required
+                                    error={touchedName && invalidName}
+                                    helperText={touchedName && invalidName ? m["contact.required"]() : " "}
+                                    placeholder={m["contact.namePlaceholder"]()}
+                                    slotProps={{
+                                        input: {
+                                            startAdornment: <Icon icon="user" />
+                                        }
+                                    }}
+                                />
+                                <TextField
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    onBlur={() => setTouchedEmail(true)}
+                                    label={m["contact.email"]()}
+                                    type="email"
+                                    fullWidth
+                                    required
+                                    error={touchedEmail && invalidEmail}
+                                    helperText={
+                                        touchedEmail && invalidEmail ? (email.trim() === "" ? m["contact.required"]() : m["contact.validEmail"]()) : " "
+                                    }
+                                    placeholder={m["contact.emailPlaceholder"]()}
+                                    slotProps={{
+                                        input: {
+                                            startAdornment: <Icon icon="email" />
+                                        }
+                                    }}
+                                />
+                                <TextField
+                                    value={website}
+                                    onChange={(e) => setWebsite(e.target.value)}
+                                    label={m["contact.website"]()}
+                                    fullWidth
+                                    helperText={" "}
+                                    placeholder={m["contact.websitePlaceholder"]()}
+                                    slotProps={{
+                                        input: {
+                                            startAdornment: <Icon icon="website" />
+                                        }
+                                    }}
+                                />
+                                <TextField
+                                    value={message}
+                                    onChange={(e) => setMessage(e.target.value)}
+                                    onBlur={() => setTouchedMessage(true)}
+                                    label={m["contact.message"]()}
+                                    multiline
+                                    rows={6}
+                                    fullWidth
+                                    required
+                                    error={touchedMessage && invalidMessage}
+                                    helperText={touchedMessage && invalidMessage ? m["contact.required"]() : " "}
+                                />
+                            </>
+                        )}
+
+                        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+                            <SendButton
+                                fullWidth
+                                confirmationDuration={500}
+                                showSpinner
+                                onClick={handleSubmit}
+                                disabled={submitting || fieldsMissing}
+                                tooltip={sendTooltip}
+                                childrenSent={m["contact.sent"]()}
+                                tooltipSent={null}
+                                iconSwitchDelay={5000}
+                            >
+                                {m["contact.send"]()}
+                            </SendButton>
                         </div>
-
-                        <TextField
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            onBlur={() => setTouchedEmail(true)}
-                            label={m["contact.email"]()}
-                            type="email"
-                            fullWidth
-                            required
-                            error={touchedEmail && personalInvalid.email}
-                            helperText={
-                                touchedEmail && personalInvalid.email ? (email.trim() === "" ? m["contact.required"]() : m["contact.validEmail"]()) : " "
-                            }
-                            placeholder={m["contact.emailPlaceholder"]()}
-                            slotProps={{
-                                input: {
-                                    startAdornment: <Icon icon="email" />
-                                }
-                            }}
-                        />
-
-                        <TextField
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            onBlur={() => setTouchedMessage(true)}
-                            label={m["contact.message"]()}
-                            multiline
-                            rows={6}
-                            fullWidth
-                            required
-                            error={touchedMessage && personalInvalid.message}
-                            helperText={touchedMessage && personalInvalid.message ? m["contact.required"]() : " "}
-                        />
-                    </>
-                ) : (
-                    <>
-                        <TextField
-                            value={orgName}
-                            onChange={(e) => setOrgName(e.target.value)}
-                            onBlur={() => setTouchedOrgName(true)}
-                            label={m["contact.organization"]()}
-                            fullWidth
-                            required
-                            error={touchedOrgName && invalidOrgName}
-                            helperText={touchedOrgName && invalidOrgName ? m["contact.required"]() : " "}
-                            placeholder={m["contact.organizationPlaceholder"]()}
-                            slotProps={{
-                                input: {
-                                    startAdornment: <Icon icon="organization" />
-                                }
-                            }}
-                        />
-                        <TextField
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                            onBlur={() => setTouchedName(true)}
-                            label={m["contact.fullName"]()}
-                            fullWidth
-                            required
-                            error={touchedName && invalidName}
-                            helperText={touchedName && invalidName ? m["contact.required"]() : " "}
-                            placeholder={m["contact.namePlaceholder"]()}
-                            slotProps={{
-                                input: {
-                                    startAdornment: <Icon icon="user" />
-                                }
-                            }}
-                        />
-                        <TextField
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            onBlur={() => setTouchedEmail(true)}
-                            label={m["contact.email"]()}
-                            type="email"
-                            fullWidth
-                            required
-                            error={touchedEmail && invalidEmail}
-                            helperText={touchedEmail && invalidEmail ? (email.trim() === "" ? m["contact.required"]() : m["contact.validEmail"]()) : " "}
-                            placeholder={m["contact.emailPlaceholder"]()}
-                            slotProps={{
-                                input: {
-                                    startAdornment: <Icon icon="email" />
-                                }
-                            }}
-                        />
-                        <TextField
-                            value={website}
-                            onChange={(e) => setWebsite(e.target.value)}
-                            label={m["contact.website"]()}
-                            fullWidth
-                            helperText={" "}
-                            placeholder={m["contact.websitePlaceholder"]()}
-                            slotProps={{
-                                input: {
-                                    startAdornment: <Icon icon="website" />
-                                }
-                            }}
-                        />
-                        <TextField
-                            value={message}
-                            onChange={(e) => setMessage(e.target.value)}
-                            onBlur={() => setTouchedMessage(true)}
-                            label={m["contact.message"]()}
-                            multiline
-                            rows={6}
-                            fullWidth
-                            required
-                            error={touchedMessage && invalidMessage}
-                            helperText={touchedMessage && invalidMessage ? m["contact.required"]() : " "}
-                        />
-                    </>
-                )}
-
-                <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-                    <SendButton
-                        fullWidth
-                        confirmationDuration={500}
-                        showSpinner
-                        onClick={handleSubmit}
-                        disabled={submitting || fieldsMissing}
-                        tooltip={sendTooltip}
-                        childrenSent={m["contact.sent"]()}
-                        tooltipSent={null}
-                        iconSwitchDelay={5000}
-                    >
-                        {m["contact.send"]()}
-                    </SendButton>
-                </div>
-            </StyledForm>
+                    </StyledForm>
+                </motion.div>
+            </AnimatePresence>
         </Right>
     );
 }

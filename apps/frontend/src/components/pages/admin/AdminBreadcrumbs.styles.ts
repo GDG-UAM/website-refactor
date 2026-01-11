@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 export const Nav = styled.nav`
     width: 100%;
@@ -18,10 +19,11 @@ export const List = styled.ol`
     font-size: 14px;
 `;
 
-export const Crumb = styled.li`
+export const Crumb = styled(motion.li)`
     display: inline-flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
 
     a {
         color: #2563eb;
@@ -32,7 +34,7 @@ export const Crumb = styled.li`
     }
 `;
 
-export const Sep = styled.span`
+export const Sep = styled(motion.span)`
     color: #9ca3af;
 `;
 
@@ -47,12 +49,12 @@ export const WarningContainer = styled.span`
     }
 `;
 
-export const CrumbAlign = styled.span`
+export const CrumbAlign = styled(motion.span)`
     display: inline-flex;
     align-items: center;
 `;
 
-export const CrumbAlignLink = styled(Link)`
+export const CrumbAlignLink = styled(motion(Link))`
     display: inline-flex;
     align-items: center;
 `;

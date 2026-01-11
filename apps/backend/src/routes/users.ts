@@ -16,7 +16,7 @@ export const userRoutes = new Elysia({ prefix: "/users" })
                 // Transform to return _id as string
                 const teamUsers = users.map((user) => ({
                     _id: user._id.toString(),
-                    name: user.name || "",
+                    name: user.displayName || user.name || "",
                     image: user.image || "",
                     role: user.role || "",
                     showProfilePublicly: user.showProfilePublicly ?? true

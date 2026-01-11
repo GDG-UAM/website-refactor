@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { motion } from "framer-motion";
 
 export const Container = styled.div`
     display: flex;
@@ -6,12 +7,12 @@ export const Container = styled.div`
     align-items: center;
 `;
 
-export const Content = styled.div`
+export const Content = styled(motion.div)`
     width: 100%;
     max-width: 1200px;
 `;
 
-export const Title = styled.h1`
+export const Title = styled(motion.h1)`
     margin: 0 0 8px 0;
     font-weight: 600;
 `;
@@ -30,7 +31,7 @@ export const Grid = styled.div`
     }
 `;
 
-export const Category = styled.section`
+export const Category = styled(motion.section)`
     display: flex;
     flex-direction: column;
     gap: 12px;

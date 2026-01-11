@@ -7,6 +7,7 @@ import { redirect, notFound } from "next/navigation";
 import * as m from "#/paraglide/messages";
 import { serverApi } from "#/lib/eden-server";
 import { cache } from "react";
+import PageReveal from "#/components/PageReveal";
 
 export const revalidate = 60;
 
@@ -63,48 +64,50 @@ export default async function EventPublicPage(context: { params: Promise<{ slug:
                 margin: "0 auto"
             }}
         >
-            <article>
-                <h1 style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.2, marginBottom: 8 }}>{event.title}</h1>
-                <div style={{ color: "#6b7280", marginBottom: 16 }}>
-                    <LocalTimeWithSettings iso={iso} dateOnly={false} />
-                    {event.location ? <> · {event.location}</> : null}
-                </div>
-                {event.image ? (
-                    <div
-                        style={{
-                            display: "flex",
-                            width: "100%",
-                            maxHeight: 360,
-                            marginBottom: 16,
-                            borderRadius: 12,
-                            overflow: "hidden",
-                            aspectRatio: event.imageWidth && event.imageHeight ? `${event.imageWidth} / ${event.imageHeight}` : "16 / 9"
-                        }}
-                    >
-                        <CoverImage
-                            src={event.image}
-                            alt={event.title}
-                            width={event.imageWidth}
-                            height={event.imageHeight}
-                            blurHash={event.imageBlurHash}
+            <PageReveal>
+                <article>
+                    <h1 style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.2, marginBottom: 8 }}>{event.title}</h1>
+                    <div style={{ color: "#6b7280", marginBottom: 16 }}>
+                        <LocalTimeWithSettings iso={iso} dateOnly={false} />
+                        {event.location ? <> · {event.location}</> : null}
+                    </div>
+                    {event.image ? (
+                        <div
                             style={{
-                                objectFit: "cover",
+                                display: "flex",
                                 width: "100%",
-                                height: "100%",
-                                borderRadius: 12
+                                maxHeight: 360,
+                                marginBottom: 16,
+                                borderRadius: 12,
+                                overflow: "hidden",
+                                aspectRatio: event.imageWidth && event.imageHeight ? `${event.imageWidth} / ${event.imageHeight}` : "16 / 9"
                             }}
-                        />
-                    </div>
-                ) : null}
-                <RenderMarkdown markdown={event.markdownContent} />
-                {event.url ? (
-                    <div style={{ marginTop: 20 }}>
-                        <Link href={event.url} target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", fontWeight: 600 }}>
-                            {m["events.registerMoreInfo"]()}
-                        </Link>
-                    </div>
-                ) : null}
-            </article>
+                        >
+                            <CoverImage
+                                src={event.image}
+                                alt={event.title}
+                                width={event.imageWidth}
+                                height={event.imageHeight}
+                                blurHash={event.imageBlurHash}
+                                style={{
+                                    objectFit: "cover",
+                                    width: "100%",
+                                    height: "100%",
+                                    borderRadius: 12
+                                }}
+                            />
+                        </div>
+                    ) : null}
+                    <RenderMarkdown markdown={event.markdownContent} />
+                    {event.url ? (
+                        <div style={{ marginTop: 20 }}>
+                            <Link href={event.url} target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", fontWeight: 600 }}>
+                                {m["events.registerMoreInfo"]()}
+                            </Link>
+                        </div>
+                    ) : null}
+                </article>
+            </PageReveal>
         </main>
     );
 }

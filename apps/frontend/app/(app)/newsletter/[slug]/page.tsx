@@ -27,6 +27,8 @@ export async function generateMetadata(context: { params: Promise<{ slug: string
     return buildSectionMetadata("newsletter", name, description);
 }
 
+import PageReveal from "#/components/PageReveal";
+
 export default async function BlogPostPage(context: { params: Promise<{ slug: string }> }) {
     const { slug } = await context.params;
     const data = await getArticleBySlug(slug);
@@ -34,5 +36,9 @@ export default async function BlogPostPage(context: { params: Promise<{ slug: st
     if (!data) {
         notFound();
     }
-    return <ArticlePage type="newsletter" article={data} />;
+    return (
+        <PageReveal>
+            <ArticlePage type="newsletter" article={data} />
+        </PageReveal>
+    );
 }

@@ -37,7 +37,6 @@ export const Label = styled.label<{ $shrink: boolean; $disabled?: boolean; $erro
 // Surface for overlayed rendering
 export const Surface = styled.div<{ $disabled?: boolean; $error?: boolean }>`
     position: relative;
-    margin-top: 10px; /* Space for the floating label */
     border-radius: 4px;
 
     ${({ $disabled, $error }) =>

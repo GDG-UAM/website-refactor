@@ -5,6 +5,37 @@ import { TextField, MenuItem } from "@mui/material";
 import { ReloadButton, BackButton, NextButton } from "#/components/Buttons";
 import { AdminTableColumn } from "./AdminTableFactories";
 import { Wrapper, Card, TableWrapper, Controls, Table, Footer, PaginationControls, RowActions, LoadingSpinner } from "./AdminTable.styles";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.05
+        }
+    }
+} as const;
+
+const rowVariants = {
+    hidden: { opacity: 0, x: -10 },
+    visible: {
+        opacity: 1,
+        x: 0,
+        transition: {
+            type: "spring",
+            stiffness: 400,
+            damping: 30
+        }
+    },
+    exit: {
+        opacity: 0,
+        x: 10,
+        transition: {
+            duration: 0.2
+        }
+    }
+} as const;
 
 export interface AdminTableFilter {
     key: string;
@@ -77,8 +108,8 @@ export function AdminTable<T extends { _id?: string | { toString: () => string }
     const showSpinner = (loading && data.length === 0) || internalReloading;
 
     return (
-        <Wrapper>
-            <Controls>
+        <Wrapper initial="hidden" animate="visible" variants={containerVariants} layout>
+            <Controls variants={rowVariants}>
                 {onReload && <ReloadButton onClick={handleReload}>{reloadLabel || "Reload"}</ReloadButton>}
                 {headerActions}
                 {filters?.map((filter) => (
@@ -110,7 +141,7 @@ export function AdminTable<T extends { _id?: string | { toString: () => string }
                 )}
             </Controls>
 
-            <Card>
+            <Card variants={rowVariants}>
                 {showSpinner ? (
                     <div style={{ padding: "40px", textAlign: "center" }}>
                         <LoadingSpinner />
@@ -138,34 +169,43 @@ export function AdminTable<T extends { _id?: string | { toString: () => string }
                                     {rowActions && <th style={{ textAlign: "right" }}></th>}
                                 </tr>
                             </thead>
-                            <tbody>
-                                {data.map((item, idx) => (
-                                    <tr key={item._id?.toString() || idx}>
-                                        {columns.map((col) => (
-                                            <td
-                                                key={col.key}
-                                                style={{
-                                                    textAlign: col.align || "left"
-                                                }}
-                                            >
-                                                {col.render(item)}
-                                            </td>
-                                        ))}
-                                        {rowActions && (
-                                            <td>
-                                                <RowActions>{rowActions(item)}</RowActions>
-                                            </td>
-                                        )}
-                                    </tr>
-                                ))}
-                            </tbody>
+                            <motion.tbody>
+                                <AnimatePresence mode="popLayout">
+                                    {data.map((item, idx) => (
+                                        <motion.tr
+                                            key={item._id?.toString() || idx}
+                                            variants={rowVariants}
+                                            initial="hidden"
+                                            animate="visible"
+                                            exit="exit"
+                                            layout
+                                        >
+                                            {columns.map((col) => (
+                                                <td
+                                                    key={col.key}
+                                                    style={{
+                                                        textAlign: col.align || "left"
+                                                    }}
+                                                >
+                                                    {col.render(item)}
+                                                </td>
+                                            ))}
+                                            {rowActions && (
+                                                <td>
+                                                    <RowActions>{rowActions(item)}</RowActions>
+                                                </td>
+                                            )}
+                                        </motion.tr>
+                                    ))}
+                                </AnimatePresence>
+                            </motion.tbody>
                         </Table>
                     </TableWrapper>
                 )}
             </Card>
 
             {!loading && (data.length > 0 || pagination) && (
-                <Footer>
+                <Footer variants={rowVariants}>
                     <div>{pagination ? `Showing ${data.length} of ${pagination.total}` : `Showing ${data.length} items`}</div>
                     {showPagination && (
                         <PaginationControls>

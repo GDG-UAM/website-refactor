@@ -21,6 +21,19 @@ type ArticleCardProps = {
     //   status?: ArticleStatus;
 };
 
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: {
+            type: "spring",
+            stiffness: 260,
+            damping: 20
+        }
+    }
+} as const;
+
 // function ArticleCardImpl({ type, article, skeleton, status }: ArticleCardProps) {
 function ArticleCardImpl({ type, article, skeleton }: ArticleCardProps) {
     // Decode BlurHash to data URL on the client
@@ -38,7 +51,12 @@ function ArticleCardImpl({ type, article, skeleton }: ArticleCardProps) {
 
     return (
         // <Card $skeleton={skeleton} $status={status}>
-        <Card $skeleton={skeleton}>
+        <Card
+            $skeleton={skeleton}
+            variants={itemVariants}
+            whileHover={!skeleton ? { scale: 1.02, boxShadow: "0 12px 40px rgba(0, 0, 0, 0.15)" } : {}}
+            whileTap={!skeleton ? { scale: 0.98 } : {}}
+        >
             <ImageWrapper $skeleton={skeleton}>
                 {!skeleton && article ? (
                     <Link href={href} aria-label={article.title} style={{ display: "block", width: "100%", height: "100%" }}>

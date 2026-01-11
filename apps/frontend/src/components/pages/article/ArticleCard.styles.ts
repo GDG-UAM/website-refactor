@@ -1,62 +1,9 @@
 import styled, { css, keyframes } from "styled-components";
+import { motion } from "framer-motion";
 
-// export const Card = styled.div<{ $skeleton?: boolean; $status?: ArticleStatus }>`
-//   background-color: ${({ $status }) => {
-//     if (!$status) return "var(--color-white)";
-//     let color = "var(--color-white)";
-//     if ($status === "published")
-//       color = "color-mix(in srgb, var(--color-white) 90%, var(--button-success-bg))";
-//     else if ($status === "draft")
-//       color = "color-mix(in srgb, var(--color-white) 90%, var(--button-warning-bg))";
-//     else if ($status === "url_only")
-//       color = "color-mix(in srgb, var(--color-white) 90%, var(--button-secondary-bg))";
-//     return color;
-//   }};
-//   border-radius: 8px;
-//   transition:
-//     background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-//     box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-//   overflow: hidden;
-//   display: flex;
-//   flex-direction: column;
-//   max-width: 350px;
-//   min-width: 275px;
-//   height: 100%;
-//   position: relative;
-//   padding: 0;
-//   margin: auto;
-//   border: 1px var(--color-gray-200) solid;
-//   width: 100%;
-//   display: flex;
-//   flex-direction: column;
-//   ${({ $skeleton }) =>
-//     !$skeleton &&
-//     css`
-//       cursor: pointer;
-//       &:hover {
-//         box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
-//       }
-//     `}
-
-//   [data-view="list"] & {
-//     flex-direction: row;
-//     max-width: fit-content;
-//     width: max-content;
-//     height: auto;
-//     min-width: 0;
-//     align-items: stretch;
-//     padding: 12px;
-//     gap: 16px;
-//     align-items: center;
-//   }
-// `;
-
-export const Card = styled.div<{ $skeleton?: boolean }>`
+export const Card = styled(motion.div)<{ $skeleton?: boolean }>`
     background-color: var(--color-white);
     border-radius: 8px;
-    transition:
-        background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -68,15 +15,10 @@ export const Card = styled.div<{ $skeleton?: boolean }>`
     margin: auto;
     border: 1px var(--color-gray-200) solid;
     width: 100%;
-    display: flex;
-    flex-direction: column;
     ${({ $skeleton }) =>
         !$skeleton &&
         css`
             cursor: pointer;
-            &:hover {
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
-            }
         `}
 
     [data-view="list"] & {

@@ -1,11 +1,9 @@
+import { motion } from "framer-motion";
 import styled, { css, keyframes } from "styled-components";
 
-export const Card = styled.div<{ $skeleton?: boolean }>`
+export const Card = styled(motion.div)<{ $skeleton?: boolean }>`
     background-color: var(--color-white);
     border-radius: 8px;
-    transition:
-        background-color 0.25s cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -18,14 +16,6 @@ export const Card = styled.div<{ $skeleton?: boolean }>`
     margin: auto;
     border: 1px var(--color-gray-200) solid;
     width: 100%;
-
-    ${({ $skeleton }) =>
-        !$skeleton &&
-        css`
-            &:hover {
-                box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
-            }
-        `}
 `;
 
 export const ImageWrapper = styled.div<{ $skeleton?: boolean }>`

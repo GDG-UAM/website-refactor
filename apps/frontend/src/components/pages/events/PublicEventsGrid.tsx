@@ -11,6 +11,17 @@ import { PageWrapper, Header, Title, Filters, EventsGrid } from "./PublicEventsG
 import { getLocale } from "#/paraglide/runtime";
 import { useEvents, EventItem } from "#/providers/EventsProvider";
 import { m } from "#/paraglide/messages";
+import { motion, AnimatePresence } from "framer-motion";
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+} as const;
 
 type DateStatus = "upcoming" | "past";
 
@@ -115,22 +126,33 @@ export function PublicEventsGrid() {
                 </Filters>
             </Header>
 
-            {(loading || cacheLoading) && (
-                <EventsGrid>
-                    {Array.from({ length: dateStatus === "upcoming" ? 3 : 6 }).map((_, i) => (
-                        <EventCard key={`skeleton-${i}`} skeleton />
-                    ))}
-                </EventsGrid>
-            )}
+            <AnimatePresence mode="popLayout">
+                {(loading || cacheLoading) && (
+                    <EventsGrid as={motion.div} key={`skeleton-${dateStatus}`} variants={containerVariants} initial="hidden" animate="visible">
+                        {Array.from({ length: dateStatus === "upcoming" ? 3 : 6 }).map((_, i) => (
+                            <EventCard key={`skeleton-${i}`} skeleton />
+                        ))}
+                    </EventsGrid>
+                )}
+            </AnimatePresence>
 
             {!loading && !error && !cacheLoading && !cacheError && sortedEvents.length === 0 && <p>{m["events.noEvents"]()}</p>}
 
             {!loading && !error && !cacheLoading && !cacheError && (
-                <EventsGrid>
-                    {sortedEvents.map((event) => (
-                        <EventCard key={event.slug} event={event} onShare={handleShareClick} />
-                    ))}
-                </EventsGrid>
+                <AnimatePresence mode="popLayout">
+                    <EventsGrid
+                        as={motion.div}
+                        key={`grid-${dateStatus}`}
+                        variants={containerVariants}
+                        initial="hidden"
+                        whileInView="visible"
+                        viewport={{ once: true, amount: 0.05 }}
+                    >
+                        {sortedEvents.map((event) => (
+                            <EventCard key={event.slug} event={event} onShare={handleShareClick} />
+                        ))}
+                    </EventsGrid>
+                </AnimatePresence>
             )}
 
             <Modal isOpen={shareModal.isOpen} onClose={handleCloseModal} title={m["events.share.title"]()}>
