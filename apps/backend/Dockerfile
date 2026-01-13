@@ -1,18 +1,22 @@
-FROM oven/bun:slim AS base
-WORKDIR /app
+FROM dhi.io/bun:1-alpine3.22 AS pruner
+WORKDIR /repo
 
-# Install dependencies
-COPY package.json bun.lock turbo.json ./
-COPY apps/backend/package.json ./apps/backend/
-COPY apps/frontend/package.json ./apps/frontend/
-COPY packages/permissions/package.json ./packages/permissions/
-RUN bun install --frozen-lockfile
-
-# Copy source code
 COPY . .
 
-# Expose backend port
-EXPOSE 3001
+# Generate a backend-only workspace + lockfile
+RUN bunx turbo prune apps/backend --docker
 
-# Start backend directly
+
+FROM dhi.io/bun:1-alpine3.22 AS runner
+WORKDIR /app
+
+COPY --from=pruner /repo/out/package.json ./
+COPY --from=pruner /repo/out/bun.lock ./
+
+COPY --from=pruner /repo/out/apps ./apps
+COPY --from=pruner /repo/out/packages ./packages
+
+RUN bun install --frozen-lockfile
+
+EXPOSE 3001
 CMD ["bun", "run", "--cwd", "apps/backend", "start"]

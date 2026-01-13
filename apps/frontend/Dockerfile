@@ -1,5 +1,5 @@
 # Stage 1: Base
-FROM oven/bun:slim AS base
+FROM dhi.io/bun:1-alpine3.22 AS base
 WORKDIR /app
 
 # Stage 2: Installer
@@ -28,7 +28,7 @@ ENV NODE_ENV=production
 RUN bun x turbo run build --filter=frontend
 
 # Stage 3: Runner
-FROM node:20-slim AS runner
+FROM dhi.io/node:25 AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
