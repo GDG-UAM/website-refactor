@@ -106,7 +106,7 @@ export class ArticleRepository {
             updates.content = processedContent;
         }
 
-        const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id), isActive: true }, { $set: updates }, { returnDocument: "after" });
+        const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
         return result;
     }

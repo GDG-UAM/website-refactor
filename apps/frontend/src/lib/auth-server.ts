@@ -1,7 +1,7 @@
 import { auth } from "backend/src/lib/auth";
 import { headers } from "next/headers";
 
-const baseURL = process.env.INTERNAL_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+const baseURL = process.env.INTERNAL_BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3002";
 
 /**
  * Server-side session fetcher for Better Auth

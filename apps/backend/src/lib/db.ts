@@ -6,9 +6,10 @@ import {
     EventRepository,
     LinkRepository,
     HackathonRepository,
-    TrackRepository
+    TrackRepository,
+    TeamRepository
 } from "../repositories";
-import type { User, PermissionTemplate, Article, Event, Link, Hackathon, Track } from "../repositories/types";
+import type { User, PermissionTemplate, Article, Event, Link, Hackathon, Track, Team } from "../repositories/types";
 
 interface MongoClientCache {
     client: MongoClient | null;
@@ -24,6 +25,7 @@ interface RepositoryCache {
     linkRepository: LinkRepository | null;
     hackathonRepository: HackathonRepository | null;
     trackRepository: TrackRepository | null;
+    teamRepository: TeamRepository | null;
 }
 
 // Extend the global object to include mongo client cache
@@ -42,7 +44,8 @@ const repositoryCache: RepositoryCache =
         eventRepository: null,
         linkRepository: null,
         hackathonRepository: null,
-        trackRepository: null
+        trackRepository: null,
+        teamRepository: null
     });
 
 // MongoDB Client for Better Auth - lazy initialization
@@ -88,7 +91,8 @@ async function initializeRepositories(): Promise<void> {
         repositoryCache.eventRepository &&
         repositoryCache.linkRepository &&
         repositoryCache.hackathonRepository &&
-        repositoryCache.trackRepository
+        repositoryCache.trackRepository &&
+        repositoryCache.teamRepository
     ) {
         return; // Already initialized
     }
@@ -103,6 +107,7 @@ async function initializeRepositories(): Promise<void> {
     const linkCollection = db.collection<Link>("links");
     const hackathonCollection = db.collection<Hackathon>("hackathons");
     const trackCollection = db.collection<Track>("tracks");
+    const teamCollection = db.collection<Team>("teams");
 
     // Create permission repository first (no dependencies)
     const permissionRepo = new PermissionRepository(templateCollection);
@@ -116,6 +121,7 @@ async function initializeRepositories(): Promise<void> {
     const linkRepo = new LinkRepository(linkCollection);
     const hackathonRepo = new HackathonRepository(hackathonCollection);
     const trackRepo = new TrackRepository(trackCollection);
+    const teamRepo = new TeamRepository(teamCollection);
 
     // Cache repositories
     repositoryCache.userRepository = userRepo;
@@ -125,6 +131,7 @@ async function initializeRepositories(): Promise<void> {
     repositoryCache.linkRepository = linkRepo;
     repositoryCache.hackathonRepository = hackathonRepo;
     repositoryCache.trackRepository = trackRepo;
+    repositoryCache.teamRepository = teamRepo;
 
     // Create indexes
     await Promise.all([
@@ -134,7 +141,8 @@ async function initializeRepositories(): Promise<void> {
         eventRepo.createIndexes(),
         linkRepo.createIndexes(),
         hackathonRepo.createIndexes(),
-        trackRepo.createIndexes()
+        trackRepo.createIndexes(),
+        teamRepo.createIndexes()
     ]);
 }
 
@@ -154,7 +162,8 @@ export function getRepositories() {
         !repositoryCache.eventRepository ||
         !repositoryCache.linkRepository ||
         !repositoryCache.hackathonRepository ||
-        !repositoryCache.trackRepository
+        !repositoryCache.trackRepository ||
+        !repositoryCache.teamRepository
     ) {
         throw new Error("Repositories not initialized. Call dbConnect() first.");
     }
@@ -166,7 +175,8 @@ export function getRepositories() {
         eventRepository: repositoryCache.eventRepository,
         linkRepository: repositoryCache.linkRepository,
         hackathonRepository: repositoryCache.hackathonRepository,
-        trackRepository: repositoryCache.trackRepository
+        trackRepository: repositoryCache.trackRepository,
+        teamRepository: repositoryCache.teamRepository
     };
 }
 

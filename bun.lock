@@ -48,7 +48,7 @@
         "@inlang/paraglide-js": "^2.7.1",
         "@inlang/paraglide-next": "^0.8.1",
         "@mui/material": "^7.3.6",
-        "@sentry/nextjs": "^10.32.1",
+        "@sentry/nextjs": "10",
         "@types/qrcode": "^1.5.6",
         "@types/sanitize-html": "^2.16.0",
         "backend": "workspace:*",

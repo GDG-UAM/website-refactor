@@ -7,7 +7,7 @@ import { blurHashToDataURL, isValidBlurHash } from "#/lib/utils/blurhashClient";
 type CoverImageProps = {
     src: string;
     alt: string;
-    blurHash?: string;
+    blurHash?: string | null;
     width?: number;
     height?: number;
     style?: React.CSSProperties;

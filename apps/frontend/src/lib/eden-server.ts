@@ -7,7 +7,7 @@ const getCachedHeaders = cache(async () => {
     return await headers();
 });
 
-export const serverApi = treaty<App>(process.env.INTERNAL_BACKEND_URL || "http://localhost:3000", {
+export const serverApi = treaty<App>(process.env.INTERNAL_BACKEND_URL || "http://localhost:3002", {
     onRequest: async (path, options) => {
         const headersList = await getCachedHeaders();
 

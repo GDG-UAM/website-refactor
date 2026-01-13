@@ -1009,6 +1009,59 @@
           "new": "New Track"
         },
         "deletedWarning": "This track has been deleted"
+      },
+      "teams": {
+        "title": "Hackathon Teams",
+        "page": {
+          "title": "Team Management",
+          "createTitle": "Create New Team",
+          "editTitle": "Edit Team"
+        },
+        "list": {
+          "reload": "Reload",
+          "search": "Search teams...",
+          "showDeleted": "Show inactive teams",
+          "noTeams": "No teams found.",
+          "noResults": "No teams match your search.",
+          "columns": {
+            "password": "Credentials",
+            "members": "Members"
+          },
+          "toasts": {
+            "reloaded": "Teams list reloaded",
+            "loadError": "Failed to load teams",
+            "passwordReloaded": "Password regenerated successfully",
+            "passwordReloadError": "Failed to regenerate password",
+            "deleteSuccess": "Team deleted successfully",
+            "deleteError": "Failed to delete team",
+            "restoreSuccess": "Team restored successfully",
+            "restoreError": "Failed to restore team"
+          }
+        },
+        "form": {
+          "save": "Save Team",
+          "cancel": "Cancel",
+          "saving": "Saving Team..."
+        },
+        "fields": {
+          "name": "Team Name",
+          "track": "Track",
+          "password": "Access Password",
+          "projectDescription": "Project Description",
+          "members": "Team Members",
+          "isActive": "Is Active"
+        },
+        "toasts": {
+          "created": "Team created successfully",
+          "updated": "Team updated successfully",
+          "createError": "Failed to create team",
+          "updateError": "Failed to update team",
+          "loadError": "Failed to load team data"
+        },
+        "breadcrumbs": {
+          "new": "New Team"
+        },
+        "deletedWarning": "This team has been deleted"
       }
     },
     "breadcrumbs": {

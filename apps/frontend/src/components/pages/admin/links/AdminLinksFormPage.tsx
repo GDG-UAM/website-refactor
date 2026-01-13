@@ -28,16 +28,19 @@ export function AdminLinksFormPage({ id, initialData }: AdminLinksFormPageProps)
     const [submitting, setSubmitting] = useState(false);
     const isEdit = !!id;
 
-    useRegisterBreadcrumbs(
-        isEdit && data.title
-            ? [
-                  {
-                      label: data.title,
-                      href: `/admin/links/${id}`
-                  }
-              ]
-            : []
-    );
+    if (isEdit) {
+        useRegisterBreadcrumbs(
+            data.title
+                ? [
+                      {
+                          label: data.title,
+                          href: `/admin/links/${id}`,
+                          warning: initialData?.isActive === false ? m["admin.links.form.deletedWarning"]() : undefined
+                      }
+                  ]
+                : []
+        );
+    }
 
     const fields: FieldConfig<LinkFormData>[] = [
         {

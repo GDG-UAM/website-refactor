@@ -53,3 +53,26 @@ export const getTrack = cache(async (id: string, trackId: string) => {
         return null;
     }
 });
+
+export const getTeam = cache(async (id: string) => {
+    try {
+        const { data: team } = await serverApi.admin.teams({ id }).get();
+
+        if (!team) {
+            return null;
+        }
+
+        if (team.isActive === false) {
+            const canManage = await canManageResource(`admin.hackathons.${team.hackathonId}.teams.${id}`);
+
+            if (!canManage) {
+                return null;
+            }
+        }
+
+        return team;
+    } catch (e) {
+        console.error("Failed to fetch team:", e);
+        return null;
+    }
+});

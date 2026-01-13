@@ -6,3 +6,4 @@ export * from "./EventRepository";
 export * from "./LinkRepository";
 export * from "./HackathonRepository";
 export * from "./TrackRepository";
+export * from "./TeamRepository";

@@ -51,6 +51,7 @@ export type FieldConfig<T> = {
     fontFamily?: string;
     disabled?: boolean;
     gridColumn?: string;
+    allowRawStrings?: boolean;
     validate?: (value: any) => string | boolean;
 };
 
@@ -297,7 +298,15 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                         </>
                     );
                 case "user-selector":
-                    return <AdminUserSelector {...commonProps} value={value || []} roles={field.roles} onChange={(val) => handleFieldChange(val)} />;
+                    return (
+                        <AdminUserSelector
+                            {...commonProps}
+                            value={value || []}
+                            roles={field.roles}
+                            allowRawStrings={field.allowRawStrings}
+                            onChange={(val) => handleFieldChange(val)}
+                        />
+                    );
                 case "multiline":
                     return (
                         <TextField {...commonProps} multiline rows={field.rows || 3} value={value || ""} onChange={(e) => handleFieldChange(e.target.value)} />

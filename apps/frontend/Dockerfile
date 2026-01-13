@@ -32,12 +32,12 @@ FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=3001
 
 # Standalone output copies
 COPY --from=installer /app/apps/frontend/public ./apps/frontend/public
 COPY --from=installer /app/apps/frontend/.next/standalone ./
 COPY --from=installer /app/apps/frontend/.next/static ./apps/frontend/.next/static
 
-EXPOSE 3000
+EXPOSE 3001
 CMD ["node", "apps/frontend/server.js"]

@@ -13,9 +13,9 @@ const LocalizedArticleSchema = t.Object({
     excerpt: t.Optional(t.String()),
     content: t.String(),
     coverImage: t.Optional(t.String()),
-    coverImageBlurHash: t.Optional(t.String()),
-    coverImageWidth: t.Optional(t.Number()),
-    coverImageHeight: t.Optional(t.Number()),
+    coverImageBlurHash: t.Optional(t.Nullable(t.String())),
+    coverImageWidth: t.Optional(t.Nullable(t.Number())),
+    coverImageHeight: t.Optional(t.Nullable(t.Number())),
     authors: t.Array(t.String()),
     publishedAt: t.Optional(t.Nullable(t.Date()))
 });

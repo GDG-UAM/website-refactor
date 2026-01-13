@@ -71,7 +71,6 @@ export const Input = styled.input`
 export const Chip = styled.div<{ $disabled?: boolean }>`
     display: flex;
     align-items: center;
-    gap: 6px;
     background-color: ${({ $disabled }) => ($disabled ? "var(--color-gray-100)" : "var(--color-gray-200)")};
     border-radius: 16px;
     padding: 2px 4px 2px 2px;
@@ -93,6 +92,7 @@ export const ChipLabel = styled.span`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    margin-left: 6px;
 `;
 
 export const RemoveButton = styled.button`

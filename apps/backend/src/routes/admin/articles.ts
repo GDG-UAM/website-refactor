@@ -155,8 +155,14 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
                 return { error: "Not found" };
             }
 
+            if (!article.isActive) {
+                if (ability.can("manage", `admin.articles.${article.type}.${id}`) && body.isActive === true) {
+                    body = { isActive: true };
+                }
+            }
+
             // Granular permission check
-            const fields = Object.keys(body as object);
+            const fields = Object.keys(body);
             for (const field of fields) {
                 if (ability.cannot("update", `admin.articles.${article.type}.${id}`, { field })) {
                     set.status = 403;
@@ -164,7 +170,7 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
                 }
             }
 
-            const updated = await articleRepository.update(id, body as any);
+            const updated = await articleRepository.update(id, body);
 
             if (!updated) {
                 set.status = 404;

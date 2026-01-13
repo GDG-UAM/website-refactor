@@ -49,7 +49,8 @@ export function AdminHackathonsFormPage({ id, initialData }: AdminHackathonsForm
                 ? [
                       {
                           label: data.title,
-                          href: `/admin/hackathons/edit/${id}`
+                          href: `/admin/hackathons/edit/${id}`,
+                          warning: initialData?.isActive === false ? m["admin.hackathons.form.deletedWarning"]() : undefined
                       }
                   ]
                 : []

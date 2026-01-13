@@ -383,3 +383,33 @@ export interface Track {
     createdAt: Date;
     updatedAt: Date;
 }
+
+// ==================== Team Types ====================
+
+export const TeamSchema = t.Object({
+    _id: t.Optional(t.Any()),
+    name: t.String({ minLength: 1 }),
+    hackathonId: t.String(),
+    trackId: t.Optional(t.Nullable(t.String())),
+    password: t.String({ minLength: 8 }),
+    projectDescription: t.Optional(t.Nullable(t.String())),
+    users: t.Optional(t.Array(t.String())),
+    isActive: t.Optional(t.Boolean()),
+    createdBy: t.Optional(t.String()),
+    createdAt: t.Optional(t.Date()),
+    updatedAt: t.Optional(t.Date())
+});
+
+export interface Team {
+    _id: ObjectId;
+    name: string;
+    hackathonId: ObjectId;
+    trackId?: ObjectId | null;
+    password: string;
+    projectDescription?: string | null;
+    users: string[]; // User IDs as strings OR raw strings
+    isActive: boolean;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
+}

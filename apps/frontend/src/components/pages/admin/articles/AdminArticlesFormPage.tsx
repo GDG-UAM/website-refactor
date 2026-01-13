@@ -49,16 +49,19 @@ export function AdminArticlesFormPage({ type, id, initialData }: AdminArticlesFo
 
     const displayTitle = initialData?.title && Object.values(initialData.title)[0];
 
-    useRegisterBreadcrumbs(
-        isEdit && displayTitle
-            ? [
-                  {
-                      label: displayTitle,
-                      href: `/admin/${type}/${id}`
-                  }
-              ]
-            : []
-    );
+    if (isEdit) {
+        useRegisterBreadcrumbs(
+            displayTitle
+                ? [
+                      {
+                          label: displayTitle,
+                          href: `/admin/${type}/${id}`,
+                          warning: initialData?.isActive === false ? m["admin.articles.form.deletedWarning"]() : undefined
+                      }
+                  ]
+                : []
+        );
+    }
 
     const formStatusOptions = [
         { label: m["admin.articles.status.draft"](), value: "draft" },

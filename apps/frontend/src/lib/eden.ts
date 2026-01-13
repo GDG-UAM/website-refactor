@@ -9,7 +9,7 @@ const getCookie = (name: string) => {
         ?.split("=")[1];
 };
 
-const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3000";
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3002";
 
 let csrfReady: Promise<void> | null = null;
 

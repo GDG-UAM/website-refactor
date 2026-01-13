@@ -48,16 +48,19 @@ export function AdminEventsFormPage({ id, initialData }: AdminEventsFormPageProp
     const [submitting, setSubmitting] = useState(false);
     const isEdit = !!id;
 
-    useRegisterBreadcrumbs(
-        isEdit && data.title
-            ? [
-                  {
-                      label: data.title,
-                      href: `/admin/events/${id}`
-                  }
-              ]
-            : []
-    );
+    if (isEdit) {
+        useRegisterBreadcrumbs(
+            data.title
+                ? [
+                      {
+                          label: data.title,
+                          href: `/admin/events/${id}`,
+                          warning: initialData?.isActive === false ? m["admin.events.form.deletedWarning"]() : undefined
+                      }
+                  ]
+                : []
+        );
+    }
 
     const fields: FieldConfig<EventFormData>[] = [
         {

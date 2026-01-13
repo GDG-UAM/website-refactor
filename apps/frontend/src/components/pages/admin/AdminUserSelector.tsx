@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { api } from "#/lib/eden";
 import { Wrapper, Label, Control, Chip, ChipLabel, RemoveButton, Input, Dropdown, DropdownItem, NoResults, Avatar } from "./AdminUserSelector.styles";
 import * as m from "#/paraglide/messages";
+import { Tooltip } from "@mui/material";
 
 interface UserLite {
     _id: string;
@@ -21,6 +22,7 @@ interface AdminUserSelectorProps {
     error?: boolean;
     required?: boolean;
     placeholder?: string;
+    allowRawStrings?: boolean;
 }
 
 const DEFAULT_ROLES: ("user" | "team" | "organizer")[] = ["team", "organizer"];
@@ -34,7 +36,8 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
     disabled = false,
     error = false,
     required = false,
-    placeholder
+    placeholder,
+    allowRawStrings = false
 }) => {
     const [q, setQ] = useState("");
     const [results, setResults] = useState<UserLite[]>([]);
@@ -44,6 +47,9 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
     const [loading, setLoading] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+
+    // Is it a MongoDB ObjectId?
+    const isObjectId = (id: string) => /^[0-9a-fA-F]{24}$/.test(id);
 
     useEffect(() => {
         const handleClickAway = (event: MouseEvent) => {
@@ -63,14 +69,15 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
     // Fetch initial user data for existing IDs
     useEffect(() => {
         const fetchInitialUsers = async () => {
-            if (value.length === 0) {
+            const userIds = value.filter((id) => isObjectId(id));
+            if (userIds.length === 0) {
                 if (selectedUsers.length > 0) setSelectedUsers([]);
                 return;
             }
 
             // Check if we already have the correct users in selectedUsers
             const currentIds = selectedUsers.map((u) => u._id);
-            const isMatch = value.length === currentIds.length && value.every((id) => currentIds.includes(id));
+            const isMatch = userIds.length === currentIds.length && userIds.every((id) => currentIds.includes(id));
             if (isMatch) return;
 
             try {
@@ -79,7 +86,7 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
                 });
 
                 if (data) {
-                    const loaded = data.items.filter((u: UserLite) => value.includes(u._id));
+                    const loaded = data.items.filter((u: UserLite) => userIds.includes(u._id));
                     setSelectedUsers(loaded);
                 }
             } catch (err) {
@@ -133,9 +140,14 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
         };
     }, [debouncedQ, showDropdown, roles, valueKey]);
 
-    const handleSelect = (user: UserLite) => {
-        const newValue = [...value, user._id];
-        setSelectedUsers((prev) => [...prev, user]);
+    const handleSelect = (user: UserLite | string) => {
+        const id = typeof user === "string" ? user : user._id;
+        if (value.includes(id)) return;
+
+        const newValue = [...value, id];
+        if (typeof user !== "string") {
+            setSelectedUsers((prev) => [...prev, user]);
+        }
         onChange(newValue);
         setQ("");
         setResults([]);
@@ -150,15 +162,28 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
         onChange(newValue);
     };
 
+    const showRawOption = allowRawStrings && q.trim() && !value.includes(q.trim());
+    const dropdownItemCount = results.length + (showRawOption ? 1 : 0);
+
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === "ArrowDown") {
-            setHighlightedIndex((prev) => (prev + 1) % Math.max(results.length, 1));
+            setHighlightedIndex((prev) => (prev + 1) % Math.max(dropdownItemCount, 1));
             setShowDropdown(true);
         } else if (e.key === "ArrowUp") {
-            setHighlightedIndex((prev) => (prev - 1 + results.length) % Math.max(results.length, 1));
-        } else if (e.key === "Enter" && showDropdown && results[highlightedIndex]) {
+            setHighlightedIndex((prev) => (prev - 1 + dropdownItemCount) % Math.max(dropdownItemCount, 1));
+        } else if (e.key === "Enter" && showDropdown) {
             e.preventDefault();
-            handleSelect(results[highlightedIndex]);
+            if (showRawOption && highlightedIndex === 0) {
+                handleSelect(q.trim());
+            } else {
+                const resultIndex = showRawOption ? highlightedIndex - 1 : highlightedIndex;
+                if (results[resultIndex]) {
+                    handleSelect(results[resultIndex]);
+                } else if (showRawOption) {
+                    // Fallback to raw if enter pressed and nothing else
+                    handleSelect(q.trim());
+                }
+            }
         } else if (e.key === "Escape") {
             setShowDropdown(false);
         } else if (e.key === "Backspace" && !q && value.length > 0) {
@@ -173,16 +198,21 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
         <Wrapper ref={wrapperRef} $disabled={disabled} $error={error}>
             <Label $shrink={isShrink} $disabled={disabled} $error={error} $focused={showDropdown}>
                 {label}
-                {required && error ? <span style={{ color: "var(--google-red)", marginLeft: "4px" }}>*</span> : " *"}
+                {required ? error ? <span style={{ color: "var(--google-red)", marginLeft: "4px" }}>*</span> : " *" : null}
             </Label>
             <Control $disabled={disabled} $error={error} $focused={showDropdown} onClick={() => !disabled && inputRef.current?.focus()}>
-                {selectedUsers.map((user) => (
-                    <Chip key={user._id} $disabled={disabled}>
-                        {user.image && <Avatar src={user.image} alt={user.name} />}
-                        <ChipLabel title={user.name}>{user.displayName || user.name}</ChipLabel>
-                        {!disabled && <RemoveButton onClick={(e) => handleRemove(user._id, e)}>×</RemoveButton>}
-                    </Chip>
-                ))}
+                {value.map((id) => {
+                    const user = selectedUsers.find((u) => u._id === id);
+                    return (
+                        <Chip key={id} $disabled={disabled}>
+                            {user?.image ? <Avatar src={user.image} alt={user.name} /> : null}
+                            <Tooltip title={user?.name || id} arrow>
+                                <ChipLabel>{user?.displayName || user?.name || id}</ChipLabel>
+                            </Tooltip>
+                            {!disabled && <RemoveButton onClick={(e) => handleRemove(id, e)}>×</RemoveButton>}
+                        </Chip>
+                    );
+                })}
                 <Input
                     ref={inputRef}
                     value={q}
@@ -205,24 +235,51 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
 
             {showDropdown && (q.trim() || results.length > 0) && (
                 <Dropdown>
-                    {results.length > 0 ? (
-                        results.map((user, idx) => (
-                            <DropdownItem
-                                key={user._id}
-                                $active={idx === highlightedIndex}
-                                onClick={() => handleSelect(user)}
-                                onMouseEnter={() => setHighlightedIndex(idx)}
+                    {showRawOption && (
+                        <DropdownItem $active={highlightedIndex === 0} onClick={() => handleSelect(q.trim())} onMouseEnter={() => setHighlightedIndex(0)}>
+                            <div
+                                style={{
+                                    width: 24,
+                                    height: 24,
+                                    borderRadius: "50%",
+                                    background: "var(--google-blue)",
+                                    color: "white",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
+                                    fontSize: "16px",
+                                    flexShrink: 0
+                                }}
                             >
-                                <Avatar src={user.image || "/default-avatar.png"} alt={user.name} />
-                                <div style={{ display: "flex", flexDirection: "column" }}>
-                                    <span style={{ fontSize: "14px", fontWeight: 500 }}>{user.displayName || user.name}</span>
-                                    <span style={{ fontSize: "12px", color: "#6b7280" }}>{user.email}</span>
-                                </div>
-                            </DropdownItem>
-                        ))
+                                +
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column" }}>
+                                <span style={{ fontSize: "14px", fontWeight: 500 }}>{q.trim()}</span>
+                                <span style={{ fontSize: "12px", color: "#6b7280" }}>Add raw member</span>
+                            </div>
+                        </DropdownItem>
+                    )}
+                    {results.length > 0 ? (
+                        results.map((user, idx) => {
+                            const actualIdx = showRawOption ? idx + 1 : idx;
+                            return (
+                                <DropdownItem
+                                    key={user._id}
+                                    $active={actualIdx === highlightedIndex}
+                                    onClick={() => handleSelect(user)}
+                                    onMouseEnter={() => setHighlightedIndex(actualIdx)}
+                                >
+                                    <Avatar src={user.image || "/default-avatar.png"} alt={user.name} />
+                                    <div style={{ display: "flex", flexDirection: "column" }}>
+                                        <span style={{ fontSize: "14px", fontWeight: 500 }}>{user.displayName || user.name}</span>
+                                        <span style={{ fontSize: "12px", color: "#6b7280" }}>{user.email}</span>
+                                    </div>
+                                </DropdownItem>
+                            );
+                        })
                     ) : loading ? (
                         <NoResults>{m["admin.userSelector.searching"]()}</NoResults>
-                    ) : q.trim() ? (
+                    ) : q.trim() && !showRawOption ? (
                         <NoResults>{m["admin.userSelector.noResults"]()}</NoResults>
                     ) : null}
                 </Dropdown>
