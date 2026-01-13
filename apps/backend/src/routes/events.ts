@@ -70,6 +70,9 @@ export const eventsRoutes = new Elysia({ prefix: "/events" })
                     page: t.Number(),
                     pageSize: t.Number()
                 })
+            },
+            detail: {
+                tags: ["Events"]
             }
         }
     )
@@ -106,6 +109,9 @@ export const eventsRoutes = new Elysia({ prefix: "/events" })
                 200: EventResponseSchema,
                 404: t.Object({ error: t.String() }),
                 500: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Events"]
             }
         }
     );

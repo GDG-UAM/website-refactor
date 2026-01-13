@@ -66,7 +66,7 @@ export const DuplicateButton: React.FC<Omit<CustomButtonProps, PropsToOmit>> = (
 };
 
 interface CopyButtonProps extends Omit<CustomButtonProps, PropsToOmit | "onClick"> {
-    content: string;
+    content: string | (() => Promise<string>);
     iconSwitchDelay?: number;
     ariaLabelCopied?: string;
     colorCopied?: CustomButtonColor;
@@ -82,17 +82,22 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
     ...props
 }) => {
     const [copied, setCopied] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const copyIconPath =
         "M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z";
 
     const handleCopy = useCallback(async () => {
         try {
-            await navigator.clipboard.writeText(content);
+            setLoading(true);
+            const text = typeof content === "function" ? await content() : content;
+            await navigator.clipboard.writeText(text);
+            setLoading(false);
             setCopied(true);
             setTimeout(() => setCopied(false), iconSwitchDelay);
         } catch (err) {
             console.error("Copy failed:", err);
+            setLoading(false);
         }
     }, [content, iconSwitchDelay]);
 
@@ -102,6 +107,9 @@ export const CopyButton: React.FC<CopyButtonProps> = ({
             path={copied ? CHECK_ICON_PATH : copyIconPath}
             color={copied ? colorCopied : color}
             ariaLabel={copied ? (ariaLabelCopied ?? m["buttons.copy.copied"]()) : (ariaLabel ?? m["buttons.copy.copy"]())}
+            showSpinner={loading}
+            isLoading={loading}
+            disabled={loading}
             {...props}
         />
     );

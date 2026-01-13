@@ -588,6 +588,36 @@
     "searchArticles": "Search issues...",
     "noArticlesToShow": "No issues to show."
   },
+  "certificates": {
+    "pageTitle": "Certificate",
+    "status": {
+      "valid": "Valid Certificate",
+      "revoked": "Revoked Certificate",
+      "issuedOn": "Issued on [date]",
+      "revokedOn": "Revoked on [date]"
+    },
+    "actions": {
+      "print": "Print",
+      "share": "Share",
+      "addToLinkedIn": "Add to LinkedIn",
+      "addOpenBadge": "Add to Badge Wallet"
+    },
+    "verification": {
+      "id": "Certificate ID"
+    },
+    "exportModal": {
+      "title": "Add to Badge Wallet",
+      "manualImport": "Manual Import",
+      "instructions": "Copy the assertion link below and import it into your badge service.",
+      "copyAssertion": "Copy Assertion Link",
+      "services": "Badge Services",
+      "openBadgePassport": "Open Badge Passport",
+      "badgr": "Badgr (Canvas Badges)",
+      "credly": "Credly",
+      "parchment": "Parchment",
+      "validate": "Validate with BadgeCheck.io"
+    }
+  },
   "admin": {
     "pageTitle": "Admin Dashboard",
     "form": {
@@ -960,8 +990,14 @@
           "signatureName": "Name",
           "signatureRole": "Role",
           "signatureImageUrl": "Signature Image URL",
+          "designId": "Certificate Design",
           "errors": {
             "signatureMissing": "Some signatures are missing required info"
+          }
+        },
+        "values": {
+          "designs": {
+            "default": "Default Design"
           }
         },
         "actions": {
@@ -1061,7 +1097,132 @@
         "breadcrumbs": {
           "new": "New Team"
         },
-        "deletedWarning": "This team has been deleted"
+        "deletedWarning": "This team has been deleted",
+        "certificates": {
+          "title": "Team Certificates",
+          "page": {
+            "title": "Certificate Templates",
+            "createTitle": "Create Certificate Template",
+            "editTitle": "Edit Certificate Template"
+          },
+          "list": {
+            "reload": "Reload",
+            "addButton": "Add Template",
+            "search": "Search templates...",
+            "noTemplates": "No certificate templates found for this team.",
+            "noResults": "No templates match your search.",
+            "columns": {
+              "type": "Type",
+              "status": "Status",
+              "recipients": "Recipients"
+            },
+            "status_active": "Active",
+            "status_deleted": "Deleted"
+          },
+          "form": {
+            "save": "Save Template",
+            "cancel": "Cancel",
+            "saving": "Saving..."
+          },
+          "toasts": {
+            "created": "Certificate template created successfully",
+            "updated": "Certificate template updated successfully",
+            "deleted": "Certificate template deleted successfully",
+            "error": "An error occurred while managing templates"
+          },
+          "helpers": {
+            "inheritedFromHackathon": "This value is inherited from the hackathon settings",
+            "inheritedFromTeam": "Recipients are determined by team members"
+          },
+          "breadcrumbs": {
+            "certificates": "Certificates",
+            "new": "New Template"
+          },
+          "deletedWarning": "This certificate template has been deleted"
+        }
+      }
+    },
+    "certificates": {
+      "title": "Certificate Management",
+      "page": {
+        "title": "Certificates",
+        "createTitle": "Issue Individual Certificate",
+        "editTitle": "Edit Certificate",
+        "templateCreateTitle": "Create Certificate Template",
+        "templateEditTitle": "Edit Certificate Template"
+      },
+      "list": {
+        "reload": "Reload",
+        "search": "Search certificates...",
+        "noCertificates": "No certificates found.",
+        "noResults": "No results match your search.",
+        "showDeleted": "Show inactive",
+        "tabs": {
+          "individual": "Individual",
+          "templates": "Templates"
+        },
+        "columns": {
+          "recipient": "Recipient",
+          "type": "Type",
+          "source": "Source",
+          "status": "Status"
+        },
+        "source_manual": "Manual",
+        "source_auto": "Auto",
+        "status_active": "Active",
+        "status_revoked": "Revoked",
+        "status_deleted": "Deleted"
+      },
+      "toasts": {
+        "created": "Certificate created successfully",
+        "updated": "Certificate updated successfully",
+        "deleted": "Certificate deleted successfully",
+        "revoked": "Certificate revoked successfully",
+        "unrevoked": "Certificate restored successfully",
+        "error": "An error occurred while managing certificates",
+        "templateCreated": "Template created successfully",
+        "templateUpdated": "Template updated successfully"
+      },
+      "form": {
+        "recipient": "Recipient (User ID or Name)",
+        "type": "Certificate Type",
+        "startDate": "Start Date",
+        "endDate": "End Date",
+        "title": "Title",
+        "description": "Description",
+        "designId": "Design",
+        "signatures": "Signatures",
+        "template": "Linked Template",
+        "hackathon": "Linked Hackathon",
+        "team": "Linked Team",
+        "recipients": "Recipients List",
+        "revoked": "Revoked",
+        "save": "Save",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "hours": "Hours",
+        "grade": "Grade",
+        "instructors": "Instructors",
+        "rank": "Rank",
+        "group": "Group",
+        "role": "Role",
+        "roles": {
+          "ATTENDEE": "Attendee",
+          "PARTICIPANT": "Participant",
+          "SPEAKER": "Speaker",
+          "ORGANIZER": "Organizer"
+        },
+        "deletedWarning": "This certificate has been deleted.",
+        "addSignature": "Add Signature"
+      },
+      "types": {
+        "COURSE_COMPLETION": "Course Completion",
+        "EVENT_ACHIEVEMENT": "Event Achievement",
+        "PARTICIPATION": "Participation",
+        "VOLUNTEER": "Volunteer"
+      },
+      "breadcrumbs": {
+        "new": "New Certificate"
       }
     },
     "breadcrumbs": {

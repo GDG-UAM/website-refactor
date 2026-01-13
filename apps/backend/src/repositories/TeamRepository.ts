@@ -1,6 +1,7 @@
 import { Collection, ObjectId, type Filter, type Sort } from "mongodb";
 import { type Team, type TeamSchema } from "./types";
 import { generatePassword } from "../lib/utils";
+import type { CertificateTemplateRepository } from "./CertificateTemplateRepository";
 
 export type TeamInput = {
     name: string;
@@ -14,7 +15,13 @@ export type TeamInput = {
 export type TeamSortTypes = "newest" | "oldest" | "name_asc" | "name_desc";
 
 export class TeamRepository {
+    private templateRepository?: CertificateTemplateRepository;
+
     constructor(private collection: Collection<Team>) {}
+
+    setTemplateRepository(repo: CertificateTemplateRepository) {
+        this.templateRepository = repo;
+    }
 
     async create(input: TeamInput, userId: string): Promise<Team> {
         const now = new Date();
@@ -52,6 +59,10 @@ export class TeamRepository {
 
         const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
+        if (result && input.users) {
+            await this.templateRepository?.syncTemplatesByTeam(id);
+        }
+
         return result;
     }
 
@@ -67,7 +78,11 @@ export class TeamRepository {
 
     async delete(id: string): Promise<boolean> {
         const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { isActive: false, updatedAt: new Date() } });
-        return result.modifiedCount > 0;
+        if (result.modifiedCount > 0) {
+            await this.templateRepository?.syncTemplatesByTeam(id);
+            return true;
+        }
+        return false;
     }
 
     async findById(id: string, options?: { includeInactive?: boolean }): Promise<Team | null> {

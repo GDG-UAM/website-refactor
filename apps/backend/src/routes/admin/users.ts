@@ -54,6 +54,9 @@ export const adminUsersRoutes = new Elysia({ prefix: "/users" }).use(permissions
                 pageSize: t.Number()
             }),
             403: t.Object({ error: t.String() })
+        },
+        detail: {
+            tags: ["Admin - Users"]
         }
     }
 );

@@ -16,6 +16,7 @@ export type HackathonFormData = {
     date: string;
     endDate?: string | null;
     location?: string | null;
+    designId?: number;
 };
 
 interface AdminHackathonsFormPageProps {
@@ -38,7 +39,8 @@ export function AdminHackathonsFormPage({ id, initialData }: AdminHackathonsForm
         slug: initialData?.slug || "",
         date: formatDateForInput(initialData?.date || new Date()),
         endDate: formatDateForInput(initialData?.endDate || undefined),
-        location: initialData?.location || ""
+        location: initialData?.location || "",
+        designId: initialData?.certificateDefaults?.designId || 0
     });
     const [submitting, setSubmitting] = useState(false);
     const isEdit = !!id;
@@ -92,6 +94,13 @@ export function AdminHackathonsFormPage({ id, initialData }: AdminHackathonsForm
             label: m["admin.hackathons.form.location"](),
             type: "text",
             gridColumn: "span 12"
+        },
+        {
+            name: "designId",
+            label: m["admin.hackathons.certificates.fields.designId"](),
+            type: "select",
+            gridColumn: "span 12",
+            options: [{ label: m["admin.hackathons.certificates.values.designs.default"](), value: 0 }]
         }
     ];
 
@@ -101,7 +110,11 @@ export function AdminHackathonsFormPage({ id, initialData }: AdminHackathonsForm
             const payload = {
                 ...formData,
                 date: formData.date ? new Date(formData.date) : undefined,
-                endDate: formData.endDate ? new Date(formData.endDate) : null
+                endDate: formData.endDate ? new Date(formData.endDate) : null,
+                certificateDefaults: {
+                    ...initialData?.certificateDefaults,
+                    designId: formData.designId
+                }
             };
 
             let result;

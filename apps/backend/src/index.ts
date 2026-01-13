@@ -4,7 +4,19 @@ import { swagger } from "@elysiajs/swagger";
 import { csrfPlugin } from "./plugins/csrf";
 import { permissionsPlugin } from "./plugins/permissions";
 import { auth } from "./lib/auth";
-import { adminRoutes, settingsRoutes, userRoutes, contactRoutes, eventsRoutes, articlesRoutes, miscRoutes, linksRoutes, hackathonRoutes } from "./routes";
+import {
+    adminRoutes,
+    settingsRoutes,
+    userRoutes,
+    contactRoutes,
+    eventsRoutes,
+    articlesRoutes,
+    miscRoutes,
+    linksRoutes,
+    hackathonRoutes,
+    badgesRoutes,
+    publicCertificateRoutes
+} from "./routes";
 import db from "./lib/db";
 import { initializeDefaults } from "./lib/init";
 import { initSentry, Sentry } from "./sentry";
@@ -35,6 +47,19 @@ const app = new Elysia({ prefix: "/api" })
             allowedHeaders: ["Content-Type", "Authorization", "x-xsrf-token", "x-better-auth", "x-internal-secret"]
         })
     )
+
+    .all("/auth/*", betterAuthView)
+    .use(csrfPlugin)
+    .use(permissionsPlugin)
+    .onBeforeHandle(({ path, user, set }: any) => {
+        if (path.startsWith("/api/docs") || path.startsWith("/docs")) {
+            const allowedRoles = ["team", "organizer", "admin"];
+            if (!user || !user.role || !allowedRoles.includes(user.role)) {
+                set.status = 401;
+                return { error: "Unauthorized" };
+            }
+        }
+    })
     .use(
         swagger({
             path: "/docs",
@@ -43,7 +68,27 @@ const app = new Elysia({ prefix: "/api" })
                     title: "GDG UAM API",
                     version: "1.0.0",
                     description: "GDG UAM API"
-                }
+                },
+                tags: [
+                    { name: "General", description: "General endpoints" },
+                    { name: "Settings", description: "Settings endpoints" },
+                    { name: "Users", description: "User management endpoints" },
+                    { name: "Contact", description: "Contact form endpoints" },
+                    { name: "Events", description: "Event endpoints" },
+                    { name: "Articles", description: "Article endpoints" },
+                    { name: "Misc", description: "Miscellaneous endpoints" },
+                    { name: "Links", description: "Link management endpoints" },
+                    { name: "Badges", description: "Open Badge endpoints" },
+                    { name: "Certificates", description: "Public certificate endpoints" },
+                    { name: "Hackathons", description: "Hackathon endpoints" },
+                    { name: "Admin - Articles", description: "Admin article management" },
+                    { name: "Admin - Events", description: "Admin event management" },
+                    { name: "Admin - Links", description: "Admin link management" },
+                    { name: "Admin - Users", description: "Admin user management" },
+                    { name: "Admin - Hackathons", description: "Admin hackathon management" },
+                    { name: "Admin - Teams", description: "Admin team management" },
+                    { name: "Admin - Certificates", description: "Admin certificate management" }
+                ]
             },
             version: "1.0.0",
             autoDarkMode: false,
@@ -84,9 +129,6 @@ const app = new Elysia({ prefix: "/api" })
             }
         })
     )
-    .all("/auth/*", betterAuthView)
-    .use(csrfPlugin)
-    .use(permissionsPlugin)
     .use(adminRoutes)
     .use(settingsRoutes)
     .use(userRoutes)
@@ -96,12 +138,17 @@ const app = new Elysia({ prefix: "/api" })
     .use(miscRoutes)
     .use(linksRoutes)
     .use(hackathonRoutes)
+    .use(badgesRoutes)
+    .use(publicCertificateRoutes)
     .get(
         "/health",
         () => {
             return { status: "ok" as const };
         },
         {
+            detail: {
+                tags: ["General"]
+            },
             response: {
                 200: t.Object({ status: t.Literal("ok") })
             }

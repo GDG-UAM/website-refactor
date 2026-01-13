@@ -313,6 +313,7 @@ export const HackathonSchema = t.Object({
         t.Nullable(
             t.Object({
                 title: t.Optional(t.Nullable(t.String())),
+                designId: t.Optional(t.Number({ default: 0 })),
                 signatures: t.Array(
                     t.Object({
                         name: t.Optional(t.String()),
@@ -341,6 +342,7 @@ export interface Hackathon {
     intermission?: AdminHackathonIntermission | null;
     certificateDefaults?: {
         title?: string | null;
+        designId?: number;
         signatures: {
             name?: string;
             role?: string;
@@ -413,3 +415,142 @@ export interface Team {
     createdAt: Date;
     updatedAt: Date;
 }
+
+// ==================== Certificate Types ====================
+
+export const CertificateTypeEnum = t.Union([
+    t.Literal("COURSE_COMPLETION"),
+    t.Literal("EVENT_ACHIEVEMENT"),
+    t.Literal("PARTICIPATION"),
+    t.Literal("VOLUNTEER")
+]);
+
+export const ParticipationRoleEnum = t.Union([t.Literal("ATTENDEE"), t.Literal("PARTICIPANT"), t.Literal("SPEAKER"), t.Literal("ORGANIZER")]);
+
+export const EventAchievementMetadataSchema = t.Object({
+    rank: t.String(),
+    group: t.Optional(t.String())
+});
+
+export const CourseCompletionMetadataSchema = t.Object({
+    instructors: t.Optional(
+        t.Array(
+            t.Object({
+                ref: t.Optional(t.Any()), // ObjectId string
+                name: t.Optional(t.String())
+            })
+        )
+    ),
+    grade: t.Optional(t.String()),
+    hours: t.Optional(t.Number())
+});
+
+export const VolunteerMetadataSchema = t.Object({
+    hours: t.Number()
+});
+
+export const CertificateSignatureSchema = t.Object({
+    name: t.String(),
+    role: t.String(),
+    imageUrl: t.String()
+});
+
+export interface CertificateSignature {
+    name: string;
+    role: string;
+    imageUrl: string;
+}
+
+export type CertificateType = "COURSE_COMPLETION" | "EVENT_ACHIEVEMENT" | "PARTICIPATION" | "VOLUNTEER";
+
+export type CertificateSource = "manual" | "auto";
+
+export const CertificateSourceEnum = t.Union([t.Literal("manual"), t.Literal("auto")]);
+
+export const CertificateRecipientSchema = t.Object({
+    name: t.String(),
+    userId: t.Optional(t.String())
+});
+
+export interface Certificate {
+    _id: ObjectId;
+    recipient: {
+        name: string;
+        userId?: string;
+    };
+    designId: number;
+    signatures: CertificateSignature[];
+    startDate?: Date;
+    endDate?: Date;
+    title: string;
+    description?: string;
+    type: CertificateType;
+    source: CertificateSource;
+    metadata?: any;
+    templateId?: ObjectId; // If generated from template
+    revoked: boolean;
+    isActive: boolean;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export const CertificateSchema = t.Object({
+    _id: t.Optional(t.Any()),
+    recipient: CertificateRecipientSchema,
+    designId: t.Number(),
+    signatures: t.Array(CertificateSignatureSchema),
+    startDate: t.Optional(t.Nullable(t.Date())),
+    endDate: t.Optional(t.Nullable(t.Date())),
+    title: t.String(),
+    description: t.Optional(t.String()),
+    type: CertificateTypeEnum,
+    source: t.Optional(CertificateSourceEnum),
+    metadata: t.Optional(t.Any()),
+    templateId: t.Optional(t.Any()),
+    revoked: t.Boolean(),
+    isActive: t.Boolean(),
+    createdBy: t.String(),
+    createdAt: t.Optional(t.Date()),
+    updatedAt: t.Optional(t.Date())
+});
+
+// ==================== Certificate Template Types ====================
+
+export interface CertificateTemplate {
+    _id: ObjectId;
+    recipients: { name: string; userId?: string }[];
+    hackathonId?: ObjectId;
+    teamId?: ObjectId;
+    designId: number;
+    signatures: CertificateSignature[];
+    startDate?: Date;
+    endDate?: Date;
+    title: string;
+    description?: string;
+    type: CertificateType;
+    metadata?: any;
+    isActive: boolean;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export const CertificateTemplateSchema = t.Object({
+    _id: t.Optional(t.Any()),
+    recipients: t.Array(CertificateRecipientSchema),
+    hackathonId: t.Optional(t.Any()),
+    teamId: t.Optional(t.Any()),
+    designId: t.Number(),
+    signatures: t.Array(CertificateSignatureSchema),
+    startDate: t.Optional(t.Date()),
+    endDate: t.Optional(t.Date()),
+    title: t.String(),
+    description: t.Optional(t.String()),
+    type: CertificateTypeEnum,
+    metadata: t.Optional(t.Any()),
+    isActive: t.Boolean({ default: true }),
+    createdBy: t.String(),
+    createdAt: t.Optional(t.Date()),
+    updatedAt: t.Optional(t.Date())
+});

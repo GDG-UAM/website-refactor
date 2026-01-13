@@ -5,6 +5,7 @@ import { adminLinksRoutes } from "./links";
 import { adminUsersRoutes } from "./users";
 import { adminHackathonsRoutes } from "./hackathons";
 import { adminTeamsRoutes } from "./teams";
+import { adminCertificatesRoutes } from "./certificates";
 
 export const adminRoutes = new Elysia({ prefix: "/admin" })
     .use(adminArticlesRoutes)
@@ -12,4 +13,5 @@ export const adminRoutes = new Elysia({ prefix: "/admin" })
     .use(adminLinksRoutes)
     .use(adminUsersRoutes)
     .use(adminHackathonsRoutes)
-    .use(adminTeamsRoutes);
+    .use(adminTeamsRoutes)
+    .use(adminCertificatesRoutes);

@@ -24,6 +24,9 @@ export const hackathonRoutes = new Elysia({ prefix: "/hackathons" })
             response: {
                 200: AdminHackathonIntermissionSchema,
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Hackathons"]
             }
         }
     )

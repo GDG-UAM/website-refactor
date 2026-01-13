@@ -66,6 +66,9 @@ export const adminTracksRoutes = new Elysia({ prefix: "/:id/tracks" })
                     pageSize: t.Number()
                 }),
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     )
@@ -91,6 +94,9 @@ export const adminTracksRoutes = new Elysia({ prefix: "/:id/tracks" })
             response: {
                 200: AdminTrackResponseSchema,
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     )
@@ -122,6 +128,9 @@ export const adminTracksRoutes = new Elysia({ prefix: "/:id/tracks" })
                 200: AdminTrackResponseSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     )
@@ -162,6 +171,9 @@ export const adminTracksRoutes = new Elysia({ prefix: "/:id/tracks" })
                 200: AdminTrackResponseSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     )
@@ -189,6 +201,9 @@ export const adminTracksRoutes = new Elysia({ prefix: "/:id/tracks" })
                 200: t.Object({ success: t.Boolean() }),
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     );

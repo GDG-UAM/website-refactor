@@ -73,6 +73,9 @@ export const adminTeamsRoutes = new Elysia({ prefix: "/teams" })
             response: {
                 200: PaginatedTeamSchema,
                 403: ErrorSchema
+            },
+            detail: {
+                tags: ["Admin - Teams"]
             }
         }
     )
@@ -106,6 +109,9 @@ export const adminTeamsRoutes = new Elysia({ prefix: "/teams" })
                 200: AdminTeamSchema,
                 403: ErrorSchema,
                 404: ErrorSchema
+            },
+            detail: {
+                tags: ["Admin - Teams"]
             }
         }
     )
@@ -131,6 +137,9 @@ export const adminTeamsRoutes = new Elysia({ prefix: "/teams" })
             response: {
                 200: AdminTeamSchema,
                 403: ErrorSchema
+            },
+            detail: {
+                tags: ["Admin - Teams"]
             }
         }
     )
@@ -175,6 +184,9 @@ export const adminTeamsRoutes = new Elysia({ prefix: "/teams" })
                 200: AdminTeamSchema,
                 403: ErrorSchema,
                 404: ErrorSchema
+            },
+            detail: {
+                tags: ["Admin - Teams"]
             }
         }
     )
@@ -208,6 +220,9 @@ export const adminTeamsRoutes = new Elysia({ prefix: "/teams" })
                 200: t.Object({ success: t.Boolean() }),
                 403: ErrorSchema,
                 404: ErrorSchema
+            },
+            detail: {
+                tags: ["Admin - Teams"]
             }
         }
     )
@@ -237,6 +252,9 @@ export const adminTeamsRoutes = new Elysia({ prefix: "/teams" })
                 200: t.Object({ password: t.String() }),
                 403: ErrorSchema,
                 404: ErrorSchema
+            },
+            detail: {
+                tags: ["Admin - Teams"]
             }
         }
     )
@@ -271,6 +289,9 @@ export const adminTeamsRoutes = new Elysia({ prefix: "/teams" })
                 200: t.Object({ password: t.String() }),
                 403: ErrorSchema,
                 404: ErrorSchema
+            },
+            detail: {
+                tags: ["Admin - Teams"]
             }
         }
     );

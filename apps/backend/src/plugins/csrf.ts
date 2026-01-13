@@ -31,15 +31,23 @@ export const csrfPlugin = (app: Elysia) =>
                 return { error: "Invalid or missing CSRF token" };
             }
         })
-        .get("/csrf", ({ cookie: { "XSRF-TOKEN": xsrfToken } }) => {
-            if (!xsrfToken.value) {
-                xsrfToken.set({
-                    value: crypto.randomUUID(),
-                    path: "/",
-                    sameSite: "lax",
-                    httpOnly: false, // Must be readable by client JS
-                    secure: process.env.NODE_ENV === "production"
-                });
+        .get(
+            "/csrf",
+            ({ cookie: { "XSRF-TOKEN": xsrfToken } }) => {
+                if (!xsrfToken.value) {
+                    xsrfToken.set({
+                        value: crypto.randomUUID(),
+                        path: "/",
+                        sameSite: "lax",
+                        httpOnly: false, // Must be readable by client JS
+                        secure: process.env.NODE_ENV === "production"
+                    });
+                }
+                return { status: "initialized" };
+            },
+            {
+                detail: {
+                    tags: ["General"]
+                }
             }
-            return { status: "initialized" };
-        });
+        );

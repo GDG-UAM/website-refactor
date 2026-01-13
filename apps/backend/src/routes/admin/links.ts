@@ -44,6 +44,9 @@ export const adminLinksRoutes = new Elysia({ prefix: "/links" })
             response: {
                 200: LinksListResponseSchema,
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Links"]
             }
         }
     )
@@ -77,6 +80,9 @@ export const adminLinksRoutes = new Elysia({ prefix: "/links" })
             response: {
                 200: AdminLinkSchema,
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Links"]
             }
         }
     )
@@ -107,6 +113,9 @@ export const adminLinksRoutes = new Elysia({ prefix: "/links" })
                 200: AdminLinkSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Links"]
             }
         }
     )
@@ -142,6 +151,9 @@ export const adminLinksRoutes = new Elysia({ prefix: "/links" })
                 200: AdminLinkSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Links"]
             }
         }
     )
@@ -169,6 +181,9 @@ export const adminLinksRoutes = new Elysia({ prefix: "/links" })
                 200: t.Object({ success: t.Boolean() }),
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Links"]
             }
         }
     );

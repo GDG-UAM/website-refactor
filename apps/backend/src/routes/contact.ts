@@ -37,6 +37,9 @@ export const contactRoutes = new Elysia({ prefix: "/contact" }).post(
         response: {
             200: t.Object({ ok: t.Boolean() }),
             400: t.Object({ error: t.String() })
+        },
+        detail: {
+            tags: ["Contact"]
         }
     }
 );

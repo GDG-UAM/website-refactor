@@ -39,6 +39,9 @@ export const userRoutes = new Elysia({ prefix: "/users" })
                         showProfilePublicly: t.Boolean()
                     })
                 )
+            },
+            detail: {
+                tags: ["Users"]
             }
         }
     )
@@ -101,7 +104,10 @@ export const userRoutes = new Elysia({ prefix: "/users" })
                 403: t.Object({ error: t.String() }),
                 500: t.Object({ error: t.String() })
             },
-            params: t.Object({ userId: t.String() })
+            params: t.Object({ userId: t.String() }),
+            detail: {
+                tags: ["Users"]
+            }
         }
     )
     .get(
@@ -149,6 +155,9 @@ export const userRoutes = new Elysia({ prefix: "/users" })
                     showProfilePublicly: t.Optional(t.Boolean())
                 }),
                 500: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Users"]
             }
         }
     );

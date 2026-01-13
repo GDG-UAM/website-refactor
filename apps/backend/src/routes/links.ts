@@ -30,6 +30,9 @@ export const linksRoutes = new Elysia({ prefix: "/links" }).get(
         response: {
             200: t.Composite([LinkSchema, t.Object({ _id: t.String() })]),
             404: t.Object({ error: t.String() })
+        },
+        detail: {
+            tags: ["Links"]
         }
     }
 );

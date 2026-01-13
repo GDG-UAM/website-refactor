@@ -78,6 +78,9 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
                     page: t.Number(),
                     pageSize: t.Number()
                 })
+            },
+            detail: {
+                tags: ["Articles"]
             }
         }
     )
@@ -108,6 +111,9 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
             response: {
                 200: LocalizedArticleSchema,
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Articles"]
             }
         }
     );

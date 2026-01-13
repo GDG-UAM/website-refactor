@@ -69,6 +69,9 @@ export const miscRoutes = new Elysia({ prefix: "/misc" }).get(
             400: t.Object({ error: t.String() }),
             404: t.Object({ error: t.String() }),
             500: t.Object({ error: t.String() })
+        },
+        detail: {
+            tags: ["Misc"]
         }
     }
 );

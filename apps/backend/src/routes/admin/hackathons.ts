@@ -67,6 +67,9 @@ export const adminHackathonsRoutes = new Elysia({ prefix: "/hackathons" })
                     pageSize: t.Number()
                 }),
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     )
@@ -90,6 +93,9 @@ export const adminHackathonsRoutes = new Elysia({ prefix: "/hackathons" })
             response: {
                 200: AdminHackathonResponseSchema,
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     )
@@ -120,6 +126,9 @@ export const adminHackathonsRoutes = new Elysia({ prefix: "/hackathons" })
                 200: AdminHackathonResponseSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     )
@@ -174,6 +183,9 @@ export const adminHackathonsRoutes = new Elysia({ prefix: "/hackathons" })
                 200: AdminHackathonResponseSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     )
@@ -201,6 +213,9 @@ export const adminHackathonsRoutes = new Elysia({ prefix: "/hackathons" })
                 200: t.Object({ success: t.Boolean() }),
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Hackathons"]
             }
         }
     );

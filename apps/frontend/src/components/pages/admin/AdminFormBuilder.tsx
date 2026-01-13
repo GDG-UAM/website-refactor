@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import { TextField, Switch, FormControlLabel, MenuItem } from "@mui/material";
+import { TextField, Switch, FormControlLabel, MenuItem, Box, Checkbox } from "@mui/material";
 import { usePermissions } from "#/providers/PermissionsProvider";
 import {
     Form,
@@ -37,11 +37,31 @@ const getShortLanguageName = (locale: string) => {
 export type FieldConfig<T> = {
     name: keyof T & string;
     label: string;
-    type: "text" | "number" | "switch" | "select" | "multiline" | "url" | "date" | "datetime" | "markdown" | "user-selector" | "carousel" | "table";
+    type:
+        | "text"
+        | "number"
+        | "switch"
+        | "checkbox"
+        | "select"
+        | "multiline"
+        | "textarea"
+        | "url"
+        | "date"
+        | "datetime"
+        | "markdown"
+        | "user-selector"
+        | "carousel"
+        | "table"
+        | "choice"
+        | "group";
     required?: boolean;
-    options?: { label: string; value: any }[];
+    options?: { label: string; value: any; icon?: string | ReactNode }[];
     roles?: ("user" | "team" | "organizer")[];
     columns?: any[];
+    fields?: FieldConfig<T>[]; // For group
+    animated?: boolean; // For group
+    animationKey?: string; // For group
+    animationDirection?: number; // For group
     addButtonLabel?: string;
     emptyMessage?: string;
     helperText?: string;
@@ -52,6 +72,7 @@ export type FieldConfig<T> = {
     disabled?: boolean;
     gridColumn?: string;
     allowRawStrings?: boolean;
+    maxItems?: number;
     validate?: (value: any) => string | boolean;
 };
 
@@ -263,18 +284,29 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             label={field.label}
                         />
                     );
-
+                case "checkbox":
+                    return (
+                        <FormControlLabel
+                            control={
+                                <Checkbox
+                                    checked={!!value}
+                                    onChange={(e) => handleFieldChange(e.target.checked)}
+                                    disabled={!canEdit || submitting || isActuallyDisabled}
+                                />
+                            }
+                            label={field.label}
+                        />
+                    );
                 case "select":
                     return (
-                        <TextField {...commonProps} select value={value || ""} onChange={(e) => handleFieldChange(e.target.value)}>
+                        <TextField {...commonProps} select value={value ?? ""} onChange={(e) => handleFieldChange(e.target.value)}>
                             {field.options?.map((opt) => (
-                                <MenuItem key={opt.value} value={opt.value}>
+                                <MenuItem key={JSON.stringify(opt.value)} value={opt.value}>
                                     {opt.label}
                                 </MenuItem>
                             ))}
                         </TextField>
                     );
-
                 case "markdown":
                     return (
                         <>
@@ -304,14 +336,15 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             value={value || []}
                             roles={field.roles}
                             allowRawStrings={field.allowRawStrings}
+                            maxItems={field.maxItems}
                             onChange={(val) => handleFieldChange(val)}
                         />
                     );
                 case "multiline":
+                case "textarea":
                     return (
                         <TextField {...commonProps} multiline rows={field.rows || 3} value={value || ""} onChange={(e) => handleFieldChange(e.target.value)} />
                     );
-
                 case "table":
                     return (
                         <AdminTableField
@@ -324,7 +357,6 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             subject={subject}
                         />
                     );
-
                 case "carousel":
                     return (
                         <AdminCarouselField
@@ -333,6 +365,34 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             onChange={(val) => handleFieldChange(val)}
                             inspectMode={disabled && ability.canUpdateAnyField(`admin.hackathons.${resourceId}.intermission.carousel`, { carousel: value })}
                         />
+                    );
+                case "choice":
+                    return (
+                        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+                            <LocaleLabel>{field.label}</LocaleLabel>
+                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+                                {field.options?.map((opt) => (
+                                    <PlainButton
+                                        key={JSON.stringify(opt.value)}
+                                        type="button"
+                                        slim
+                                        color={JSON.stringify(value) === JSON.stringify(opt.value) ? "primary" : "default"}
+                                        onClick={() => handleFieldChange(opt.value)}
+                                        disabled={!canEdit || submitting || isActuallyDisabled}
+                                        showColorDisabled
+                                    >
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                            {opt.icon && (
+                                                <Box sx={{ display: "flex", alignItems: "center" }}>
+                                                    {typeof opt.icon === "string" ? <img src={opt.icon} alt="" style={{ width: 18, height: 18 }} /> : opt.icon}
+                                                </Box>
+                                            )}
+                                            <span>{opt.label}</span>
+                                        </Box>
+                                    </PlainButton>
+                                ))}
+                            </Box>
+                        </Box>
                     );
                 case "date":
                 case "datetime":
@@ -356,7 +416,11 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             value={field.type === "date" && typeof value === "string" ? value.split("T")[0] : (value ?? "")}
                             onChange={(e) => {
                                 const val = e.target.value;
-                                handleFieldChange(field.type === "number" ? (val === "" ? 0 : Number(val)) : val);
+                                if (val === "") {
+                                    handleFieldChange("");
+                                    return;
+                                }
+                                handleFieldChange(field.type === "number" ? Number(val) : val);
                             }}
                             inputProps={{
                                 pattern: field.pattern,
@@ -365,13 +429,49 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             InputLabelProps={field.type === "date" || field.type === "datetime" ? { shrink: true } : undefined}
                         />
                     );
+                case "group":
+                    const content = (
+                        <div
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(12, 1fr)",
+                                gap: "20px",
+                                width: "100%"
+                            }}
+                        >
+                            {field.fields?.map((f) => renderField(f))}
+                        </div>
+                    );
+
+                    if (field.animated) {
+                        return (
+                            <AnimatePresence mode="popLayout" custom={field.animationDirection || 1} initial={false}>
+                                <motion.div
+                                    key={field.animationKey || "static"}
+                                    custom={field.animationDirection || 1}
+                                    variants={localeVariants}
+                                    initial="enter"
+                                    animate="center"
+                                    exit="exit"
+                                    transition={{
+                                        x: { type: "spring", stiffness: 350, damping: 30 },
+                                        opacity: { duration: 0.2 }
+                                    }}
+                                    style={{ width: "100%" }}
+                                >
+                                    {content}
+                                </motion.div>
+                            </AnimatePresence>
+                        );
+                    }
+                    return content;
             }
         };
 
         return (
             <FieldWrapper key={`${field.name}_${isLocalized ? activeLocale : "base"}`} $gridColumn={field.gridColumn}>
                 {renderInput()}
-                {field.type !== "switch" && field.helperText && <HelpText>{field.helperText}</HelpText>}
+                {field.type !== "switch" && field.type !== "checkbox" && field.helperText && <HelpText>{field.helperText}</HelpText>}
             </FieldWrapper>
         );
     };

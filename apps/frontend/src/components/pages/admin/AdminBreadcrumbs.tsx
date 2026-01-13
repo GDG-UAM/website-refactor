@@ -26,7 +26,7 @@ export default function AdminBreadcrumbs({ items: propsItems, className, style }
 
     return (
         <Nav aria-label="breadcrumb" className={className} style={style}>
-            <List as={motion.ol} layout>
+            <List as={motion.ol}>
                 <AnimatePresence mode="popLayout">
                     {items.map((it, i) => {
                         const isLink = it.href && i !== last;
@@ -46,18 +46,12 @@ export default function AdminBreadcrumbs({ items: propsItems, className, style }
                         );
 
                         return (
-                            <React.Fragment key={it.label}>
-                                <Crumb variants={crumbVariants} initial="hidden" animate="visible" exit="exit" layout>
-                                    {isLink ? (
-                                        <CrumbAlignLink href={it.href!} layout>
-                                            {content}
-                                        </CrumbAlignLink>
-                                    ) : (
-                                        <CrumbAlign layout>{content}</CrumbAlign>
-                                    )}
+                            <React.Fragment key={it.href || i}>
+                                <Crumb variants={crumbVariants} initial="hidden" animate="visible" exit="exit">
+                                    {isLink ? <CrumbAlignLink href={it.href!}>{content}</CrumbAlignLink> : <CrumbAlign>{content}</CrumbAlign>}
                                 </Crumb>
                                 {i !== last && (
-                                    <Sep variants={crumbVariants} layout initial="hidden" animate="visible" exit="exit" key={`sep-${it.label}`}>
+                                    <Sep variants={crumbVariants} initial="hidden" animate="visible" exit="exit" key={`sep-${it.href || i}`}>
                                         /
                                     </Sep>
                                 )}{" "}

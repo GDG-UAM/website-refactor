@@ -7,3 +7,5 @@ export * from "./LinkRepository";
 export * from "./HackathonRepository";
 export * from "./TrackRepository";
 export * from "./TeamRepository";
+export * from "./CertificateRepository";
+export * from "./CertificateTemplateRepository";

@@ -39,6 +39,7 @@ export interface CustomButtonProps {
     dontUseContext?: boolean;
     justify?: "center" | "flex-start" | "flex-end" | "space-between" | "space-around";
     type?: "button" | "submit" | "reset";
+    showColorDisabled?: boolean;
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -66,6 +67,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     fullWidth = false,
     dontUseContext = false,
     justify = "center",
+    showColorDisabled = false,
     children = null
 }) => {
     const [loading, setLoading] = useState(isLoading);
@@ -194,7 +196,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             viewBox={viewBox}
             style={style}
             $holdProgress={holdProgress}
-            $buttonColor={disabled ? "var(--button-disabled-bg)" : buttonColor}
+            $buttonColor={showColorDisabled ? buttonColor : disabled ? "var(--button-disabled-bg)" : buttonColor}
             $hoverColor={hoverColor}
             $noBackground={noBackground}
             $borderRadius={borderRadius}
@@ -217,7 +219,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
                         height={`${iconSize}px`}
                         viewBox={viewBox}
                         width={`${iconSize}px`}
-                        fill={disabled ? "var(--button-disabled-bg)" : buttonColor}
+                        fill={showColorDisabled ? buttonColor : disabled ? "var(--button-disabled-bg)" : buttonColor}
                     >
                         {isPathElement ? <g dangerouslySetInnerHTML={{ __html: path }} /> : <path d={path} />}
                     </svg>

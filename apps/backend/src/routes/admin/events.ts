@@ -87,6 +87,9 @@ export const adminEventsRoutes = new Elysia({ prefix: "/events" })
                     pageSize: t.Number()
                 }),
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Events"]
             }
         }
     )
@@ -110,6 +113,9 @@ export const adminEventsRoutes = new Elysia({ prefix: "/events" })
             response: {
                 200: AdminEventSchema,
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Events"]
             }
         }
     )
@@ -140,6 +146,9 @@ export const adminEventsRoutes = new Elysia({ prefix: "/events" })
                 200: AdminEventSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Events"]
             }
         }
     )
@@ -175,6 +184,9 @@ export const adminEventsRoutes = new Elysia({ prefix: "/events" })
                 200: AdminEventSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Events"]
             }
         }
     )
@@ -202,6 +214,9 @@ export const adminEventsRoutes = new Elysia({ prefix: "/events" })
                 200: t.Object({ success: t.Boolean() }),
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Events"]
             }
         }
     );

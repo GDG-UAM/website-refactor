@@ -23,6 +23,7 @@ interface AdminUserSelectorProps {
     required?: boolean;
     placeholder?: string;
     allowRawStrings?: boolean;
+    maxItems?: number;
 }
 
 const DEFAULT_ROLES: ("user" | "team" | "organizer")[] = ["team", "organizer"];
@@ -37,7 +38,8 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
     error = false,
     required = false,
     placeholder,
-    allowRawStrings = false
+    allowRawStrings = false,
+    maxItems
 }) => {
     const [q, setQ] = useState("");
     const [results, setResults] = useState<UserLite[]>([]);
@@ -141,6 +143,7 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
     }, [debouncedQ, showDropdown, roles, valueKey]);
 
     const handleSelect = (user: UserLite | string) => {
+        if (maxItems && value.length >= maxItems) return;
         const id = typeof user === "string" ? user : user._id;
         if (value.includes(id)) return;
 
@@ -228,7 +231,7 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
                         }
                     }}
                     onKeyDown={handleKeyDown}
-                    disabled={disabled}
+                    disabled={disabled || (maxItems ? value.length >= maxItems : false)}
                     placeholder={value.length === 0 ? placeholder : ""}
                 />
             </Control>

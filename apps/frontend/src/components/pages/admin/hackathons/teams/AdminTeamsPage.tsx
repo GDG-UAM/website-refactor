@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "#/lib/eden";
 import { AdminTable } from "#/components/pages/admin/AdminTable";
 import { textColumn, chipColumn, customColumn } from "#/components/pages/admin/AdminTableFactories";
-import { AddButton, EditButton, DeleteButton, RestoreButton, ViewButton, ReloadButton } from "#/components/Buttons";
+import { AddButton, EditButton, DeleteButton, RestoreButton, ViewButton, ReloadButton, CertificateButton } from "#/components/Buttons";
 import { newErrorToast, newInfoToast, newSuccessToast } from "#/components/Toast";
 import { usePermissions } from "#/providers/PermissionsProvider";
 import { FormControlLabel, Checkbox } from "@mui/material";
@@ -240,8 +240,17 @@ export function AdminTeamsPage({ hackathonId, hackathon }: AdminTeamsPageProps) 
                     const hackathonInactive = hackathon?.isActive === false;
                     const canEditRow = row.isActive && !hackathonInactive && ability.canUpdateAnyField(`${resourceBase}.${row._id}`, row);
 
+                    const canAccessCertificates = ability.hasSectionPermissions(`admin.hackathons.${hackathonId}.teams.${row._id}.certificates`);
+
                     return (
                         <>
+                            {canAccessCertificates && (
+                                <CertificateButton
+                                    onClick={() => router.push(`/admin/hackathons/${hackathonId}/teams/${row._id}/certificates`)}
+                                    ariaLabel="Manage certificates"
+                                    iconSize={20}
+                                />
+                            )}
                             {canEditRow ? (
                                 <EditButton
                                     onClick={() => router.push(`/admin/hackathons/${hackathonId}/teams/${row._id}`)}

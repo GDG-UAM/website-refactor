@@ -8,6 +8,8 @@ import { newErrorToast, newSuccessToast } from "#/components/Toast";
 import * as m from "#/paraglide/messages";
 import { Container } from "#/components/pages/admin/AdminFormPage.styles";
 
+import { getDesignOptions } from "#/components/certificates/CertificateDesigns";
+
 interface AdminCertificatesFormPageProps {
     id: string;
     initialData: any;
@@ -21,14 +23,16 @@ interface SignatureEntry {
 
 interface CertificatesData {
     title: string;
+    designId: number;
     signatures: SignatureEntry[];
 }
 
 export function AdminCertificatesFormPage({ id, initialData }: AdminCertificatesFormPageProps) {
     const router = useRouter();
     const [data, setData] = useState<CertificatesData>({
-        title: initialData?.certificateDefaults?.title ?? "",
-        signatures: initialData?.certificateDefaults?.signatures ?? []
+        title: initialData?.certificateDefaults?.title || "",
+        designId: initialData?.certificateDefaults?.designId ?? 0,
+        signatures: initialData?.certificateDefaults?.signatures || []
     });
     const [submitting, setSubmitting] = useState(false);
 
@@ -38,7 +42,15 @@ export function AdminCertificatesFormPage({ id, initialData }: AdminCertificates
             label: m["admin.hackathons.certificates.fields.title"](),
             type: "text",
             placeholder: initialData.title,
-            gridColumn: "span 12"
+            helperText: m["admin.hackathons.certificates.helpers.titleOverride"]({ name: initialData.title }),
+            gridColumn: "span 8"
+        },
+        {
+            name: "designId",
+            label: m["admin.hackathons.certificates.fields.designId"](),
+            type: "select",
+            gridColumn: "span 4",
+            options: getDesignOptions()
         },
         {
             name: "signatures",

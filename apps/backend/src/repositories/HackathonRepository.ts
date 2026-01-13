@@ -1,5 +1,6 @@
 import { Collection, ObjectId, type Filter, type Sort } from "mongodb";
 import type { Hackathon } from "./types";
+import type { CertificateTemplateRepository } from "./CertificateTemplateRepository";
 
 export type HackathonInput = {
     title: string;
@@ -13,7 +14,13 @@ export type HackathonInput = {
 export type HackathonSortTypes = "newest" | "oldest" | "title_asc" | "title_desc";
 
 export class HackathonRepository {
+    private templateRepository?: CertificateTemplateRepository;
+
     constructor(private collection: Collection<Hackathon>) {}
+
+    setTemplateRepository(repo: CertificateTemplateRepository) {
+        this.templateRepository = repo;
+    }
 
     async create(input: HackathonInput, userId: string): Promise<Hackathon> {
         const now = new Date();
@@ -63,12 +70,20 @@ export class HackathonRepository {
 
         const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
+        if (result && (input.certificateDefaults || input.title || input.date || input.endDate)) {
+            await this.templateRepository?.syncTemplatesByHackathon(id);
+        }
+
         return result;
     }
 
     async delete(id: string): Promise<boolean> {
         const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { isActive: false, updatedAt: new Date() } });
-        return result.modifiedCount > 0;
+        if (result.modifiedCount > 0) {
+            await this.templateRepository?.syncTemplatesByHackathon(id);
+            return true;
+        }
+        return false;
     }
 
     async findById(id: string, options?: { includeInactive?: boolean }): Promise<Hackathon | null> {

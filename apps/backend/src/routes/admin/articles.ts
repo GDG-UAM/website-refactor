@@ -88,6 +88,9 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
                     pageSize: t.Number()
                 }),
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Articles"]
             }
         }
     )
@@ -111,6 +114,9 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
             response: {
                 200: AdminArticleSchema,
                 403: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Articles"]
             }
         }
     )
@@ -141,6 +147,9 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
                 200: AdminArticleSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Articles"]
             }
         }
     )
@@ -189,6 +198,9 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
                 200: AdminArticleSchema,
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Articles"]
             }
         }
     )
@@ -223,6 +235,9 @@ export const adminArticlesRoutes = new Elysia({ prefix: "/articles" })
                 200: t.Object({ success: t.Boolean() }),
                 403: t.Object({ error: t.String() }),
                 404: t.Object({ error: t.String() })
+            },
+            detail: {
+                tags: ["Admin - Articles"]
             }
         }
     );
