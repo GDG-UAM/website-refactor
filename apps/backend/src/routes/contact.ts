@@ -1,5 +1,5 @@
 import { Elysia, t } from "elysia";
-import { sendContactEmail, ContactPayload } from "../lib/mail/brevo";
+import { sendContactEmail, ContactPayload } from "../lib/mail/resend";
 
 export const contactRoutes = new Elysia({ prefix: "/contact" }).post(
     "/",
