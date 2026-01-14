@@ -43,7 +43,7 @@ type ContactPayload = {
 };
 
 function isValidEmail(email: string) {
-    return /^[\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
 interface ContactFormProps {

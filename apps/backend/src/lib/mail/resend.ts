@@ -19,7 +19,7 @@ export function sendContactEmail(payload: ContactPayload) {
                 email_type: payload.type.charAt(0).toUpperCase() + payload.type.slice(1),
                 sender_name: payload.name,
                 sender_email: payload.email,
-                content: payload.message,
+                content: payload.message.replaceAll("\n", "<br>"),
                 org_name: payload.orgName || "",
                 website: payload.website || ""
             }
