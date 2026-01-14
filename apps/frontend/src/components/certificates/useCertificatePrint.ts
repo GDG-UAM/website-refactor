@@ -6,10 +6,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { ServerStyleSheet } from "styled-components";
 import { CertificateData } from "./types";
 
-// ============================================================================
 // Types
-// ============================================================================
-
 interface PrintOptions {
     title?: string;
     onBeforePrint?: () => void;
@@ -20,10 +17,7 @@ interface CertificateComponentProps {
     data: CertificateData;
 }
 
-// ============================================================================
 // Constants
-// ============================================================================
-
 const IFRAME_STYLES = `
     position: fixed;
     top: -10000px;
@@ -36,10 +30,16 @@ const IFRAME_STYLES = `
 
 const FONT_LOAD_DELAY_MS = 250;
 
-// ============================================================================
-// Hook
-// ============================================================================
+/** Certificate dimensions in pixels (matching CEUAMCertificate) */
+const CERTIFICATE_WIDTH_PX = 1009;
+const CERTIFICATE_HEIGHT_PX = 760;
 
+/** Convert pixels to mm for print (assuming 96 DPI) */
+const PX_TO_MM = 25.4 / 96;
+const CERTIFICATE_WIDTH_MM = Math.round(CERTIFICATE_WIDTH_PX * PX_TO_MM);
+const CERTIFICATE_HEIGHT_MM = Math.round(CERTIFICATE_HEIGHT_PX * PX_TO_MM);
+
+// Hook
 /**
  * Custom hook to handle certificate printing.
  * Uses a hidden iframe to render the certificate with all its styles
@@ -74,28 +74,30 @@ export function useCertificatePrint() {
                 }
 
                 html, body {
-                    width: 100%;
-                    height: 100%;
+                    width: ${CERTIFICATE_WIDTH_PX}px;
+                    height: ${CERTIFICATE_HEIGHT_PX}px;
                     margin: 0;
                     padding: 0;
                     background: white;
+                    overflow: hidden;
                 }
 
                 body {
                     display: flex;
                     justify-content: center;
-                    align-items: flex-start;
+                    align-items: center;
                 }
 
+                /* Custom page size matching certificate dimensions */
                 @page {
-                    size: landscape;
+                    size: ${CERTIFICATE_WIDTH_MM}mm ${CERTIFICATE_HEIGHT_MM}mm;
                     margin: 0;
                 }
 
                 @media print {
                     html, body {
-                        width: 100%;
-                        height: 100%;
+                        width: ${CERTIFICATE_WIDTH_PX}px;
+                        height: ${CERTIFICATE_HEIGHT_PX}px;
                     }
 
                     body > * {
