@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Open_Sans, Poppins, Roboto, Lexend } from "next/font/google";
+import { Open_Sans, Poppins, Roboto, Lexend, Montserrat } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { cookies } from "next/headers";
@@ -39,6 +39,10 @@ const lexend = Lexend({
     subsets: ["latin"],
     weight: ["400", "500"],
     display: "swap"
+});
+export const montserrat = Montserrat({
+    subsets: ["latin"],
+    weight: ["400", "600", "700", "800", "900"]
 });
 
 export async function generateMetadata(): Promise<Metadata> {

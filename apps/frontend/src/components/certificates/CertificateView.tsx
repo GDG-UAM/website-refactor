@@ -19,6 +19,8 @@ import {
     LinkText
 } from "./CertificateView.styles";
 import Certificate, { CertificateData } from "./Certificate";
+import { getDesignById } from "./CertificateDesigns";
+import { useCertificatePrint } from "./useCertificatePrint";
 import { PrintButton, ShareButton, LinkedInShareButton, OpenBadgeButton, OpenLinkButton, CopyButton } from "#/components/Buttons";
 import Modal from "#/components/Modal";
 import * as m from "#/paraglide/messages";
@@ -50,6 +52,7 @@ export default function CertificateView({
     recipientUserId
 }: CertificateViewProps) {
     const { data: session } = useSession();
+    const { print: printCertificate, cleanup: cleanupPrint } = useCertificatePrint();
 
     if (showStatus === undefined) showStatus = isRevoked;
 
@@ -62,6 +65,7 @@ export default function CertificateView({
     const [scale, setScale] = useState(1);
     const [wrapperHeight, setWrapperHeight] = useState<number>(0);
     const [showBadgeModal, setShowBadgeModal] = useState(false);
+    const [isPrinting, setIsPrinting] = useState(false);
 
     useEffect(() => {
         const resize = () => {
@@ -83,11 +87,19 @@ export default function CertificateView({
         return () => {
             window.removeEventListener("resize", resize);
             ro.disconnect();
+            cleanupPrint();
         };
-    }, []);
+    }, [cleanupPrint]);
 
     const handlePrint = () => {
-        // TODO: Implement this
+        const design = getDesignById(data.designId);
+        const CertificateComponent = design.component;
+
+        printCertificate(CertificateComponent, data, {
+            title: `${data.title} - ${data.recipient.name}`,
+            onBeforePrint: () => setIsPrinting(true),
+            onAfterPrint: () => setIsPrinting(false)
+        });
     };
 
     const handleShare = async () => {
@@ -200,8 +212,8 @@ export default function CertificateView({
 
             {showActions && (
                 <ActionsContainer>
-                    <PrintButton onClick={handlePrint} disabled>
-                        {m["certificates.actions.print"]()}
+                    <PrintButton onClick={handlePrint} disabled={isPrinting}>
+                        {isPrinting ? ((m as any)["certificates.actions.printing"]?.() ?? "Printing...") : m["certificates.actions.print"]()}
                     </PrintButton>
                     <ShareButton onClick={handleShare}>{m["certificates.actions.share"]()}</ShareButton>
                     {showLinkedInButton && <LinkedInShareButton onClick={handleLinkedInShare}>{m["certificates.actions.addToLinkedIn"]()}</LinkedInShareButton>}

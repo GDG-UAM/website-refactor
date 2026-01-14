@@ -1,248 +1,294 @@
+"use client";
+
 import styled from "styled-components";
 
+// Design Constants
+
+// CEUAM brand color and paper background
+// --ceuam: #0d7377 (teal)
+// --paper: #f6faf9 (light mint)
+
+// Main Container
+
 export const CertificateWrapper = styled.div`
-    width: 1000px;
-    min-height: 707px;
-    height: auto;
-    background: #fdfdf5; /* Off-white / cream background */
-    padding: 30px;
-    box-sizing: border-box;
+    /* CSS Custom Properties */
+    --ceuam: #0d7377;
+    --paper: #f6faf9;
+    --font-title: "Montserrat", "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    --font-body: "Montserrat", system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+
+    /* Layout */
     position: relative;
-    font-family: "Inter", "Outfit", sans-serif;
-    color: #1a1a1a;
+    width: 1009px;
+    height: 760px;
     overflow: hidden;
+
+    /* Appearance */
+    background: var(--paper);
+    font-family: var(--font-body);
 `;
+
+// Border & Frame
 
 export const BorderFrame = styled.div`
     position: absolute;
-    top: 15px;
-    left: 15px;
-    right: 15px;
-    bottom: 15px;
-    border: 4px solid #0d7377;
+    inset: 18px;
+    border: 3px solid var(--ceuam);
     pointer-events: none;
-    z-index: 10;
-    overflow: hidden; /* This clips the decorations to the outer edge */
 
-    &::before {
+    /* Inner decorative border */
+    &::after {
         content: "";
         position: absolute;
-        top: 10px;
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
-        border: 1px solid #0d7377;
-        opacity: 0.5;
+        inset: 10px;
+        border: 1px solid rgba(13, 115, 119, 0.22);
     }
 `;
+
+// Decorative Elements
 
 export const DecorationClip = styled.div`
     position: absolute;
-    top: 19px; // 29px for inner border, 19px for outer
-    left: 19px;
-    right: 19px;
-    bottom: 19px;
+    inset: 18px;
     overflow: hidden;
     pointer-events: none;
-    z-index: 1;
-`;
-
-export const ContentLayer = styled.div`
-    position: relative;
-    z-index: 5;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px 80px;
-    box-sizing: border-box;
-`;
-
-export const HeaderLogos = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    margin-bottom: 25px;
-
-    .divider {
-        width: 1px;
-        height: 50px;
-        background: #0d7377;
-        opacity: 0.3;
-    }
-
-    img {
-        height: 50px;
-        object-fit: contain;
-    }
-`;
-
-export const MainTitle = styled.h1`
-    margin: 0;
-    font-size: 40px;
-    text-transform: uppercase;
-    color: #0d7377;
-    letter-spacing: 3px;
-    font-weight: 800;
-    text-align: center;
-`;
-
-export const SubTitle = styled.h2`
-    margin: 10px 0 5px;
-    font-size: 26px;
-    color: #000;
-    font-weight: 700;
-    text-transform: uppercase;
-    text-align: center;
-`;
-
-export const DateDisplay = styled.div`
-    font-size: 16px;
-    color: #666;
-    font-weight: 600;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-`;
-
-export const AwardText = styled.p`
-    margin: 0;
-    font-size: 18px;
-    color: #666;
-    font-style: italic;
-`;
-
-export const RecipientName = styled.h3`
-    margin: 5px 0 25px;
-    font-size: 52px;
-    font-weight: 800;
-    color: #0d7377;
-    text-transform: uppercase;
-    text-align: center;
-`;
-
-export const Description = styled.p`
-    margin: -10px 0 30px;
-    font-size: 16px;
-    color: #444;
-    text-align: center;
-    max-width: 700px;
-    line-height: 1.5;
-`;
-
-export const MetadataGrid = styled.div`
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-bottom: 40px;
-`;
-
-export const MetadataItem = styled.div`
-    background: #7b1fa2; /* Fixed Purple Role Color */
-    color: white;
-    padding: 6px 20px;
-    border-radius: 50px;
-    font-weight: 700;
-    text-transform: uppercase;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 10px rgba(123, 31, 162, 0.2);
-
-    .label {
-        opacity: 0.8;
-        font-size: 12px;
-    }
-`;
-
-export const Footer = styled.div`
-    width: 100%;
-    margin-top: auto;
-    display: flex;
-    justify-content: space-around;
-    gap: 60px;
-`;
-
-export const SignatureBox = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 280px;
-`;
-
-export const SignatureImg = styled.img`
-    height: 60px;
-    margin-bottom: -10px;
-    z-index: 1;
-`;
-
-export const SignatureLine = styled.div`
-    width: 100%;
-    border-top: 1.5px solid #1a1a1a;
-    margin-bottom: 8px;
-`;
-
-export const SignatureName = styled.div`
-    font-weight: 700;
-    font-size: 14px;
-    color: #1a1a1a;
-`;
-
-export const SignatureRole = styled.div`
-    font-size: 12px;
-    color: #666;
-    text-align: center;
 `;
 
 export const DecorationContainer = styled.div`
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
+    inset: 0;
 
-    .shapes {
+    /* Radial mask to fade decoration near center content */
+    -webkit-mask-image: radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0) 0 285px, rgba(0, 0, 0, 1) 435px);
+    mask-image: radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0) 0 285px, rgba(0, 0, 0, 1) 435px);
+
+    /* Corner positioning */
+    .corner {
         position: absolute;
-        width: 300px;
-        height: 300px;
     }
 
-    .top-left {
-        top: -40px;
-        left: -40px;
-        transform: rotate(-10deg);
+    .corner svg {
+        display: block;
     }
 
-    .bottom-right {
-        bottom: -20px;
-        right: -20px;
-        transform: rotate(170deg);
+    .corner-tl {
+        top: -80px;
+        left: -80px;
     }
 
+    .corner-tr {
+        top: -70px;
+        right: -110px;
+        opacity: 0.95;
+    }
+
+    .corner-bl {
+        bottom: -120px;
+        left: -120px;
+        opacity: 0.95;
+    }
+
+    .corner-br {
+        right: -95px;
+        bottom: -105px;
+    }
+
+    /* Dot grid decoration */
     .dots {
         position: absolute;
         display: grid;
         grid-template-columns: repeat(6, 10px);
-        gap: 10px;
-        opacity: 0.4;
-        .dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: #f0a500;
-        }
+        gap: 8px;
+        opacity: 0.5;
     }
 
     .dots-tl {
-        top: 60px;
-        left: 40px;
+        left: 125px;
+        top: 155px;
     }
 
     .dots-br {
-        bottom: 60px;
-        right: 40px;
+        right: 170px;
+        bottom: 165px;
     }
+
+    .dot {
+        width: 4px;
+        height: 4px;
+        border-radius: 999px;
+        background: rgba(13, 115, 119, 0.18);
+    }
+
+    .dot-google {
+        background: var(--dot, rgba(13, 115, 119, 0.18));
+    }
+`;
+
+// Content Layer
+
+export const ContentLayer = styled.div`
+    position: absolute;
+    inset: 18px;
+    padding: 54px 70px 46px 70px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+`;
+
+// Header
+
+export const HeaderLogos = styled.div`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 22px;
+
+    img {
+        height: 40px;
+        width: auto;
+        object-fit: contain;
+    }
+
+    .divider {
+        width: 1px;
+        height: 34px;
+        background: rgba(13, 115, 119, 0.28);
+    }
+`;
+
+// Typography
+
+export const MainTitle = styled.h1`
+    margin: 6px 0 10px 0;
+    font-family: var(--font-title);
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ceuam);
+`;
+
+export const SubTitle = styled.h2`
+    margin: 0;
+    font-family: var(--font-title);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #111;
+`;
+
+export const DateDisplay = styled.div`
+    margin-top: 10px;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(17, 17, 17, 0.62);
+`;
+
+export const AwardText = styled.div`
+    margin-top: 26px;
+    font-size: 14px;
+    font-style: italic;
+    color: rgba(17, 17, 17, 0.58);
+`;
+
+export const RecipientName = styled.div`
+    margin-top: 10px;
+    font-family: var(--font-title);
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ceuam);
+`;
+
+export const Description = styled.p`
+    margin: 18px 0 0 0;
+    max-width: 720px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: rgba(17, 17, 17, 0.66);
+`;
+
+// Metadata
+
+export const MetadataGrid = styled.div`
+    margin-top: 18px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+`;
+
+export const MetadataItem = styled.div`
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background: rgba(13, 115, 119, 0.035);
+    border: 1px solid rgba(13, 115, 119, 0.18);
+
+    .label {
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(13, 115, 119, 0.92);
+    }
+
+    .value {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        color: rgba(17, 17, 17, 0.78);
+    }
+`;
+
+// Footer & Signatures
+
+export const Footer = styled.div`
+    margin-top: auto;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 26px;
+    padding-top: 26px;
+`;
+
+export const SignatureBox = styled.div`
+    width: 44%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`;
+
+export const SignatureImg = styled.img`
+    height: 58px;
+    width: auto;
+    object-fit: contain;
+`;
+
+export const SignatureLine = styled.div`
+    width: 100%;
+    height: 1px;
+    margin-top: 8px;
+    background: rgba(17, 17, 17, 0.25);
+`;
+
+export const SignatureName = styled.div`
+    margin-top: 10px;
+    font-size: 17px;
+    font-weight: 800;
+    color: #111;
+`;
+
+export const SignatureRole = styled.div`
+    margin-top: 3px;
+    font-size: 14px;
+    color: rgba(17, 17, 17, 0.62);
 `;
