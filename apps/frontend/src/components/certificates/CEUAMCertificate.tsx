@@ -299,7 +299,9 @@ export default function CEUAMCertificate({ data }: CEUAMCertificateProps) {
                         <SignatureBox key={index}>
                             <div
                                 style={{
-                                    height: SIGNATURE_CONTAINER_HEIGHT,
+                                    minHeight: SIGNATURE_PLACEHOLDER_HEIGHT,
+                                    maxHeight: SIGNATURE_CONTAINER_HEIGHT,
+                                    flex: "1 1 auto",
                                     display: "flex",
                                     alignItems: "flex-end",
                                     justifyContent: "center"

@@ -120,12 +120,14 @@ export const RecipientName = styled.div`
 `;
 
 export const Description = styled.p`
-    font-size: 1.125rem;
+    font-size: 1rem;
     color: #4b5563;
     max-width: 700px;
-    line-height: 1.8;
-    margin-bottom: 40px;
+    line-height: 1.6;
+    margin-bottom: 30px;
     font-style: italic;
+    white-space: pre-line;
+    flex-shrink: 0;
 `;
 
 // Metadata Grid
