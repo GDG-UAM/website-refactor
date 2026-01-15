@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { Montserrat } from "next/font/google";
 import {
     CertificateWrapper,
     BorderFrame,
@@ -25,6 +26,15 @@ import {
 } from "./CEUAMCertificate.styles";
 import { CertificateData } from "./types";
 import * as m from "#/paraglide/messages";
+
+// Fonts
+
+/** Montserrat font for certificate typography */
+const montserrat = Montserrat({
+    subsets: ["latin"],
+    weight: ["400", "600", "700", "800", "900"],
+    display: "swap"
+});
 
 // Types
 
@@ -257,7 +267,7 @@ export default function CEUAMCertificate({ data }: CEUAMCertificateProps) {
         : formatDate(new Date().toISOString());
 
     return (
-        <CertificateWrapper>
+        <CertificateWrapper className={montserrat.className}>
             <BorderFrame />
             <Decoration />
 
