@@ -191,7 +191,7 @@ export const DateDisplay = styled.div`
 `;
 
 export const AwardText = styled.div`
-    margin-top: 26px;
+    margin-top: 20px;
     font-size: 14px;
     font-style: italic;
     color: rgba(17, 17, 17, 0.58);
@@ -208,11 +208,13 @@ export const RecipientName = styled.div`
 `;
 
 export const Description = styled.p`
-    margin: 18px 0 0 0;
+    margin: 14px 0 0 0;
     max-width: 720px;
-    font-size: 14px;
-    line-height: 1.6;
+    font-size: 13px;
+    line-height: 1.5;
     color: rgba(17, 17, 17, 0.66);
+    white-space: pre-line;
+    flex-shrink: 0;
 `;
 
 // Metadata
@@ -257,7 +259,9 @@ export const Footer = styled.div`
     display: flex;
     justify-content: space-between;
     gap: 26px;
-    padding-top: 26px;
+    padding-top: 14px;
+    flex-shrink: 1;
+    min-height: 0;
 `;
 
 export const SignatureBox = styled.div`
@@ -265,12 +269,16 @@ export const SignatureBox = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    min-height: 0;
+    flex-shrink: 1;
 `;
 
 export const SignatureImg = styled.img`
     height: 58px;
+    min-height: 40px;
     width: auto;
     object-fit: contain;
+    flex-shrink: 1;
 `;
 
 export const SignatureLine = styled.div`
