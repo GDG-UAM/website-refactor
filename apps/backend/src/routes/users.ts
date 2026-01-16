@@ -67,7 +67,7 @@ export const userRoutes = new Elysia({ prefix: "/users" })
 
                 return {
                     _id: user._id.toString(),
-                    role: (user.role || "user") as "user" | "team" | "organizer",
+                    role: (user.role || "user") as "user" | "team" | "organizer" | "admin",
                     name: user.displayName || user.name || "",
                     shortBio: user.shortBio || "",
                     image: user.image || "",
@@ -89,7 +89,7 @@ export const userRoutes = new Elysia({ prefix: "/users" })
             response: {
                 200: t.Object({
                     _id: t.String(),
-                    role: t.Union([t.Literal("user"), t.Literal("team"), t.Literal("organizer")]),
+                    role: t.Union([t.Literal("user"), t.Literal("team"), t.Literal("organizer"), t.Literal("admin")]),
                     name: t.String(),
                     shortBio: t.String(),
                     image: t.String(),
@@ -102,6 +102,7 @@ export const userRoutes = new Elysia({ prefix: "/users" })
                     customTags: t.Array(t.String())
                 }),
                 403: t.Object({ error: t.String() }),
+                404: t.Object({ error: t.String() }),
                 500: t.Object({ error: t.String() })
             },
             params: t.Object({ userId: t.String() }),
@@ -154,6 +155,7 @@ export const userRoutes = new Elysia({ prefix: "/users" })
                     image: t.Optional(t.String()),
                     showProfilePublicly: t.Optional(t.Boolean())
                 }),
+                404: t.Object({ error: t.String() }),
                 500: t.Object({ error: t.String() })
             },
             detail: {

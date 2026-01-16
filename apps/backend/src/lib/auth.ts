@@ -14,12 +14,8 @@ export const auth = betterAuth({
     },
     user: {
         additionalFields: {
-            role: {
-                type: "string",
-                required: false,
-                defaultValue: "user",
-                input: false
-            },
+            // Note: 'role' field is managed by the admin plugin via defaultRole and roles config
+            // Do NOT add a 'role' field here as it conflicts with the admin plugin
             individualPermissions: {
                 type: "json",
                 required: false,
