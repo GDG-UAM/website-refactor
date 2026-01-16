@@ -305,7 +305,7 @@ export default function CEUAMCertificate({ data }: CEUAMCertificateProps) {
 
                 {/* Signatures footer */}
                 <Footer>
-                    {data.signatures?.slice(0, 2).map((signature, index) => (
+                    {data.signatures?.map((signature, index) => (
                         <SignatureBox key={index}>
                             <div
                                 style={{

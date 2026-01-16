@@ -12,8 +12,7 @@ const ROLE_TEMPLATES = [
             {
                 resource: "*",
                 actions: ["manage"] as Actions[],
-                effect: "allow" as const,
-                priority: 50
+                effect: "allow" as const
             }
         ],
         isActive: true
@@ -25,8 +24,7 @@ const ROLE_TEMPLATES = [
             {
                 resource: "*",
                 actions: ["manage"] as Actions[],
-                effect: "allow" as const,
-                priority: 50
+                effect: "allow" as const
             }
         ],
         isActive: true

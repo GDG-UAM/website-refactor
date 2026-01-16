@@ -210,12 +210,7 @@ export interface PermissionDocument {
     actions: Actions[];
     effect: PermissionEffect;
 
-    // Optional conditions for fine-grained control
     conditions?: ConditionQuery;
-
-    // Priority for conflict resolution (higher = more important)
-    // Default: deny = 100, allow = 50
-    priority: number;
 
     // Metadata
     createdAt: Date;

@@ -19,6 +19,7 @@ import { ArticlesProvider } from "#/providers/ArticlesProvider";
 import { EventsProvider } from "#/providers/EventsProvider";
 import { getServerSession } from "#/lib/auth-server";
 import { AccessibilityAttributes, accessibilityScript } from "#/components/AccessibilityAttributes";
+import { ImpersonationPill } from "#/components/ImpersonationPill";
 
 const openSans = Open_Sans({
     subsets: ["latin"],
@@ -78,6 +79,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                                                         <Navbar locale={locale} />
                                                         <main>{children}</main>
                                                         <Footer />
+                                                        <ImpersonationPill />
                                                     </AITranslationProvider>
                                                 </CustomThemeProvider>
                                             </ToastProvider>

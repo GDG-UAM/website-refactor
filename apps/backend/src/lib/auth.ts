@@ -1,4 +1,5 @@
 import { betterAuth } from "better-auth/minimal";
+import { admin } from "better-auth/plugins";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "./db";
 
@@ -219,5 +220,30 @@ export const auth = betterAuth({
             enabled: true,
             maxAge: 3 * 60
         }
-    }
+    },
+    plugins: [
+        admin({
+            defaultRole: "user",
+            adminRoles: ["organizer", "admin"],
+            allowImpersonatingAdmins: false,
+            roles: {
+                user: {
+                    authorize: () => ({ success: false, error: "Not authorized" }),
+                    statements: {}
+                },
+                team: {
+                    authorize: () => ({ success: false, error: "Not authorized" }),
+                    statements: {}
+                },
+                organizer: {
+                    authorize: () => ({ success: true }),
+                    statements: {}
+                },
+                admin: {
+                    authorize: () => ({ success: true }),
+                    statements: {}
+                }
+            }
+        })
+    ]
 });

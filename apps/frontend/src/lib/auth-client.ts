@@ -1,5 +1,6 @@
 import { createAuthClient } from "better-auth/react";
 import type { auth } from "backend/src/lib/auth";
+import { adminClient } from "better-auth/client/plugins";
 
 const backendURL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3002";
 
@@ -8,7 +9,7 @@ const baseURL = `${backendURL}/api/auth`;
 
 export const authClient = createAuthClient({
     baseURL,
-    plugins: []
+    plugins: [adminClient()]
 });
 
 // Export typed hooks with inferred user type

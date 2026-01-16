@@ -27,6 +27,7 @@ import RenderMarkdown from "#/components/markdown/RenderMarkdown";
 import { AdminUserSelector } from "./AdminUserSelector";
 import { AdminTableField } from "./fields/AdminTableField";
 import { AdminCarouselField } from "./fields/AdminCarouselField";
+import { AdminPermissionsField } from "./fields/AdminPermissionsField";
 
 const getShortLanguageName = (locale: string) => {
     const langKey = `navbar.lang.manualLanguages.${locale}` as keyof typeof m;
@@ -53,6 +54,7 @@ export type FieldConfig<T> = {
         | "carousel"
         | "table"
         | "choice"
+        | "permissions"
         | "group";
     required?: boolean;
     options?: { label: string; value: any; icon?: string | ReactNode }[];
@@ -427,6 +429,15 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                                 style: { fontFamily: field.fontFamily }
                             }}
                             InputLabelProps={field.type === "date" || field.type === "datetime" ? { shrink: true } : undefined}
+                        />
+                    );
+                case "permissions":
+                    return (
+                        <AdminPermissionsField
+                            value={value || []}
+                            onChange={(val) => handleFieldChange(val)}
+                            label={field.label}
+                            disabled={!canEdit || submitting || isActuallyDisabled}
                         />
                     );
                 case "group":

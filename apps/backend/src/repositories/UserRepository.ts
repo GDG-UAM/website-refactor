@@ -201,4 +201,36 @@ export class UserRepository {
     async getTeam(): Promise<User[]> {
         return await this.collection.find({ role: { $in: ["team", "organizer"] } }).toArray();
     }
+
+    /**
+     * Update user with support for role, templates, and permissions changes
+     */
+    async update(userId: string, data: Partial<User>): Promise<User | null> {
+        const { role, templatesUsed, individualPermissions, ...otherData } = data;
+
+        const updateData: any = { ...otherData, updatedAt: new Date() };
+        if (role !== undefined) updateData.role = role;
+        if (templatesUsed !== undefined) updateData.templatesUsed = templatesUsed;
+        if (individualPermissions !== undefined) updateData.individualPermissions = individualPermissions;
+
+        // Get current user to check role change
+        const oldUser = await this.findById(userId);
+        if (!oldUser) return null;
+
+        const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(userId) }, { $set: updateData }, { returnDocument: "after" });
+
+        if (!result) return null;
+
+        // Handle role synchronization if role changed
+        if (role !== undefined && role !== null && role !== oldUser.role) {
+            await this.syncRoleTemplates(userId, role, oldUser.role || undefined);
+        } else if (templatesUsed !== undefined || individualPermissions !== undefined) {
+            // Recompute permissions if templates or individual permissions changed
+            if (this.permissionRepository) {
+                await this.permissionRepository.recomputeUserTemplatePermissions(userId, this.collection as unknown as Collection<Document>);
+            }
+        }
+
+        return result;
+    }
 }

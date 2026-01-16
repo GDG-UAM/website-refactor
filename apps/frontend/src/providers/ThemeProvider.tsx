@@ -11,7 +11,7 @@ const COLOR_MAP = {
     success: "var(--button-success-bg)",
     warning: "var(--button-warning-bg)",
     error: "var(--button-danger-bg)",
-    default: "var(--button-default-bg)"
+    default: "var(--color-gray-200)"
 };
 
 const resolveColor = (color: keyof typeof COLOR_MAP, disabled?: boolean) => {
@@ -191,9 +191,11 @@ export function CustomThemeProvider({ children }: { children: ReactNode }) {
                             };
                         }
 
-                        // filled (default)
+                        const text_color = color === "default" ? "var(--foreground)" : "var(--color-white)";
+
                         return {
-                            backgroundColor: resolved
+                            backgroundColor: resolved,
+                            color: text_color
                         };
                     },
 
@@ -201,10 +203,22 @@ export function CustomThemeProvider({ children }: { children: ReactNode }) {
                         const color = ownerState.color ?? "default";
                         const resolved = resolveColor(color, ownerState.disabled);
 
+                        if (ownerState.variant === "outlined") {
+                            return {
+                                color: resolved,
+                                "&:hover": {
+                                    color: resolved
+                                }
+                            };
+                        }
+
+                        const iconColor = color === "default" || color === "warning" ? "rgba(0, 0, 0, 0.54)" : "rgba(255, 255, 255, 0.7)";
+                        const hoverColor = color === "default" || color === "warning" ? "rgba(0, 0, 0, 0.87)" : "#ffffff";
+
                         return {
-                            color: resolved,
+                            color: iconColor,
                             "&:hover": {
-                                color: resolved
+                                color: hoverColor
                             }
                         };
                     }

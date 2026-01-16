@@ -5,10 +5,53 @@ export class PermissionRepository {
     constructor(private collection: Collection<PermissionTemplate>) {}
 
     /**
+     * Maps legacy permission templates structure to the new granular permissions format
+     */
+    private mapLegacyTemplate(template: any): PermissionTemplate {
+        if (template.permissions && Array.isArray(template.permissions)) {
+            return template as PermissionTemplate;
+        }
+
+        const permissions: any[] = [];
+
+        // Map grants
+        if (template.grants && Array.isArray(template.grants) && template.grants.length > 0) {
+            permissions.push({
+                resource: template.pattern || "*",
+                actions: template.grants,
+                effect: "allow"
+            });
+        }
+
+        // Map denies
+        if (template.denies && Array.isArray(template.denies) && template.denies.length > 0) {
+            permissions.push({
+                resource: template.pattern || "*",
+                actions: template.denies,
+                effect: "deny"
+            });
+        }
+
+        const mapped = {
+            ...template,
+            permissions
+        };
+
+        // Clean up legacy fields to avoid validation errors if strictly typed
+        delete mapped.pattern;
+        delete mapped.grants;
+        delete mapped.denies;
+        delete mapped.usageCount;
+
+        return mapped as PermissionTemplate;
+    }
+
+    /**
      * Find template by ID
      */
     async findTemplateById(id: string): Promise<PermissionTemplate | null> {
-        return await this.collection.findOne({ _id: new ObjectId(id) });
+        const template = await this.collection.findOne({ _id: new ObjectId(id) });
+        return template ? this.mapLegacyTemplate(template) : null;
     }
 
     /**
@@ -21,14 +64,16 @@ export class PermissionRepository {
             query.isActive = true;
         }
 
-        return await this.collection.find(query).sort({ name: 1 }).toArray();
+        const templates = await this.collection.find(query).sort({ name: 1 }).toArray();
+        return templates.map((t) => this.mapLegacyTemplate(t));
     }
 
     /**
      * Find template by name
      */
     async findTemplateByName(name: string): Promise<PermissionTemplate | null> {
-        return await this.collection.findOne({ name });
+        const template = await this.collection.findOne({ name });
+        return template ? this.mapLegacyTemplate(template) : null;
     }
 
     /**
@@ -63,12 +108,14 @@ export class PermissionRepository {
             { returnDocument: "after" }
         );
 
+        if (!result) return null;
+
         // Update all users who have this template
-        if (result && userCollection) {
+        if (userCollection) {
             await this.updateUsersWithTemplate(id, userCollection);
         }
 
-        return result;
+        return this.mapLegacyTemplate(result);
     }
 
     /**
@@ -110,7 +157,6 @@ export class PermissionRepository {
             actions: string[];
             effect: "allow" | "deny";
             conditions?: Record<string, unknown>;
-            priority: number;
         }>
     > {
         if (!templateIds || templateIds.length === 0) {
@@ -131,10 +177,10 @@ export class PermissionRepository {
             actions: string[];
             effect: "allow" | "deny";
             conditions?: Record<string, unknown>;
-            priority: number;
         }> = [];
 
-        for (const template of templates) {
+        for (const rawTemplate of templates) {
+            const template = this.mapLegacyTemplate(rawTemplate);
             if (template.permissions && Array.isArray(template.permissions)) {
                 permissions.push(...template.permissions);
             }

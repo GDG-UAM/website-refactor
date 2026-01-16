@@ -27,8 +27,7 @@ export const defineAbilitiesFor = async (
             resource: p.resource,
             actions: p.actions,
             effect: p.effect,
-            conditions: p.conditions,
-            priority: p.priority
+            conditions: p.conditions
         }))
     };
 

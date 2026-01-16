@@ -7,9 +7,9 @@ import { Tooltip } from "@mui/material";
 interface UserLite {
     _id: string;
     name: string;
-    displayName?: string;
+    displayName?: string | null;
     email: string;
-    image?: string;
+    image?: string | null;
 }
 
 interface AdminUserSelectorProps {
@@ -88,7 +88,8 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
                 });
 
                 if (data) {
-                    const loaded = data.items.filter((u: UserLite) => userIds.includes(u._id));
+                    const items = data.items as unknown as UserLite[];
+                    const loaded = items.filter((u) => userIds.includes(u._id));
                     setSelectedUsers(loaded);
                 }
             } catch (err) {
@@ -127,7 +128,8 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
 
                 if (apiError) return;
                 if (!ignore && data) {
-                    setResults(data.items.filter((u: UserLite) => !value.includes(u._id)));
+                    const items = data.items as unknown as UserLite[];
+                    setResults(items.filter((u) => !value.includes(u._id)));
                 }
             } catch (err) {
                 console.error("Search failed", err);

@@ -8,38 +8,44 @@ export default async function AdminPage() {
             title={m["admin.title"]()}
             categories={[
                 {
-                    title: m["admin.navigation.categories.events"](),
-                    buttons: [
-                        { label: m["admin.navigation.events"](), type: "events", href: "/admin/events", disabled: !(await hasSectionAccess("admin.events")) },
-                        {
-                            label: m["admin.navigation.giveaways"](),
-                            type: "giveaways",
-                            href: "/admin/giveaways",
-                            disabled: !(await hasSectionAccess("admin.giveaways"))
-                        },
-                        {
-                            label: m["admin.navigation.hackathons"](),
-                            type: "hackathons",
-                            href: "/admin/hackathons",
-                            disabled: !(await hasSectionAccess("admin.hackathons"))
-                        }
-                    ]
-                },
-                {
                     title: m["admin.navigation.categories.misc"](),
                     buttons: [
                         { label: m["admin.navigation.links"](), type: "links", href: "/admin/links", disabled: !(await hasSectionAccess("admin.links")) },
                         {
-                            label: m["admin.navigation.certificates"](),
-                            type: "certificates",
-                            href: "/admin/certificates",
-                            disabled: !(await hasSectionAccess("admin.certificates"))
+                            label: m["admin.navigation.users"](),
+                            type: "users",
+                            href: "/admin/users",
+                            disabled: !(await hasSectionAccess("admin.users"))
                         },
                         {
                             label: m["admin.navigation.permissions"](),
                             type: "permissions",
                             href: "/admin/permissions",
                             disabled: !(await hasSectionAccess("admin.permissions"))
+                        }
+                    ]
+                },
+                {
+                    title: m["admin.navigation.categories.events"](),
+                    buttons: [
+                        { label: m["admin.navigation.events"](), type: "events", href: "/admin/events", disabled: !(await hasSectionAccess("admin.events")) },
+                        // {
+                        //     label: m["admin.navigation.giveaways"](),
+                        //     type: "giveaways",
+                        //     href: "/admin/giveaways",
+                        //     disabled: !(await hasSectionAccess("admin.giveaways"))
+                        // },
+                        {
+                            label: m["admin.navigation.hackathons"](),
+                            type: "hackathons",
+                            href: "/admin/hackathons",
+                            disabled: !(await hasSectionAccess("admin.hackathons"))
+                        },
+                        {
+                            label: m["admin.navigation.certificates"](),
+                            type: "certificates",
+                            href: "/admin/certificates",
+                            disabled: !(await hasSectionAccess("admin.certificates"))
                         }
                     ]
                 },

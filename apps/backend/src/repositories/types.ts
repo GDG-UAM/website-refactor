@@ -14,7 +14,6 @@ export interface SerializablePermission {
     actions: Actions[];
     effect: "allow" | "deny";
     conditions?: ConditionQuery;
-    priority: number;
 }
 
 // ==================== Elysia Schema Helpers ====================
@@ -29,7 +28,6 @@ export interface Permission {
     actions: Actions[];
     effect: "allow" | "deny";
     conditions?: ConditionQuery;
-    priority: number;
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -41,7 +39,6 @@ export const PermissionSchema = t.Object({
     actions: t.Array(ActionsSchema, { minItems: 1 }),
     effect: t.Union([t.Literal("allow"), t.Literal("deny")]),
     conditions: t.Optional(t.Record(t.String(), t.Any())),
-    priority: t.Number({ default: 50 }),
     createdAt: t.Optional(t.Date()),
     updatedAt: t.Optional(t.Date())
 });
@@ -68,8 +65,7 @@ export const PermissionTemplateSchema = t.Object({
             resource: t.String({ minLength: 1 }),
             actions: t.Array(ActionsSchema, { minItems: 1 }),
             effect: t.Union([t.Literal("allow"), t.Literal("deny")]),
-            conditions: t.Optional(t.Record(t.String(), t.Any())),
-            priority: t.Number({ default: 50 })
+            conditions: t.Optional(t.Record(t.String(), t.Any()))
         })
     ),
     isActive: t.Boolean({ default: true }),
@@ -214,6 +210,20 @@ export const LinkSchema = t.Object({
     updatedAt: t.Date()
 });
 
+export const ReturnLinkSchema = t.Object({
+    _id: t.String(),
+    slug: t.String({ minLength: 1 }),
+    destination: t.String({ minLength: 1 }),
+    title: t.String({ minLength: 1 }),
+    description: t.Optional(t.String()),
+    isActive: t.Boolean({ default: true }),
+    clicks: t.Number({ default: 0 }),
+    order: t.Optional(t.Number()),
+    createdBy: t.String(),
+    createdAt: t.Date(),
+    updatedAt: t.Date()
+});
+
 export const LinkInputSchema = t.Object({
     slug: t.String({ minLength: 1 }),
     destination: t.String({ minLength: 1 }),
@@ -224,7 +234,7 @@ export const LinkInputSchema = t.Object({
 });
 
 export const LinksListResponseSchema = t.Object({
-    items: t.Array(LinkSchema),
+    items: t.Array(ReturnLinkSchema),
     total: t.Number(),
     page: t.Number(),
     pageSize: t.Number()

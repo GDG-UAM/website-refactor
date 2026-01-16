@@ -139,7 +139,7 @@ const COMPONENT_REGISTRY: ComponentConfig[] = [
     }
 ];
 
-type UserLite = { _id: string; name: string; displayName?: string; image?: string };
+type UserLite = { _id: string; name: string; displayName?: string | null; image?: string | null };
 
 type DropdownMode = "mention" | "component" | "componentProps" | null;
 
@@ -436,7 +436,7 @@ export default function CustomMarkdownTextArea({
                     }
                 });
                 if (error) return;
-                if (!ignore) setList(data.items || []);
+                if (!ignore) setList((data.items || []) as UserLite[]);
             } catch {}
         }, 150);
         return () => {

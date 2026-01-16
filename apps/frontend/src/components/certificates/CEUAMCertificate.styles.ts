@@ -222,7 +222,9 @@ export const Description = styled.p`
 export const MetadataGrid = styled.div`
     margin-top: 18px;
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+    gap: 24px;
     width: 100%;
 `;
 
@@ -257,15 +259,16 @@ export const Footer = styled.div`
     margin-top: auto;
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    gap: 26px;
-    padding-top: 14px;
+    justify-content: center;
+    gap: 40px;
+    padding-top: 20px;
     flex-shrink: 1;
     min-height: 0;
 `;
 
 export const SignatureBox = styled.div`
-    width: 44%;
+    flex: 1;
+    max-width: 280px;
     display: flex;
     flex-direction: column;
     align-items: center;

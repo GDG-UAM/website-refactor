@@ -12,7 +12,6 @@ export interface PermissionUser {
         actions: Actions[];
         effect: "allow" | "deny";
         conditions?: Record<string, unknown>;
-        priority: number;
     }>;
 }
 
@@ -57,10 +56,7 @@ export function applyUserPermissions(builder: AbilityBuilder, user: PermissionUs
         return;
     }
 
-    // Sort by priority (higher priority first)
-    const sorted = [...user.permissions].sort((a, b) => b.priority - a.priority);
-
-    for (const perm of sorted) {
+    for (const perm of user.permissions) {
         const method = perm.effect === "deny" ? builder.cannot.bind(builder) : builder.can.bind(builder);
 
         // Evaluate conditions with context (replaces {user.id}, etc.)

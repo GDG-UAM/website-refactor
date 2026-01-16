@@ -94,13 +94,6 @@ export function AdminHackathonsFormPage({ id, initialData }: AdminHackathonsForm
             label: m["admin.hackathons.form.location"](),
             type: "text",
             gridColumn: "span 12"
-        },
-        {
-            name: "designId",
-            label: m["admin.hackathons.certificates.fields.designId"](),
-            type: "select",
-            gridColumn: "span 12",
-            options: [{ label: m["admin.hackathons.certificates.values.designs.default"](), value: 0 }]
         }
     ];
 

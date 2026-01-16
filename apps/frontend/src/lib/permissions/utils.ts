@@ -14,7 +14,6 @@ export type Permission = {
     actions: Actions[];
     effect: "allow" | "deny";
     conditions?: Record<string, unknown>;
-    priority: number;
 };
 
 /**
