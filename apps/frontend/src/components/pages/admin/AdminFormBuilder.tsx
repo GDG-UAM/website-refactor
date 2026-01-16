@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import { TextField, Switch, FormControlLabel, MenuItem, Box, Checkbox } from "@mui/material";
+import { TextField, Switch, FormControlLabel, MenuItem, Box, Checkbox, Autocomplete, Chip } from "@mui/material";
 import { usePermissions } from "#/providers/PermissionsProvider";
 import {
     Form,
@@ -44,6 +44,7 @@ export type FieldConfig<T> = {
         | "switch"
         | "checkbox"
         | "select"
+        | "multiselect"
         | "multiline"
         | "textarea"
         | "url"
@@ -308,6 +309,42 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                                 </MenuItem>
                             ))}
                         </TextField>
+                    );
+                case "multiselect":
+                    // Convert value array to option objects for Autocomplete
+                    const valueArray: any[] = Array.isArray(value) ? value : [];
+                    const selectedOptions = valueArray.map((v) => field.options?.find((opt) => opt.value === v)).filter(Boolean);
+                    return (
+                        <Autocomplete
+                            multiple
+                            options={field.options || []}
+                            value={selectedOptions}
+                            onChange={(_event, newValue) => {
+                                handleFieldChange(newValue.map((opt: any) => opt.value));
+                            }}
+                            getOptionLabel={(option: any) => option.label || ""}
+                            isOptionEqualToValue={(option: any, val: any) => option.value === val.value}
+                            disabled={!canEdit || submitting || isActuallyDisabled}
+                            renderInput={(params) => (
+                                <TextField
+                                    {...params}
+                                    {...commonProps}
+                                    placeholder={field.placeholder || (selectedOptions.length === 0 ? "Select..." : undefined)}
+                                />
+                            )}
+                            renderTags={(tagValue, getTagProps) =>
+                                tagValue.map((option: any, index: number) => (
+                                    <Chip
+                                        {...getTagProps({ index })}
+                                        key={option.value}
+                                        label={option.label}
+                                        size="small"
+                                        disabled={!canEdit || submitting || isActuallyDisabled}
+                                    />
+                                ))
+                            }
+                            size="small"
+                        />
                     );
                 case "markdown":
                     return (

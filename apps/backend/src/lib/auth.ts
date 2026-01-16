@@ -213,8 +213,8 @@ export const auth = betterAuth({
     trustedOrigins: [process.env.FRONTEND_URL || "http://localhost:3001", process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3002"],
     session: {
         cookieCache: {
-            // enabled: true,
-            enabled: false,
+            enabled: true,
+            // enabled: false,
             maxAge: 3 * 60
         }
     },

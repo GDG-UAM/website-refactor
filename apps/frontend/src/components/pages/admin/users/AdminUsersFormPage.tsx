@@ -68,17 +68,16 @@ export function AdminUsersFormPage({ id, initialData }: AdminUsersFormPageProps)
         {
             name: "templatesUsed",
             label: m["admin.users.form.templates"](),
-            type: "select",
+            type: "multiselect",
             options: templates,
             gridColumn: "span 12",
-            helperText: "Multiple templates can be assigned. Order doesn't matter for templates (Deny rules take precedence over Allow rules)."
+            placeholder: "Search and select templates..."
         },
         {
             name: "individualPermissions",
             label: m["admin.users.form.individualPermissions"](),
             type: "permissions",
-            gridColumn: "span 12",
-            helperText: "Permissions defined here will override or supplement template permissions."
+            gridColumn: "span 12"
         }
     ];
 
