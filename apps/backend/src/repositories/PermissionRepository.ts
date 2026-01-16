@@ -1,5 +1,6 @@
 import { Collection, ObjectId } from "mongodb";
 import type { PermissionTemplate } from "./types";
+import { invalidateUserSessions } from "../lib/auth";
 
 export class PermissionRepository {
     constructor(private collection: Collection<PermissionTemplate>) {}
@@ -215,6 +216,9 @@ export class PermissionRepository {
 
         // Update user document
         await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatePermissions, updatedAt: new Date() } });
+
+        // Invalidate cached sessions for this user
+        invalidateUserSessions(userId);
     }
 
     /**

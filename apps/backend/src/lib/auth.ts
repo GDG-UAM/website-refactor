@@ -2,6 +2,71 @@ import { betterAuth } from "better-auth/minimal";
 import { admin } from "better-auth/plugins";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "./db";
+import { LRUCache } from "lru-cache";
+
+// Track which cache keys belong to which user (for invalidation)
+const userSessionKeys = new Map<string, Set<string>>();
+// Reverse mapping: key -> userId (for cleanup when cache entries expire)
+const keyToUser = new Map<string, string>();
+
+// In-memory session cache to avoid DB queries on every request
+// Max 1000 sessions, 3 minute TTL by default
+const sessionCache = new LRUCache<string, string>({
+    max: 1000,
+    ttl: 3 * 60 * 1000, // 3 minutes in milliseconds
+    dispose: (value, key) => {
+        // Clean up tracking maps when a session key expires or is evicted
+        const userId = keyToUser.get(key);
+        if (userId) {
+            const keys = userSessionKeys.get(userId);
+            if (keys) {
+                keys.delete(key);
+                if (keys.size === 0) {
+                    userSessionKeys.delete(userId);
+                }
+            }
+            keyToUser.delete(key);
+        }
+    }
+});
+
+/**
+ * Track a session key for a user (called when caching session data)
+ */
+function trackSessionKey(key: string, userId: string): void {
+    // Add to user -> keys mapping
+    let keys = userSessionKeys.get(userId);
+    if (!keys) {
+        keys = new Set();
+        userSessionKeys.set(userId, keys);
+    }
+    keys.add(key);
+    // Add reverse mapping
+    keyToUser.set(key, userId);
+}
+
+/**
+ * Invalidate all cached sessions for a specific user
+ * Call this when a user's data changes (role, permissions, etc.)
+ */
+export function invalidateUserSessions(userId: string): void {
+    const keys = userSessionKeys.get(userId);
+    if (keys) {
+        for (const key of keys) {
+            sessionCache.delete(key); // dispose callback will clean up keyToUser
+        }
+        userSessionKeys.delete(userId);
+    }
+}
+
+/**
+ * Clear all session cache entries
+ */
+export function clearSessionCache(): void {
+    sessionCache.clear();
+    userSessionKeys.clear();
+    keyToUser.clear();
+}
 
 export const auth = betterAuth({
     database: mongodbAdapter(client.db()),
@@ -213,9 +278,30 @@ export const auth = betterAuth({
     trustedOrigins: [process.env.FRONTEND_URL || "http://localhost:3001", process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3002"],
     session: {
         cookieCache: {
-            enabled: true,
-            // enabled: false,
-            maxAge: 3 * 60
+            enabled: false // Disabled due to complex JSON fields exceeding cookie size limits
+        }
+    },
+    secondaryStorage: {
+        // In-memory LRU cache for session data (avoids hitting DB on every request)
+        get: async (key) => {
+            const cached = sessionCache.get(key);
+            return cached || null;
+        },
+        set: async (key, value, ttl) => {
+            sessionCache.set(key, value, { ttl: ttl ? ttl * 1000 : undefined });
+            // Try to extract userId from the cached data for tracking
+            try {
+                const parsed = JSON.parse(value);
+                const userId = parsed.userId || parsed.user?.id;
+                if (userId) {
+                    trackSessionKey(key, userId);
+                }
+            } catch {
+                // Value might not be JSON or might not contain userId - that's fine
+            }
+        },
+        delete: async (key) => {
+            sessionCache.delete(key);
         }
     },
     plugins: [
@@ -245,30 +331,12 @@ export const auth = betterAuth({
     ],
     databaseHooks: {
         user: {
-            create: {
-                before: async (user, _context) => {
-                    console.log("[Auth Debug] Creating user:", JSON.stringify({ id: user.id, email: user.email, role: user.role }));
-                },
-                after: async (user, _context) => {
-                    console.log("[Auth Debug] User created:", JSON.stringify({ id: user.id, email: user.email, role: user.role }));
-                }
-            },
             update: {
-                before: async (user, _context) => {
-                    console.log("[Auth Debug] Updating user:", JSON.stringify({ id: user.id, role: user.role }));
-                },
                 after: async (user, _context) => {
-                    console.log("[Auth Debug] User updated:", JSON.stringify({ id: user.id, role: user.role }));
-                }
-            }
-        },
-        session: {
-            create: {
-                before: async (session, _context) => {
-                    console.log("[Auth Debug] Creating session for user:", session.userId);
-                },
-                after: async (session, _context) => {
-                    console.log("[Auth Debug] Session created:", session.id, "for user:", session.userId);
+                    // Invalidate cached sessions when user data changes (role, permissions, etc.)
+                    if (user.id) {
+                        invalidateUserSessions(user.id);
+                    }
                 }
             }
         }

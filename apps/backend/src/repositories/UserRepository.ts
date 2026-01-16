@@ -1,5 +1,6 @@
 import { Collection, ObjectId, Document } from "mongodb";
 import type { User, SerializablePermission } from "./types";
+import { invalidateUserSessions } from "../lib/auth";
 
 // Role template name constants
 const ROLE_TEMPLATE_PREFIX = "role:";
@@ -101,6 +102,9 @@ export class UserRepository {
             await this.syncRoleTemplates(userId, role, oldRole);
         }
 
+        // Invalidate cached sessions for this user
+        invalidateUserSessions(userId);
+
         return result;
     }
 
@@ -154,6 +158,8 @@ export class UserRepository {
      */
     async updateIndividualPermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
         await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { individualPermissions: permissions, updatedAt: new Date() } });
+        // Invalidate cached sessions for this user
+        invalidateUserSessions(userId);
     }
 
     /**
@@ -161,6 +167,8 @@ export class UserRepository {
      */
     async updateTemplatePermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
         await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatePermissions: permissions, updatedAt: new Date() } });
+        // Invalidate cached sessions for this user
+        invalidateUserSessions(userId);
     }
 
     /**
@@ -168,6 +176,8 @@ export class UserRepository {
      */
     async updateTemplatesUsed(userId: string, templateIds: string[]): Promise<void> {
         await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatesUsed: templateIds, updatedAt: new Date() } });
+        // Invalidate cached sessions for this user
+        invalidateUserSessions(userId);
     }
 
     /**
@@ -229,6 +239,11 @@ export class UserRepository {
             if (this.permissionRepository) {
                 await this.permissionRepository.recomputeUserTemplatePermissions(userId, this.collection as unknown as Collection<Document>);
             }
+        }
+
+        // Invalidate cached sessions if role, permissions, or templates changed
+        if (role !== undefined || templatesUsed !== undefined || individualPermissions !== undefined) {
+            invalidateUserSessions(userId);
         }
 
         return result;
