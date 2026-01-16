@@ -129,7 +129,7 @@ export function AdminTeamsFormPage({ hackathonId, id, initialData }: AdminTeamsF
             <AdminFormBuilder
                 title={isEdit ? m["admin.hackathons.teams.page.editTitle"]() : m["admin.hackathons.teams.page.createTitle"]()}
                 id={id}
-                resource="admin.hackathons.teams" // This will be used for field-level permissions too
+                resource={`admin.hackathons.${hackathonId}.teams`}
                 action={isEdit ? "update" : "create"}
                 fields={fields}
                 data={data}

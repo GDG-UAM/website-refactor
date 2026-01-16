@@ -225,13 +225,13 @@ export const adminCertificatesRoutes = new Elysia({ prefix: "/certificates" })
     .get(
         "/templates",
         async ({ query: { page, pageSize, search, includeInactive, teamId, hackathonId }, ability, set }) => {
-            if (ability.cannot("read", "admin.certificates.templates")) {
+            if (ability.cannot("read", `admin.hackathons.${hackathonId}.teams.${teamId}.certificates`)) {
                 set.status = 403;
                 return { error: "Forbidden" };
             }
 
             const { certificateTemplateRepository } = db.getRepositories();
-            const shouldIncludeInactive = includeInactive && ability.can("manage", "admin.certificates.templates");
+            const shouldIncludeInactive = includeInactive && ability.can("manage", `admin.hackathons.${hackathonId}.teams.${teamId}.certificates`);
 
             const data = await certificateTemplateRepository.list({
                 page,
@@ -313,7 +313,7 @@ export const adminCertificatesRoutes = new Elysia({ prefix: "/certificates" })
     .post(
         "/templates",
         async ({ body, ability, user, set }) => {
-            if (ability.cannot("create", "admin.certificates.templates")) {
+            if (ability.cannot("create", `admin.hackathons.${body.hackathonId}.teams.${body.teamId}.certificates`)) {
                 set.status = 403;
                 return { error: "Forbidden" };
             }
@@ -342,7 +342,7 @@ export const adminCertificatesRoutes = new Elysia({ prefix: "/certificates" })
     .patch(
         "/templates/:id",
         async ({ params: { id }, body, ability, user, set }) => {
-            if (ability.cannot("update", `admin.certificates.templates.${id}`)) {
+            if (ability.cannot("update", `admin.hackathons.${body.hackathonId}.teams.${body.teamId}.certificates.${id}`)) {
                 set.status = 403;
                 return { error: "Forbidden" };
             }
@@ -378,7 +378,12 @@ export const adminCertificatesRoutes = new Elysia({ prefix: "/certificates" })
     .delete(
         "/templates/:id",
         async ({ params: { id }, ability, set }) => {
-            if (ability.cannot("delete", `admin.certificates.templates.${id}`)) {
+            const template = await db.getRepositories().certificateTemplateRepository.findById(id);
+            if (!template) {
+                set.status = 404;
+                return { error: "Not found" };
+            }
+            if (ability.cannot("delete", `admin.hackathons.${template.hackathonId}.teams.${template.teamId}.certificates.${id}`)) {
                 set.status = 403;
                 return { error: "Forbidden" };
             }

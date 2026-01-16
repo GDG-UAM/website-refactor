@@ -186,6 +186,10 @@ export const RESOURCE_TREE: Record<string, ResourceNode> = {
                                     return (data?.items || []).map((t) => ({ label: t.name, value: t._id }));
                                 }
                             },
+                            trackSelection: {
+                                label: "Track Selection",
+                                path: "admin.hackathons.{id}.trackSelection"
+                            },
                             intermission: {
                                 label: "Intermission",
                                 path: "admin.hackathons.{id}.intermission",
@@ -194,7 +198,7 @@ export const RESOURCE_TREE: Record<string, ResourceNode> = {
                             certificateDefaults: {
                                 label: "Certificate Defaults",
                                 path: "admin.hackathons.{id}.certificateDefaults",
-                                fields: ["title", "designId", "sgnatures"]
+                                fields: ["title", "designId", "signatures"]
                             },
                             tracks: {
                                 label: "Tracks",
@@ -215,6 +219,108 @@ export const RESOURCE_TREE: Record<string, ResourceNode> = {
                     "*": "wildcard"
                 },
                 fields: ["title", "slug", "date", "endDate", "location", "intermission", "certificateDefaults"],
+                search: async (search: string) => {
+                    const { data } = await api.admin.hackathons.get({ query: { search, pageSize: 50 } });
+                    return (data?.items || []).map((h) => ({ label: h.title, value: h._id }));
+                }
+            }
+        }
+    },
+    adminSectionDenies: {
+        label: "Admin Denies",
+        path: "adminSectionDenies",
+        children: {
+            users: {
+                label: "Users",
+                path: "adminSectionDenies.users",
+                children: { "{id}": "id", "*": "wildcard" },
+                search: async (search: string) => {
+                    const { data } = await api.admin.users.get({ query: { search, pageSize: 50 } });
+                    return (data?.items || []).map((u) => ({
+                        label: `${u.displayName || u.name} (${u.email})`,
+                        value: u._id
+                    }));
+                }
+            },
+            links: {
+                label: "Links",
+                path: "adminSectionDenies.links",
+                children: { "{id}": "id", "*": "wildcard" },
+                search: async (search: string) => {
+                    const { data } = await api.admin.links.get({ query: { search, pageSize: 50 } });
+                    return (data?.items || []).map((l) => ({ label: l.title, value: l._id }));
+                }
+            },
+            events: {
+                label: "Events",
+                path: "adminSectionDenies.events",
+                children: { "{id}": "id", "*": "wildcard" },
+                search: async (search: string) => {
+                    const { data } = await api.admin.events.get({ query: { search, pageSize: 50 } });
+                    return (data?.items || []).map((e) => ({ label: e.title, value: e._id }));
+                }
+            },
+            articles: {
+                label: "Articles",
+                path: "adminSectionDenies.articles",
+                children: {
+                    blog: {
+                        label: "Blog",
+                        path: "adminSectionDenies.articles.blog",
+                        children: { "{id}": "id", "*": "wildcard" },
+                        search: async (search: string) => {
+                            const { data } = await api.admin.articles.get({ query: { type: "blog", search, pageSize: 50 } });
+                            return (data?.items || []).map((a) => ({ label: (a.title as any).en || (a.title as any).es || a._id, value: a._id }));
+                        }
+                    },
+                    newsletter: {
+                        label: "Newsletter",
+                        path: "adminSectionDenies.articles.newsletter",
+                        children: { "{id}": "id", "*": "wildcard" },
+                        search: async (search: string) => {
+                            const { data } = await api.admin.articles.get({ query: { type: "newsletter", search, pageSize: 50 } });
+                            return (data?.items || []).map((a) => ({ label: (a.title as any).en || (a.title as any).es || a._id, value: a._id }));
+                        }
+                    }
+                }
+            },
+            certificates: {
+                label: "Certificates",
+                path: "adminSectionDenies.certificates",
+                children: { "{id}": "id", "*": "wildcard" },
+                search: async (search: string) => {
+                    const { data } = await api.admin.certificates.get({ query: { search, pageSize: 50 } });
+                    return (data?.items || []).map((c) => ({ label: `Cert: ${c._id}`, value: c._id }));
+                }
+            },
+            permissions: {
+                label: "Permissions",
+                path: "adminSectionDenies.permissions",
+                children: { "{id}": "id", "*": "wildcard" },
+                search: async (search: string) => {
+                    const { data } = await api.admin.permissions.get();
+                    return (data || [])
+                        .filter((p) => (p as any).name.toLowerCase().includes(search.toLowerCase()))
+                        .map((p) => ({ label: (p as any).name, value: (p as any)._id }));
+                }
+            },
+            hackathons: {
+                label: "Hackathons",
+                path: "adminSectionDenies.hackathons",
+                children: {
+                    "*": "wildcard",
+                    "{id}": {
+                        label: "Specific Hackathon",
+                        path: "adminSectionDenies.hackathons.{id}",
+                        children: {
+                            teams: { label: "Teams", path: "adminSectionDenies.hackathons.{id}.teams" },
+                            tracks: { label: "Tracks", path: "adminSectionDenies.hackathons.{id}.tracks" },
+                            trackSelection: { label: "Track Selection", path: "adminSectionDenies.hackathons.{id}.trackSelection" },
+                            intermission: { label: "Intermission", path: "adminSectionDenies.hackathons.{id}.intermission" },
+                            certificateDefaults: { label: "Certificate Defaults", path: "adminSectionDenies.hackathons.{id}.certificateDefaults" }
+                        }
+                    }
+                },
                 search: async (search: string) => {
                     const { data } = await api.admin.hackathons.get({ query: { search, pageSize: 50 } });
                     return (data?.items || []).map((h) => ({ label: h.title, value: h._id }));

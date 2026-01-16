@@ -16,9 +16,15 @@ export const PermissionRuleItem = styled.div`
     border-radius: 12px;
     border: 1px solid #e9ecef;
     transition: all 0.2s;
+    min-width: 0; // Allow it to shrink below content size
 
     &:hover {
         background: var(--google-super-light-gray);
+    }
+
+    @media (max-width: 640px) {
+        gap: 12px;
+        padding: 10px 12px;
     }
 `;
 
@@ -27,6 +33,7 @@ export const RuleInfo = styled.div`
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0; // Crucial for text wrapping inside flex containers
 `;
 
 export const RuleTitle = styled.span`
@@ -34,12 +41,15 @@ export const RuleTitle = styled.span`
     font-size: 0.875rem;
     color: #1a1a1a;
     font-family: var(--font-mono);
+    word-break: break-all;
+    overflow-wrap: anywhere;
 `;
 
 export const BadgeRow = styled.div`
     display: flex;
     gap: 8px;
     align-items: center;
+    flex-wrap: wrap; // Added to fix non-wrapping tags
 `;
 
 export const ActionBadge = styled.div`
@@ -76,7 +86,7 @@ export const ConditionText = styled.span`
     font-size: 0.75rem;
     color: #868e96;
     font-family: var(--font-mono);
-    max-width: 300px;
+    max-width: 100%; // Changed from hardcoded 300px
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -137,6 +147,14 @@ export const EffectToggleGroup = styled.div`
     display: flex;
     gap: 12px;
     margin-bottom: 24px;
+
+    @media (max-width: 600px) {
+        flex-direction: column;
+
+        button {
+            width: 100%;
+        }
+    }
 `;
 
 export const ModalSubHeading = styled.div`
@@ -152,6 +170,11 @@ export const ModalCaption = styled.div`
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #868e96;
+    flex-shrink: 0;
+
+    @media (max-width: 600px) {
+        display: none;
+    }
 `;
 
 export const FlexBox = styled.div<{
@@ -183,6 +206,8 @@ export const MonoText = styled.div`
     font-size: 0.9rem;
     color: #1971c2;
     font-weight: 700;
+    word-break: break-all;
+    overflow-wrap: anywhere;
 `;
 
 export const Stack = styled.div<{ $spacing?: number; $pl?: number; $direction?: "row" | "column" }>`

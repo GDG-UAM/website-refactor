@@ -55,6 +55,11 @@ export async function enforcePathAccess(currentPath: string) {
  */
 export async function hasSectionAccess(section: string) {
     const session = await getServerSession();
+
+    if (session?.data?.user?.role === "admin") {
+        return !section.startsWith("adminSectionDenies");
+    }
+
     const { ability } = buildAbilityForUser(session?.data?.user);
 
     return ability.hasSectionPermissions(section);

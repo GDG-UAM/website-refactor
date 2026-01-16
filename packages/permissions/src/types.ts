@@ -44,6 +44,9 @@ export class Ability {
         // Check deny rules first
         for (const rule of denyRules) {
             if (this.matchesRule(rule, action, subject, data)) {
+                if (subject.endsWith("certificates")) {
+                    console.log(rule);
+                }
                 return inverted; // Denied
             }
         }

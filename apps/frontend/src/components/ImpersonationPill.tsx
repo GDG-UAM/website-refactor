@@ -8,6 +8,7 @@ import { authClient } from "#/lib/auth-client";
 import { CancelButton } from "./Buttons";
 import { Avatar } from "@mui/material";
 import { newSuccessToast, newErrorToast } from "./Toast";
+import * as m from "#/paraglide/messages";
 
 const PillContainer = styled(motion.div)`
     position: fixed;
@@ -120,13 +121,13 @@ export function ImpersonationPill() {
                     <AnimatePresence>
                         {hovered && (
                             <StopOverlay initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.8 }}>
-                                <CancelButton onClick={handleStop} isLoading={submitting} iconSize={18} color="danger" ariaLabel="Stop Impersonating" />
+                                <CancelButton onClick={handleStop} isLoading={submitting} iconSize={18} color="danger" />
                             </StopOverlay>
                         )}
                     </AnimatePresence>
                 </AvatarWrapper>
                 <Content>
-                    <Label>Impersonating</Label>
+                    <Label>{m["admin.users.impersonating"]()}</Label>
                     <UserName>{impersonatedUser.name}</UserName>
                 </Content>
             </PillContainer>

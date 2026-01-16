@@ -10,25 +10,35 @@ export default async function AdminPage() {
                 {
                     title: m["admin.navigation.categories.misc"](),
                     buttons: [
-                        { label: m["admin.navigation.links"](), type: "links", href: "/admin/links", disabled: !(await hasSectionAccess("admin.links")) },
+                        {
+                            label: m["admin.navigation.links"](),
+                            type: "links",
+                            href: "/admin/links",
+                            disabled: !(await hasSectionAccess("admin.links")) || (await hasSectionAccess("adminSectionDenies.links"))
+                        },
                         {
                             label: m["admin.navigation.users"](),
                             type: "users",
                             href: "/admin/users",
-                            disabled: !(await hasSectionAccess("admin.users"))
+                            disabled: !(await hasSectionAccess("admin.users")) || (await hasSectionAccess("adminSectionDenies.users"))
                         },
                         {
                             label: m["admin.navigation.permissions"](),
                             type: "permissions",
                             href: "/admin/permissions",
-                            disabled: !(await hasSectionAccess("admin.permissions"))
+                            disabled: !(await hasSectionAccess("admin.permissions")) || (await hasSectionAccess("adminSectionDenies.permissions"))
                         }
                     ]
                 },
                 {
                     title: m["admin.navigation.categories.events"](),
                     buttons: [
-                        { label: m["admin.navigation.events"](), type: "events", href: "/admin/events", disabled: !(await hasSectionAccess("admin.events")) },
+                        {
+                            label: m["admin.navigation.events"](),
+                            type: "events",
+                            href: "/admin/events",
+                            disabled: !(await hasSectionAccess("admin.events")) || (await hasSectionAccess("adminSectionDenies.events"))
+                        },
                         // {
                         //     label: m["admin.navigation.giveaways"](),
                         //     type: "giveaways",
@@ -39,25 +49,30 @@ export default async function AdminPage() {
                             label: m["admin.navigation.hackathons"](),
                             type: "hackathons",
                             href: "/admin/hackathons",
-                            disabled: !(await hasSectionAccess("admin.hackathons"))
+                            disabled: !(await hasSectionAccess("admin.hackathons")) || (await hasSectionAccess("adminSectionDenies.hackathons"))
                         },
                         {
                             label: m["admin.navigation.certificates"](),
                             type: "certificates",
                             href: "/admin/certificates",
-                            disabled: !(await hasSectionAccess("admin.certificates"))
+                            disabled: !(await hasSectionAccess("admin.certificates")) || (await hasSectionAccess("adminSectionDenies.certificates"))
                         }
                     ]
                 },
                 {
                     title: m["admin.navigation.categories.articles"](),
                     buttons: [
-                        { label: m["admin.navigation.blog"](), type: "blog", href: "/admin/blog", disabled: !(await hasSectionAccess("admin.blog")) },
+                        {
+                            label: m["admin.navigation.blog"](),
+                            type: "blog",
+                            href: "/admin/blog",
+                            disabled: !(await hasSectionAccess("admin.blog")) || (await hasSectionAccess("adminSectionDenies.blog"))
+                        },
                         {
                             label: m["admin.navigation.newsletter"](),
                             type: "newsletter",
                             href: "/admin/newsletter",
-                            disabled: !(await hasSectionAccess("admin.newsletter"))
+                            disabled: !(await hasSectionAccess("admin.newsletter")) || (await hasSectionAccess("adminSectionDenies.newsletter"))
                         }
                     ]
                 }

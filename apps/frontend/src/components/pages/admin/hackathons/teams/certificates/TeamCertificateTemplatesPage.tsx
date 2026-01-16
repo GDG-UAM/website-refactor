@@ -42,7 +42,8 @@ export function TeamCertificateTemplatesPage({ hackathonId, teamId, hackathon, t
                     pageSize: PAGE_SIZE,
                     search: search || undefined,
                     includeInactive: includeDeleted,
-                    teamId
+                    teamId,
+                    hackathonId
                 }
             });
 
@@ -147,7 +148,7 @@ export function TeamCertificateTemplatesPage({ hackathonId, teamId, hackathon, t
                 onReload={load}
                 headerActions={
                     <>
-                        {ability.can("create", "admin.certificates.templates") && (
+                        {ability.can("create", `admin.hackathons.${hackathonId}.teams.${teamId}.certificates`) && (
                             <AddButton onClick={() => router.push(`${baseUrl}/create`)} ariaLabel="Create certificate template">
                                 {m["admin.hackathons.teams.certificates.list.addButton"]()}
                             </AddButton>
@@ -171,17 +172,20 @@ export function TeamCertificateTemplatesPage({ hackathonId, teamId, hackathon, t
                 rowActions={(row) => (
                     <>
                         <CopyButton content={() => generateCopyContent(row)} ariaLabel="Copy certificates list" iconSize={20} />
-                        {row.isActive && team.isActive && hackathon.isActive && ability.canUpdateAnyField(`admin.certificates.templates.${row._id}`, row) ? (
+                        {row.isActive &&
+                        team.isActive &&
+                        hackathon.isActive &&
+                        ability.canUpdateAnyField(`admin.hackathons.${hackathonId}.teams.${teamId}.certificates.templates.${row._id}`, row) ? (
                             <EditButton onClick={() => router.push(`${baseUrl}/${row._id}`)} ariaLabel="Edit template" iconSize={20} />
                         ) : (
                             <ViewButton
                                 onClick={() => router.push(`${baseUrl}/${row._id}`)}
                                 ariaLabel="View template"
                                 iconSize={20}
-                                disabled={ability.cannot("read", `admin.certificates.templates.${row._id}`)}
+                                disabled={ability.cannot("read", `admin.hackathons.${hackathonId}.teams.${teamId}.certificates.templates.${row._id}`)}
                             />
                         )}
-                        {ability.can("manage", `admin.certificates.templates.${row._id}`) && !row.isActive ? (
+                        {ability.can("manage", `admin.hackathons.${hackathonId}.teams.${teamId}.certificates.templates.${row._id}`) && !row.isActive ? (
                             <RestoreButton
                                 onClick={() => handleRestore(row._id)}
                                 ariaLabel="Restore template"
@@ -195,7 +199,7 @@ export function TeamCertificateTemplatesPage({ hackathonId, teamId, hackathon, t
                                 iconSize={20}
                                 disabled={
                                     !row.isActive ||
-                                    ability.cannot("delete", `admin.certificates.templates.${row._id}`) ||
+                                    ability.cannot("delete", `admin.hackathons.${hackathonId}.teams.${teamId}.certificates.templates.${row._id}`) ||
                                     !team.isActive ||
                                     !hackathon.isActive
                                 }

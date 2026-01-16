@@ -23,7 +23,9 @@ export default async function AdminPage({ params }: { params: Promise<{ id: stri
                             label: m["admin.hackathons.navigation.teams"](),
                             type: "hackathon-teams",
                             href: `/admin/hackathons/${hackathon._id}/teams`,
-                            disabled: !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.teams`))
+                            disabled:
+                                !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.teams`)) ||
+                                (await hasSectionAccess(`adminSectionDenies.hackathons.${hackathon._id}.teams`))
                         }
                     ]
                 },
@@ -34,7 +36,9 @@ export default async function AdminPage({ params }: { params: Promise<{ id: stri
                             label: m["admin.hackathons.navigation.intermission"](),
                             type: "hackathon-intermission",
                             href: `/admin/hackathons/${hackathon._id}/intermission`,
-                            disabled: !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.intermission`)),
+                            disabled:
+                                !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.intermission`)) ||
+                                (await hasSectionAccess(`adminSectionDenies.hackathons.${hackathon._id}.intermission`)),
                             openLinkHref: `/hackathon/${hackathon.slug}/intermission`
                         }
                     ]
@@ -46,7 +50,9 @@ export default async function AdminPage({ params }: { params: Promise<{ id: stri
                             label: m["admin.hackathons.navigation.certificates"](),
                             type: "hackathon-certificates",
                             href: `/admin/hackathons/${hackathon._id}/certificates`,
-                            disabled: !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.certificateDefaults`))
+                            disabled:
+                                !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.certificateDefaults`)) ||
+                                (await hasSectionAccess(`adminSectionDenies.hackathons.${hackathon._id}.certificateDefaults`))
                         }
                     ]
                 },
@@ -57,13 +63,17 @@ export default async function AdminPage({ params }: { params: Promise<{ id: stri
                             label: m["admin.hackathons.navigation.tracks"](),
                             type: "hackathon-tracks",
                             href: `/admin/hackathons/${hackathon._id}/tracks`,
-                            disabled: !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.tracks`))
+                            disabled:
+                                !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.tracks`)) ||
+                                (await hasSectionAccess(`adminSectionDenies.hackathons.${hackathon._id}.tracks`))
                         },
                         {
                             label: m["admin.hackathons.navigation.selection"](),
                             type: "hackathon-track-selection",
                             href: `/admin/hackathons/${hackathon._id}/selection`,
-                            disabled: !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.trackSelection`))
+                            disabled:
+                                !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.trackSelection`)) ||
+                                (await hasSectionAccess(`adminSectionDenies.hackathons.${hackathon._id}.trackSelection`))
                         }
                     ]
                 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { AddButton, DeleteButton, EditButton, SaveButton, CancelButton, CollapsableMenuButton, AcceptButton, InspectButton } from "#/components/Buttons";
 import { Select, MenuItem, TextField, Autocomplete, Checkbox, FormControlLabel, CircularProgress } from "@mui/material";
 import Modal from "#/components/Modal";
@@ -77,7 +77,7 @@ const getExplorerLevels = (resource: string): ExplorerLevel[] => {
         node: null,
         isId: false,
         options: Object.keys(RESOURCE_TREE).map((key) => ({
-            label: RESOURCE_TREE[key].label || key,
+            label: key === "*" ? m["admin.permissions.form.editor.wildcard"]() : RESOURCE_TREE[key].label || key,
             value: key
         })),
         selectedValue: segments[0] || ""
@@ -109,7 +109,12 @@ const getExplorerLevels = (resource: string): ExplorerLevel[] => {
                 options: isId
                     ? null
                     : childKeys.map((k) => ({
-                          label: typeof node.children[k] === "object" && node.children[k].label ? node.children[k].label : k,
+                          label:
+                              k === "*"
+                                  ? m["admin.permissions.form.editor.wildcard"]()
+                                  : typeof node.children[k] === "object" && node.children[k].label
+                                    ? node.children[k].label
+                                    : k,
                           value: k
                       })),
                 selectedValue: nextSeg
@@ -127,7 +132,7 @@ const getExplorerLevels = (resource: string): ExplorerLevel[] => {
 
 // Global label cache to persist labels across re-renders/searches
 const labelCache: Record<string, string> = {
-    "*": "All (*)" // We keep this as a base, but ideally this would be translated too if needed
+    "*": m["admin.permissions.form.editor.wildcard"]()
 };
 
 const StaticSelector: React.FC<{
@@ -137,18 +142,22 @@ const StaticSelector: React.FC<{
     placeholder: string;
     disabled?: boolean;
 }> = ({ options, value, onChange, placeholder, disabled }) => (
-    <Select size="small" value={value} displayEmpty onChange={(e) => onChange(e.target.value as string)} sx={{ minWidth: 180 }} disabled={disabled}>
+    <Select
+        size="small"
+        value={value}
+        displayEmpty
+        onChange={(e) => onChange(e.target.value as string)}
+        sx={{ width: { xs: "100%", sm: 180 }, maxWidth: "100%" }}
+        disabled={disabled}
+    >
         <MenuItem value="" disabled>
             {placeholder}
         </MenuItem>
-        <MenuItem value="*">{m["admin.permissions.form.editor.effect_allow"]()} (*)</MenuItem>
-        {options
-            .filter((o) => o.value !== "*")
-            .map((opt) => (
-                <MenuItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                </MenuItem>
-            ))}
+        {options.map((opt) => (
+            <MenuItem key={opt.value} value={opt.value}>
+                {opt.value === "*" ? m["admin.permissions.form.editor.wildcard"]() : opt.label}
+            </MenuItem>
+        ))}
     </Select>
 );
 
@@ -182,7 +191,11 @@ const SearchableID: React.FC<{
             try {
                 const res = await node.search(cleanQuery, parents);
                 setOptions((prev) => {
-                    const combined = [{ label: `${m["admin.permissions.form.editor.effect_allow"]()} (*)`, value: "*" }, ...res.filter((r) => r.value !== "*")];
+                    const combined = [...res.filter((r) => r.value !== "*")];
+                    // Only add wildcard if it's explicitly allowed in children
+                    if (node.children && node.children["*"]) {
+                        combined.unshift({ label: m["admin.permissions.form.editor.wildcard"](), value: "*" });
+                    }
                     if (value && labelCache[value] && value !== "*") {
                         if (!combined.find((o) => o.value === value)) {
                             combined.push({ label: labelCache[value], value });
@@ -191,7 +204,7 @@ const SearchableID: React.FC<{
                     return combined;
                 });
             } catch (e) {
-                setOptions([{ label: `${m["admin.permissions.form.editor.effect_allow"]()} (*)`, value: "*" }]);
+                setOptions([{ label: m["admin.permissions.form.editor.wildcard"](), value: "*" }]);
             } finally {
                 setLoading(false);
             }
@@ -216,7 +229,7 @@ const SearchableID: React.FC<{
             loading={loading}
             value={selectedOption}
             onChange={(_, val) => {
-                const final = val || { label: `${m["admin.permissions.form.editor.effect_allow"]()} (*)`, value: "*" };
+                const final = val || { label: m["admin.permissions.form.editor.wildcard"](), value: "*" };
                 labelCache[final.value] = final.label;
                 onChange(final);
             }}
@@ -224,11 +237,16 @@ const SearchableID: React.FC<{
             onInputChange={(_, val) => setInputValue(val)}
             isOptionEqualToValue={(opt, val) => opt.value === val?.value}
             getOptionLabel={(opt) => opt.label || opt.value}
-            sx={{ minWidth: 220 }}
+            sx={{ width: { xs: "100%", sm: 320 }, maxWidth: "100%" }}
             renderInput={(params) => (
                 <TextField
                     {...params}
                     placeholder={m["admin.permissions.form.editor.search_id_placeholder"]()}
+                    sx={{
+                        "& .MuiInputBase-input": {
+                            textOverflow: "ellipsis"
+                        }
+                    }}
                     InputProps={{
                         ...params.InputProps,
                         endAdornment: (
@@ -248,6 +266,27 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
     const [editingIdx, setEditingIdx] = useState<number | null>(null);
     const [mobileActionsIdx, setMobileActionsIdx] = useState<number | null>(null);
     const [tempRule, setTempRule] = useState<SerializablePermission | null>(null);
+    const [conditionText, setConditionText] = useState("");
+
+    // Initialize conditionText when starting to edit
+    useEffect(() => {
+        if (editingIdx !== null && tempRule) {
+            setConditionText(tempRule.conditions ? JSON.stringify(tempRule.conditions, null, 2) : "");
+        } else if (editingIdx === null) {
+            setConditionText("");
+        }
+    }, [editingIdx]);
+
+    const isJsonValid = useMemo(() => {
+        const trimmed = conditionText.trim();
+        if (!trimmed) return true;
+        try {
+            JSON.parse(trimmed);
+            return true;
+        } catch (e) {
+            return false;
+        }
+    }, [conditionText]);
 
     const addRule = () => {
         setTempRule({ resource: "", actions: ["read"], effect: "allow" });
@@ -327,6 +366,7 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                         $border="1px solid var(--admin-card-border)"
                         $alignItems="center"
                         $gap={1}
+                        style={{ minWidth: 0 }}
                     >
                         <ModalCaption>{m["admin.permissions.form.editor.current_path"]()}</ModalCaption>
                         <MonoText>{tempRule.resource}</MonoText>
@@ -439,11 +479,37 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                             <DeleteButton onClick={() => removeRule(idx)} confirmationDuration={1000} iconSize={20} disabled={disabled} />
                         </ActionRow>
                         <MobileActionTrigger>
-                            <CollapsableMenuButton onClick={() => setMobileActionsIdx(idx)} disabled={disabled} />
+                            <CollapsableMenuButton onClick={() => setMobileActionsIdx(idx)} disabled={disabled} iconSize={20} />
                         </MobileActionTrigger>
                     </PermissionRuleItem>
                 ))}
             </PermissionsList>
+
+            <Modal isOpen={mobileActionsIdx !== null} onClose={() => setMobileActionsIdx(null)} title={m["admin.permissions.form.editor.actions"]()} width="xs">
+                {mobileActionsIdx !== null && (
+                    <Stack $spacing={2}>
+                        <EditButton
+                            fullWidth
+                            onClick={() => {
+                                setTempRule({ ...value[mobileActionsIdx] });
+                                setEditingIdx(mobileActionsIdx);
+                                setMobileActionsIdx(null);
+                            }}
+                        >
+                            {m["buttons.edit"]()}
+                        </EditButton>
+                        <DeleteButton
+                            fullWidth
+                            onClick={() => {
+                                removeRule(mobileActionsIdx);
+                                setMobileActionsIdx(null);
+                            }}
+                        >
+                            {m["buttons.delete"]()}
+                        </DeleteButton>
+                    </Stack>
+                )}
+            </Modal>
 
             <Modal
                 isOpen={editingIdx !== null}
@@ -461,7 +527,7 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                     disabled
                         ? []
                         : ([
-                              <SaveButton key="save" onClick={handleSaveRule} />,
+                              <SaveButton key="save" onClick={handleSaveRule} disabled={conditionText.trim() !== "" && !isJsonValid} />,
                               <CancelButton
                                   key="cancel"
                                   onClick={() => {
@@ -510,7 +576,7 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                                     }
                                     label={<strong>{m["admin.permissions.form.editor.action_manage"]()}</strong>}
                                 />
-                                <Stack $pl={3} $direction="row" $spacing={2}>
+                                <Stack $pl={3} $direction="column" $spacing={0.5}>
                                     {ACTIONS.map((a) => (
                                         <FormControlLabel
                                             key={a}
@@ -538,12 +604,38 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                                     options={getFieldsForPath(tempRule.resource)}
                                     value={tempRule.conditions?.field?.$in || []}
                                     onChange={(_, val) => {
-                                        const c = { ...tempRule.conditions };
-                                        if (val.length) c.field = { $in: val };
-                                        else delete c.field;
-                                        setTempRule({ ...tempRule, conditions: Object.keys(c).length ? c : undefined });
+                                        if (!tempRule) return;
+
+                                        let currentConditions: any = {};
+                                        try {
+                                            if (conditionText.trim()) {
+                                                currentConditions = JSON.parse(conditionText);
+                                            }
+                                        } catch (e) {
+                                            currentConditions = tempRule.conditions || {};
+                                        }
+
+                                        const newConditions = { ...currentConditions };
+                                        if (val.length) newConditions.field = { $in: val };
+                                        else delete newConditions.field;
+
+                                        const finalConditions = Object.keys(newConditions).length ? newConditions : undefined;
+                                        setTempRule({ ...tempRule, conditions: finalConditions });
+                                        setConditionText(finalConditions ? JSON.stringify(finalConditions, null, 2) : "");
                                     }}
-                                    renderInput={(p) => <TextField {...p} size="small" placeholder={m["admin.permissions.form.editor.fields_placeholder"]()} />}
+                                    renderInput={(p) => (
+                                        <TextField
+                                            {...p}
+                                            size="small"
+                                            placeholder={m["admin.permissions.form.editor.fields_placeholder"]()}
+                                            sx={{
+                                                "& .MuiInputBase-input": {
+                                                    textOverflow: "ellipsis"
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                    sx={{ width: "100%" }}
                                 />
                             </FlexBox>
                         )}
@@ -555,12 +647,23 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                                 multiline
                                 rows={2}
                                 disabled={disabled}
-                                value={tempRule.conditions ? JSON.stringify(tempRule.conditions, null, 2) : ""}
+                                value={conditionText}
                                 onChange={(e) => {
+                                    const text = e.target.value;
+                                    setConditionText(text);
+                                    if (!text.trim()) {
+                                        setTempRule((prev) => (prev ? { ...prev, conditions: undefined } : null));
+                                        return;
+                                    }
                                     try {
-                                        setTempRule({ ...tempRule, conditions: JSON.parse(e.target.value) });
-                                    } catch (e) {}
+                                        const parsed = JSON.parse(text);
+                                        setTempRule((prev) => (prev ? { ...prev, conditions: parsed } : null));
+                                    } catch (e) {
+                                        // Keep current tempRule.conditions until JSON is valid again
+                                    }
                                 }}
+                                error={conditionText.trim() !== "" && !isJsonValid}
+                                helperText={conditionText.trim() !== "" && !isJsonValid ? "Invalid JSON" : ""}
                                 sx={{ "& .MuiInputBase-root": { fontFamily: "monospace", fontSize: "0.8rem" } }}
                             />
                         </FlexBox>

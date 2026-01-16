@@ -2,7 +2,7 @@
   "$schema": "https://inlang.com/schema/inlang-message-format",
   "metadata": {
     "title": "GDG on Campus UAM",
-    "description": "Asociación dirigida por estudiantes de la Universidad Autónoma de Madrid"
+    "description": "Asociación estudiantil de la Universidad Autónoma de Madrid"
   },
   "notFound": {
     "title": "404",
@@ -13,9 +13,9 @@
   },
   "dateFormats": {
     "shortDate": "{day} {month} {year}",
-    "fullDate": "{day} {month} {year}",
+    "fullDate": "{day} de {month} de {year}",
     "shortDateTime": "{day} {month} {year}, {time}",
-    "fullDateTime": "{day} {month} {year}, {time}"
+    "fullDateTime": "{day} de {month} de {year}, {time}"
   },
   "buttons": {
     "tooltip": {
@@ -23,7 +23,7 @@
     },
     "accept": "Aceptar",
     "add": "Nuevo",
-    "back": "Volver",
+    "back": "Atrás",
     "cancel": "Cancelar",
     "duplicate": "Duplicar",
     "copy": {
@@ -39,7 +39,7 @@
     "next": "Siguiente",
     "read": "Leer",
     "save": "Guardar",
-    "view": "Ver",
+    "view": "Mostrar",
     "menu": "Menú",
     "reload": "Recargar",
     "share": "Compartir",
@@ -55,7 +55,7 @@
     "search": "Buscar",
     "down": "Bajar",
     "up": "Subir",
-    "manage": "Gestionar",
+    "manage": "Configurar",
     "send": {
       "send": "Enviar",
       "sent": "Enviado"
@@ -66,19 +66,19 @@
       "openGithub": "Abrir GitHub",
       "openX": "Abrir X",
       "openWebsite": "Abrir sitio web",
-      "openEmail": "Abrir correo",
+      "openEmail": "Abrir email",
       "openWhatsapp": "Abrir WhatsApp",
       "openGdgCommunity": "Abrir comunidad GDG"
     },
-    "openEmail": "Abrir correo",
+    "openEmail": "Abrir email",
     "openWhatsapp": "Abrir WhatsApp",
     "openInstagram": "Abrir Instagram",
     "openLinkedin": "Abrir LinkedIn",
-    "openWebsite": "Abrir sitio web",
+    "openWebsite": "Abrir Web",
     "certificate": "Certificado",
     "openX": "Abrir X",
     "openGithub": "Abrir GitHub",
-    "openGdgCommunity": "Abrir comunidad GDG",
+    "openGdgCommunity": "Abrir GDG Community",
     "addOpenBadge": "Añadir OpenBadge",
     "accessibility": "Opciones de accesibilidad",
     "restore": "Restaurar",
@@ -87,15 +87,15 @@
   },
   "footer": {
     "quickLinks": "Enlaces rápidos",
-    "connectWithUs": "Conecta con nosotros",
+    "connectWithUs": "Conéctate con nosotros",
     "about": "Sobre nosotros",
     "blog": "Blog",
     "events": "Eventos",
     "contact": "Contacto",
     "privacy": "Política de privacidad",
     "disclaimer": {
-      "title": "Aviso legal",
-      "text": "Google Developer Group on Campus - UAM es un grupo independiente; nuestras actividades y las opiniones aquí expresadas no deben ser vinculadas en ningún caso a Google, la corporación. Para saber más sobre el programa GDG, visita [link]."
+      "title": "Descargo de responsabilidad",
+      "text": "Google Developer Group on Campus - UAM es un grupo independiente; nuestras actividades y las opiniones expresadas aquí no deben vincularse de ninguna manera con Google, la corporación. Para saber más sobre el programa GDG, visita [link]."
     },
     "credits": "Web realizada por [hector] y [jose].",
     "copyright": "{year}. Todos los derechos reservados."
@@ -104,7 +104,7 @@
     "home": "Inicio",
     "events": "Eventos",
     "activities": "Actividades",
-    "newsletter": "Boletín",
+    "newsletter": "Newsletter",
     "blog": "Blog",
     "about": "Sobre nosotros",
     "contact": "Contacto",
@@ -115,22 +115,22 @@
     "mainNav": "Navegación principal",
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
-    "adminPanel": "Panel de administración",
+    "adminPanel": "Administración",
     "myProfile": "Mi perfil",
     "myGiveaways": "Mis sorteos",
-    "settings": "Ajustes",
+    "settings": "Configuración",
     "ai": {
       "translateAria": "Traducir con IA",
       "changeLanguage": "Cambiar idioma de la IA",
       "translate": "Traducir esta página",
-      "notSupported": "La traducción por IA no es compatible con este navegador.",
-      "searchPlaceholder": "Buscar idiomas por nombre, código...",
+      "notSupported": "La traducción AI no es compatible con este navegador.",
+      "searchPlaceholder": "Buscar idiomas por nombre, código…",
       "searchAria": "Buscar idiomas",
       "availableAria": "Idioma disponible",
       "downloadingAria": "Descargando idioma...",
       "banner": {
         "enabled": "Traducción por IA activada. Las traducciones pueden no ser precisas.",
-        "downloading": "Descargando modelo...",
+        "downloading": "Descargando el modelo…",
         "translating": "Traduciendo {progress}"
       }
     },
@@ -139,16 +139,16 @@
       "switchLanguage": "Cambiar idioma",
       "flagLabel": "Bandera de {code}",
       "manualLanguages": {
-        "es": "Español",
+        "es": "Español (Español)",
         "en": "Inglés (English)"
       },
       "aiLanguages": {
         "af": "Afrikáans",
-        "am": "Amhárico",
+        "am": "Amárico",
         "ar": "Árabe",
         "as": "Asamés",
         "az": "Azerbaiyano",
-        "ba": "Bashkir",
+        "ba": "Baskir",
         "be": "Bielorruso",
         "bg": "Búlgaro",
         "bn": "Bengalí",
@@ -156,26 +156,26 @@
         "br": "Bretón",
         "bs": "Bosnio",
         "ca": "Catalán",
-        "ckb": "Kurdo central",
+        "ckb": "Kurdo Central",
         "co": "Corso",
         "cs": "Checo",
         "cy": "Galés",
         "da": "Danés",
         "de": "Alemán",
-        "dv": "Divehi",
+        "dv": "Maldivo",
         "el": "Griego",
         "en": "Inglés",
         "es": "Español",
         "et": "Estonio",
         "eu": "Euskera",
         "fa": "Persa",
-        "fi": "Finlandés",
+        "fi": "Finés",
         "fil": "Filipino",
         "fo": "Faroés",
         "fr": "Francés",
         "fy": "Frisón",
         "ga": "Irlandés",
-        "gd": "Gaelico escocés",
+        "gd": "Gaélico Escocés",
         "gl": "Gallego",
         "gu": "Guyaratí",
         "ha": "Hausa",
@@ -203,7 +203,7 @@
         "lv": "Letón",
         "mi": "Maorí",
         "mk": "Macedonio",
-        "ml": "Malayalam",
+        "ml": "Malayálam",
         "mn": "Mongol",
         "mr": "Maratí",
         "ms": "Malayo",
@@ -215,9 +215,9 @@
         "nn": "Noruego (Nynorsk)",
         "no": "Noruego",
         "oc": "Occitano",
-        "or": "Odia",
+        "or": "Oriya",
         "pap": "Papiamento",
-        "pa": "Panyabí",
+        "pa": "Punyabí",
         "pl": "Polaco",
         "ps": "Pastún",
         "pt": "Portugués",
@@ -226,13 +226,13 @@
         "ro": "Rumano",
         "ru": "Ruso",
         "rw": "Kinyarwanda",
-        "se": "Sami (Norte)",
+        "se": "Sami Septentrional",
         "si": "Cingalés",
         "sk": "Eslovaco",
         "sl": "Esloveno",
         "sq": "Albanés",
         "sr": "Serbio",
-        "st": "Sesotho",
+        "st": "Sesoto",
         "sv": "Sueco",
         "sw": "Suajili",
         "ta": "Tamil",
@@ -240,7 +240,7 @@
         "tg": "Tayiko",
         "th": "Tailandés",
         "tk": "Turcomano",
-        "tn": "Tswana",
+        "tn": "Setsuana",
         "tr": "Turco",
         "tt": "Tártaro",
         "ug": "Uigur",
@@ -258,28 +258,28 @@
   "index": {
     "hero": {
       "university": "Universidad Autónoma de Madrid",
-      "description": "Comunidad universitaria oficial donde conectamos, aprendemos y creamos con tecnologías de Google.",
-      "joinChapter": "Únete a este capítulo",
+      "description": "Comunidad oficial universitaria donde conectamos, aprendemos y creamos con tecnologías de Google.",
+      "joinChapter": "Unirme al capítulo",
       "learnMore": "¿Qué es un GDG?",
-      "scroll": "Baja para saber más"
+      "scroll": "Desliza para saber más"
     },
     "events": {
       "eyebrow": "Google Developer Groups on Campus · UAM",
       "nextEvents": "Próximos eventos",
-      "mainCopy": "Aprende, crea y comparte con la comunidad. Aquí destacamos algunos eventos próximos; puedes ver la lista completa en la página de [link].",
+      "mainCopy": "Aprende, crea y comparte con la comunidad. Aquí destacamos algunos eventos cercanos; puedes ver el listado completo en la página de [link].",
       "copyBullets": {
         "_0": "Charlas técnicas, talleres prácticos y networking.",
-        "_1": "Formatos presenciales y online según la actividad.",
-        "_2": "Abierto a todo el mundo, ¡únete!"
+        "_1": "Formato presencial y online según la actividad.",
+        "_2": "Abiertos a todo el mundo, ¡únete!"
       },
       "seeAll": "Ver todos los eventos",
-      "nextEvent": "Siguiente",
+      "nextEvent": "Próximo",
       "pastEvent": "Pasado",
-      "join": "Unirse",
+      "join": "Apuntarme",
       "moreInfo": "Más info",
-      "timeline": "Cronograma de eventos",
+      "timeline": "Línea temporal de eventos",
       "youAreHere": "Estás aquí",
-      "timelineSR": "Pasa el ratón o enfoca un punto para ver detalles. La tarjeta rota automáticamente.",
+      "timelineSR": "Pasa el cursor o enfoca un punto para ver detalles. La tarjeta rota automáticamente cada 40 segundos.",
       "mainCopy_events": "Eventos"
     }
   },
@@ -293,48 +293,48 @@
       "signingIn": "Iniciando sesión..."
     },
     "logout": {
-      "title": "Cerrar sesión",
-      "subtitle": "¿Estás seguro de que quieres cerrar sesión?",
-      "signOutButton": "Cerrar sesión",
+      "title": "Cerrar Sesión",
+      "subtitle": "¿Estás seguro de que quieres cerrar tu sesión?",
+      "signOutButton": "Cerrar Sesión",
       "cancelButton": "Cancelar",
       "loading": "Cargando..."
     }
   },
   "about": {
-    "pageTitle": "Sobre nosotros",
-    "pageDescription": "Conoce más sobre GDG on Campus UAM, nuestra misión, visión, historia y el equipo detrás de la comunidad. Únete a nuestro viaje para conectar y empoderar a estudiantes a través de la tecnología.",
+    "pageTitle": "Sobre Nosotros",
+    "pageDescription": "Descubre quiénes somos en GDG on Campus UAM. Nuestra misión, visión e historia como comunidad tecnológica en la Universidad Autónoma de Madrid.",
     "title": "Sobre nosotros",
     "subtitle": "[google] Developer Group on Campus - [uni]",
     "subtitle_google": "Google",
     "subtitle_uni": "Universidad Autónoma de Madrid",
-    "intro": "Somos una comunidad universitaria apasionada por la tecnología. Aquí conectamos, aprendemos y crecemos juntos, explorando herramientas de Google y resolviendo retos reales. Si te encanta la tecnología, este es tu sitio.",
-    "missionTitle": "Nuestra misión",
-    "whatWeDoTitle": "Qué hacemos",
+    "intro": "Somos una comunidad universitaria apasionada por la tecnología. Aquí conectamos, aprendemos y crecemos juntos, explorando las herramientas de Google y resolviendo retos reales. Si te gusta la tecnología, este es tu sitio.",
+    "missionTitle": "Nuestra Misión",
+    "whatWeDoTitle": "¿Qué Hacemos?",
     "mission": {
       "_0": {
-        "title": "Conectar con el mundo profesional",
-        "text": "Acercamos el mundo profesional a los estudiantes con charlas, talleres y espacios para hacer contactos que impulsen tu carrera."
+        "title": "Conectar con el mundo laboral",
+        "text": "Acercamos el mundo profesional a los estudiantes con charlas, talleres y espacios para hacer contactos que impulsan tu carrera."
       },
       "_1": {
-        "title": "Hacer que programar sea divertido",
-        "text": "Creamos un entorno donde aprender a programar sea entretenido y colaborativo, lleno de retos y creatividad."
+        "title": "Hacer la programación divertida",
+        "text": "Creamos un ambiente donde aprender a programar es entretenido y colaborativo, lleno de retos y creatividad."
       },
       "_2": {
-        "title": "Estar al día",
-        "text": "Descubrimos juntos las últimas tendencias tecnológicas y compartimos la curiosidad por lo nuevo."
+        "title": "Mantenernos al día",
+        "text": "Descubrimos juntos las últimas tendencias en tecnología y compartimos esa curiosidad por lo nuevo."
       },
       "_3": {
         "title": "Mejorar la vida en el campus",
-        "text": "Aplicamos nuestras habilidades para hacer un campus más conectado, moderno y útil para todos."
+        "text": "Aplicamos nuestras habilidades para que el campus sea más conectado, moderno y útil para todos."
       }
     },
     "whatWeDo": {
       "_0": {
-        "title": "Charlas con ponentes (Google Developer Expert)",
-        "description": "Escucha a expertos y profesionales que comparten ideas y experiencias del mundo tecnológico."
+        "title": "Charlas con Ponentes (Google Developer Expert)",
+        "description": "Escucha a expertos y profesionales que comparten ideas y experiencias del mundo tech."
       },
       "_1": {
-        "title": "Hackatones",
+        "title": "Hackathones",
         "description": "Maratones donde creamos soluciones tecnológicas en equipo y ponemos a prueba nuestra creatividad."
       },
       "_2": {
@@ -343,44 +343,44 @@
       },
       "_3": {
         "title": "Talleres",
-        "description": "Aprender haciendo: talleres prácticos sobre IA, Machine Learning y más."
+        "description": "Aprende haciendo: talleres prácticos sobre IA, Machine Learning y más."
       }
     },
-    "visionTitle": "Nuestra visión",
-    "vision": "Queremos que la tecnología sea accesible para todos en la universidad. Aspiramos a ser el lugar donde nazcan ideas y proyectos que mejoren el día a día.",
+    "visionTitle": "Nuestra Visión",
+    "vision": "Queremos que la tecnología sea accesible para todos en la universidad. Buscamos ser el lugar donde nacen ideas y proyectos que mejoran la vida diaria.",
     "historyTitle": "¿De dónde venimos? La historia de GDG",
-    "history": "Los Google Developer Groups (GDG) son comunidades de desarrolladores de todo el mundo interesados en las tecnologías de Google. La iniciativa se centra en el aprendizaje, la conexión y el crecimiento profesional. Cada grupo GDG es un punto de encuentro local donde los desarrolladores comparten conocimientos, crean productos de éxito y hacen networking.",
-    "disclaimer": " es un grupo independiente. Nuestras actividades y opiniones expresadas en este grupo no deben vincularse en modo alguno a Google, la corporación.",
-    "connectTitle": "¡Conecta con nosotros!",
-    "connect": "Si te interesa la tecnología y quieres formar parte de una comunidad activa, ¡únete! Síguenos en redes sociales y participa en nuestros eventos para aprender, crecer y construir con nosotros.",
-    "teamTitle": "Nuestro equipo",
+    "history": "Los Google Developer Groups (GDG) son comunidades de desarrolladores de todo el mundo que se interesan en las tecnologías de Google. La iniciativa se centra en el aprendizaje, la conexión y el crecimiento profesional. Cada grupo GDG es un punto de encuentro local donde los desarrolladores comparten sus conocimientos, construyen productos exitosos y establecen contactos.",
+    "disclaimer": " es un grupo independiente. Nuestras actividades y las opiniones expresadas en este grupo no deben vincularse de ninguna manera con Google, la corporación.",
+    "connectTitle": "¡Conéctate con nosotros!",
+    "connect": "Si te interesa la tecnología y quieres formar parte de una comunidad activa, ¡únete a nosotros! Síguenos en nuestras redes sociales y participa en nuestros eventos para aprender, crecer y construir con nosotros.",
+    "teamTitle": "Nuestro Equipo",
     "organizersTitle": "Organizadores GDG",
-    "membersTitle": "Miembros del equipo",
-    "organizerRoleLabel": "Organizador GDG",
-    "memberRoleLabel": "Miembro del equipo"
+    "membersTitle": "Miembros del Equipo",
+    "organizerRoleLabel": "GDG Organizer",
+    "memberRoleLabel": "Team Member"
   },
   "contact": {
-    "pageTitle": "Contacto",
-    "pageDescription": "Usa este formulario para contactar con el equipo de GDG on Campus UAM. Elige 'Personal' para preguntas generales o feedback, o 'Patrocinador' si tu organización quiere colaborar con nosotros.",
+    "pageTitle": "Contacta con Nosotros",
+    "pageDescription": "Usa este formulario para contactar con el equipo GDG on Campus UAM. Elige 'Personal' para dudas generales o feedback de los meetups, o 'Sponsor' si tu organización quiere colaborar o apoyar.",
     "title": "Contacta con nosotros",
-    "intro": "Usa este formulario para contactar con el equipo de GDG on Campus UAM. Elige 'Personal' para preguntas generales o feedback, o 'Patrocinador' si tu organización quiere colaborar con nosotros.",
+    "intro": "Usa este formulario para contactar con el equipo GDG on Campus UAM. Elige 'Personal' para dudas generales o feedback de los meetups, o 'Sponsor' si tu organización quiere colaborar o apoyar.",
     "personal": "Personal",
     "sponsor": "Patrocinador",
     "formTitlePersonal": "Escríbenos directamente",
     "formTitleSponsor": "Contacto para patrocinadores",
     "fullName": "Nombre completo",
     "namePlaceholder": "Tu nombre",
-    "email": "Correo electrónico",
-    "emailPlaceholder": "tu@ejemplo.com",
+    "email": "Email",
+    "emailPlaceholder": "nombre@ejemplo.com",
     "message": "Mensaje",
     "organization": "Organización",
     "organizationPlaceholder": "Tu organización",
     "contactName": "Nombre de contacto",
-    "contactEmail": "Correo de contacto",
-    "website": "Sitio web",
+    "contactEmail": "Email de contacto",
+    "website": "Web",
     "websitePlaceholder": "https://tu-sitio.com",
-    "required": "Obligatorio",
-    "validEmail": "Introduce un correo válido",
+    "required": "Requerido",
+    "validEmail": "Introduce un email válido",
     "send": "Enviar",
     "sent": "Enviado",
     "faq": {
@@ -388,19 +388,19 @@
       "items": {
         "_0": {
           "q": "¿Necesito experiencia previa para asistir?",
-          "a": "No. Nuestros eventos están abiertos a todos los niveles a menos que se indique lo contrario en la descripción, y animamos a los principiantes a participar."
+          "a": "No. Nuestros eventos están abiertos a todos los niveles a menos que se indique en la descripción e invitamos a los principiantes a participar."
         },
         "_1": {
           "q": "¿Puedo dar una charla?",
-          "a": "¡Nos encantaría! Envíanos tu idea con un título, un breve resumen (3-5 líneas), duración estimada y cualquier enlace relevante. Te daremos feedback y te ayudaremos a prepararla."
+          "a": "¡Nos encantaría! Envíanos tu idea con título, breve resumen (3-5 líneas), duración estimada y enlaces relevantes. Te daremos feedback y ayuda para prepararla."
         },
         "_2": {
-          "q": "¿En qué consiste el patrocinio?",
-          "a": "Puede ser apoyo financiero o contribuciones en especie (espacios, comida, merchandising, mentores...). A cambio, ofrecemos visibilidad de marca y acceso a talento. Cuéntanos tus objetivos y te propondremos algo que encaje."
+          "q": "¿Qué supone un patrocinio?",
+          "a": "Puede ser apoyo económico o en especie (espacios, comida, swag, mentores…). A cambio ofrecemos visibilidad de marca y contacto con talento. Cuéntanos tus objetivos y propondremos un encaje."
         },
         "_3": {
-          "q": "¿Cómo puedo ser voluntario?",
-          "a": "Contacta a través del formulario de esta página. Concertaremos una entrevista para conocerte mejor y ver cómo podrías encajar en el equipo."
+          "q": "¿Cómo puedo volverme un voluntario?",
+          "a": "Contacta con nosotros a través del formulario de esta página. Organizaremos una entrevista para conocerte mejor y ver cómo encajas en el equipo."
         }
       }
     }
@@ -418,11 +418,11 @@
     "secretary": "Secretario"
   },
   "settings": {
-    "pageTitle": "Ajustes de usuario",
-    "pageDescription": "Gestiona tus ajustes personales y preferencias para una experiencia personalizada. Actualiza tu perfil, opciones de privacidad, preferencias de notificación y más.",
-    "categoriesAriaLabel": "Categorías de ajustes",
+    "pageTitle": "Configuración",
+    "pageDescription": "Gestiona tus preferencias y ajustes en tu perfil de GDG on Campus UAM. Actualiza tu información personal, opciones de privacidad, notificaciones y más.",
+    "categoriesAriaLabel": "Categorías de configuración",
     "page": {
-      "heading": "Ajustes",
+      "heading": "Configuración",
       "subtitle": "Selecciona y ajusta tus preferencias."
     },
     "general": {
@@ -442,12 +442,12 @@
     },
     "profile": {
       "title": "Perfil",
-      "displayName": "Nombre visible",
+      "displayName": "Nombre para mostrar",
       "shortBio": "Biografía corta",
       "socialLinks": "Enlaces sociales",
       "placeholders": {
         "name": "Tu nombre",
-        "bio": "Una biografía corta",
+        "bio": "Una breve biografía",
         "github": "https://github.com/usuario",
         "linkedin": "https://linkedin.com/in/usuario",
         "x": "https://x.com/usuario",
@@ -455,17 +455,17 @@
         "website": "https://tu-sitio.com"
       },
       "data": {
-        "section": "Eliminación de datos",
+        "section": "Exportación y eliminación de datos",
         "delete": "Solicitud de eliminación de cuenta",
         "deleteConfirm": {
           "title": "Eliminar cuenta",
-          "body": "Esto eliminará permanentemente tu cuenta y los datos asociados. Esta acción no se puede deshacer. ¿Estás seguro?"
+          "body": "Esto eliminará permanentemente tu cuenta y los datos asociados. Esta acción no se puede deshacer. ¿Seguro que quieres continuar?"
         }
       },
       "errors": {
         "displayNameMax": "Máximo 80 caracteres.",
         "shortBioMax": "Máximo 500 caracteres.",
-        "invalidUrl": "URL no válida."
+        "invalidUrl": "URL inválida."
       },
       "preview": {
         "cannotPreview": "No se puede previsualizar este enlace"
@@ -474,24 +474,24 @@
     "privacy": {
       "title": "Privacidad",
       "attendance": "Mostrar públicamente mi asistencia a eventos",
-      "results": "Mostrar públicamente mis resultados de hackatones / juegos",
+      "results": "Mostrar públicamente mis resultados de hackathons / juegos",
       "tagging": {
-        "group": "Permitir que me etiqueten",
+        "group": "Permitir etiquetarme",
         "instagram": "Instagram",
         "linkedin": "LinkedIn",
         "x": "X (Twitter)",
-        "linkedinComment": "Esta opción debe aparecer desmarcada y desactivada si el usuario no ha añadido LinkedIn a sus enlaces sociales",
-        "xComment": "Desactivar a menos que se proporcione un enlace al perfil de X en los enlaces sociales"
+        "linkedinComment": "Esta opción debe aparecer desmarcada y deshabilitada si el usuario no ha añadido LinkedIn a sus enlaces sociales",
+        "xComment": "Deshabilitar salvo que se haya añadido enlace de perfil X"
       },
-      "mentionBlog": "Permitir que me mencionen en artículos del blog",
+      "mentionBlog": "Permitir mencionarme en artículos del blog",
       "showProfile": "Mostrar perfil públicamente",
-      "photoConsent": "Consentimiento para el uso de fotos",
+      "photoConsent": "Consentimiento para uso de fotos",
       "anonUsage": "Permitir datos de uso anonimizados"
     },
     "events": {
       "title": "Eventos",
-      "dietary": "Preferencias / Restricciones alimentarias",
-      "dietaryPlaceholder": "ej. Vegetariano, alergia a los frutos secos",
+      "dietary": "Preferencias / restricciones alimentarias",
+      "dietaryPlaceholder": "p.ej. Vegetariano, Alergia a frutos secos",
       "tshirt": "Talla de camiseta",
       "errors": {
         "dietaryMax": "Máximo 200 caracteres."
@@ -499,9 +499,9 @@
     },
     "games": {
       "title": "Juegos",
-      "nickname": "Apodo para el marcador",
+      "nickname": "Apodo para marcador",
       "anonymous": "Ocultarme en el marcador en vivo",
-      "rankings": "Permitir mis clasificaciones pasadas en las tablas de puntuación",
+      "rankings": "Permitir mis clasificaciones pasadas en tablas de posiciones",
       "nicknamePlaceholder": "Alias",
       "errors": {
         "nicknameMax": "Máximo 60 caracteres."
@@ -511,13 +511,13 @@
       "title": "Notificaciones",
       "emailMentions": "Email: Menciones en artículos",
       "weekly": "Boletín semanal",
-      "urgent": "Alertas urgentes (siempre activado)"
+      "urgent": "Alertas urgentes (siempre activadas)"
     },
     "accessibility": {
       "title": "Accesibilidad",
       "highContrast": "Modo de alto contraste",
       "reducedMotion": "Eliminar animaciones",
-      "dyslexicFont": "Fuente apta para disléxicos",
+      "dyslexicFont": "Fuente amigable para dislexia",
       "colorBlind": "Paleta para daltonismo",
       "daltonism": {
         "none": "Ninguno",
@@ -529,36 +529,36 @@
     "giveaways": {
       "lock": {
         "title": "Opción bloqueada",
-        "photo": "Este ajuste es obligatorio porque estás participando en un sorteo o evento que requiere consentimiento para el uso de fotos. No puedes desactivarlo mientras el sorteo esté activo. Puedes salir del sorteo desde [link].",
-        "profile": "Este ajuste es obligatorio porque estás participando en un sorteo o evento que requiere un perfil público. No puedes hacer tu perfil privado mientras el sorteo esté activo. Puedes salir del sorteo desde [link]."
+        "photo": "Esta opción es obligatoria porque actualmente participas en un sorteo o evento que requiere consentimiento para el uso de fotos. No puedes desactivarla mientras el sorteo esté activo. Puedes abandonar el sorteo desde [link].",
+        "profile": "Esta opción es obligatoria porque actualmente participas en un sorteo o evento que requiere un perfil público. No puedes hacer tu perfil privado mientras el sorteo esté activo. Puedes abandonar el sorteo desde [link]."
       },
       "lock_myGiveaways": "Mis sorteos"
     },
     "onboarding": {
       "title": "Configura tus preferencias",
-      "intro": "Repasemos un par de preferencias de privacidad importantes. Podrás cambiarlo todo más tarde en la página de Ajustes.",
+      "intro": "Vamos a revisar un par de preferencias de privacidad importantes. Puedes cambiar todo más tarde en la página de Configuración.",
       "showAll": "Mostrar todas las opciones",
       "profileTitle": "Perfil",
       "privacyTitle": "Privacidad",
-      "finishTitle": "¡Todo listo!",
-      "finishMessage": "¡Gracias por configurar tus preferencias! Podrás cambiarlo todo más tarde en la página de Ajustes, incluyendo opciones que no se muestran aquí."
+      "finishTitle": "¡Listo!",
+      "finishMessage": "¡Gracias por configurar tus preferencias! Puedes cambiar todo más tarde en la página de Configuración, incluyendo opciones no mostradas aquí."
     }
   },
   "events": {
     "pageTitle": "Eventos",
-    "pageDescription": "Mantente al día con los últimos eventos organizados por GDG on Campus UAM. ¡Únete a nuestras charlas técnicas, talleres, hackatones y más!",
+    "pageDescription": "Mantente al día con los últimos eventos organizados por GDG on Campus UAM. Únete a nosotros para charlas tecnológicas, talleres, hackathons y más.",
     "events": "Eventos",
     "filters": {
       "upcoming": "Próximos ({count})",
       "past": "Pasados ({count})"
     },
-    "registerMoreInfo": "Registro / Más info",
+    "registerMoreInfo": "Inscribirse / Más info",
     "loading": "Cargando eventos...",
     "error": "Error",
     "noEvents": "No hay eventos para mostrar.",
     "share": {
       "title": "Compartir",
-      "description": "Comparte el evento \"{title}\" el {date}.",
+      "description": "Comparte el evento \"{title}\" del día {date}.",
       "linkLabel": "Copiar enlace del evento"
     }
   },
@@ -574,7 +574,7 @@
   },
   "blog": {
     "pageTitle": "Blog",
-    "pageDescription": "Lee los últimos artículos y novedades de GDG on Campus UAM. Mantente informado sobre nuestros eventos, talleres y actividades de la comunidad a través de nuestro blog.",
+    "pageDescription": "Lee los últimos artículos y noticias de GDG on Campus UAM. Mantente informado sobre eventos, talleres, y novedades tecnológicas.",
     "title": "Blog",
     "authors": "Autores",
     "publishedOn": "Publicado el [date]",
@@ -582,18 +582,18 @@
     "noArticlesToShow": "No hay artículos para mostrar."
   },
   "newsletter": {
-    "pageTitle": "Boletín",
-    "pageDescription": "Mantente al día con las últimas noticias y artículos sobre tecnología, IA y Google en nuestro boletín.",
-    "title": "Boletín",
+    "pageTitle": "Newsletter",
+    "pageDescription": "Mantente al día de las últimas noticias y artículos sobre tecnología, IA y Google en nuestra newsletter.",
+    "title": "Newsletter",
     "publishedOn": "Publicado el [date]",
-    "searchArticles": "Buscar números...",
-    "noArticlesToShow": "No hay números para mostrar."
+    "searchArticles": "Buscar ediciones...",
+    "noArticlesToShow": "No hay ediciones para mostrar."
   },
   "certificates": {
     "pageTitle": "Certificado",
     "status": {
-      "valid": "Certificado válido",
-      "revoked": "Certificado revocado",
+      "valid": "Certificado Válido",
+      "revoked": "Este certificado ha sido revocado",
       "issuedOn": "Emitido el [date]",
       "revokedOn": "Revocado el [date]"
     },
@@ -602,26 +602,26 @@
       "printing": "Imprimiendo...",
       "share": "Compartir",
       "addToLinkedIn": "Añadir a LinkedIn",
-      "addOpenBadge": "Añadir a Badge Wallet"
+      "addOpenBadge": "Añadir OpenBadge"
     },
     "verification": {
       "id": "ID del certificado"
     },
     "exportModal": {
-      "title": "Añadir a Badge Wallet",
+      "title": "Añadir a tu perfil",
       "manualImport": "Importación manual",
-      "instructions": "Copia el enlace de aserción de abajo e impórtalo en tu servicio de insignias.",
+      "instructions": "Para añadir este certificado a tu cartera digital, copia el siguiente enlace y usa la opción 'Importar desde URL' en tu servicio preferido.",
       "copyAssertion": "Copiar enlace de aserción",
-      "services": "Servicios de insignias",
-      "openBadgePassport": "Open Badge Passport",
-      "badgr": "Badgr (Canvas Badges)",
+      "services": "Servicios de Insignias",
+      "openBadgePassport": "OpenBadge Passport",
+      "badgr": "Badgr",
       "credly": "Credly",
       "parchment": "Parchment",
-      "validate": "Validar con BadgeCheck.io"
+      "validate": "Validar Insignia"
     }
   },
   "admin": {
-    "pageTitle": "Panel de administración",
+    "pageTitle": "Panel de Administración",
     "form": {
       "view_only_warning": "Este formulario está en modo de solo lectura.",
       "languages": "Idiomas:",
@@ -656,8 +656,8 @@
       "list": {
         "reload": "Recargar",
         "search": "Buscar artículos...",
-        "noArticles": "No se han encontrado artículos.",
-        "noResults": "Ningún artículo coincide con tu búsqueda.",
+        "noArticles": "No hay artículos para mostrar.",
+        "noResults": "No se encontraron resultados para la búsqueda.",
         "showDeleted": "Mostrar artículos eliminados",
         "all": "Todos",
         "sort": "Ordenar",
@@ -685,7 +685,7 @@
         "loadError": "Error al cargar los datos del artículo"
       },
       "blog": {
-        "title": "Gestión del Blog",
+        "title": "Gestión de Blog",
         "listTitle": "Artículos del Blog",
         "create": "Crear entrada de blog",
         "edit": "Editar entrada de blog",
@@ -694,68 +694,68 @@
         }
       },
       "newsletter": {
-        "title": "Gestión del Boletín",
-        "listTitle": "Artículos del Boletín",
-        "create": "Crear boletín",
-        "edit": "Editar boletín",
+        "title": "Gestión de Newsletter",
+        "listTitle": "Artículos de Newsletter",
+        "create": "Crear newsletter",
+        "edit": "Editar newsletter",
         "breadcrumbs": {
-          "new": "Nuevo boletín"
+          "new": "Nueva newsletter"
         }
       }
     },
-    "pageDescription": "Gestiona eventos, artículos, permisos, feature flags y sorteos en el panel de administración. Asegura un funcionamiento fluido y la participación de la comunidad.",
+    "pageDescription": "Gestiona eventos, artículos, permisos, feature flags y sorteos en el panel de administración. Asegura operaciones fluidas y participación de la comunidad.",
     "title": "Administración",
     "links": {
       "title": "Enlaces",
       "page": {
-        "title": "Gestión de enlaces",
-        "createTitle": "Crear nuevo enlace",
-        "editTitle": "Editar enlace"
+        "title": "Gestión de Enlaces",
+        "createTitle": "Crear Nuevo Enlace",
+        "editTitle": "Editar Enlace"
       },
       "breadcrumbs": {
         "new": "Nuevo enlace"
       },
       "list": {
         "reload": "Recargar",
-        "create": "Crear enlace",
+        "create": "Crear Enlace",
         "search": "Buscar enlaces...",
-        "noLinks": "No hay enlaces cortos. ¡Crea el primero!",
-        "noResults": "Ningún enlace coincide con tu búsqueda.",
+        "noLinks": "No hay enlaces aún. ¡Crea uno para empezar!",
+        "noResults": "No hay enlaces que coincidan con tu búsqueda",
         "showDeleted": "Mostrar enlaces eliminados",
         "status_active": "Activo",
         "status_inactive": "Inactivo",
         "columns": {
           "status": "Estado",
-          "clicks": "Clics"
+          "clicks": "Clicks"
         },
         "toasts": {
-          "reloaded": "Lista de enlaces recargada",
-          "loadError": "Error al cargar los enlaces",
-          "deleteSuccess": "Enlace eliminado correctamente",
-          "deleteError": "Error al eliminar el enlace",
+          "reloaded": "Lista recargada",
+          "loadError": "No se pudieron cargar los enlaces",
+          "deleteSuccess": "Enlace eliminado con éxito",
+          "deleteError": "No se pudo eliminar el enlace",
           "restoreSuccess": "Enlace restaurado correctamente",
           "restoreError": "Error al restaurar el enlace"
         }
       },
       "form": {
-        "slug": "Slug",
-        "slugHelp": "El sufijo de la URL corta (ej. 'registro'). Solo letras minúsculas, números y guiones.",
-        "destination": "URL de destino",
-        "destinationHelp": "La URL completa a la que se redirigirá al usuario.",
-        "title": "Título interno",
-        "titleHelp": "Solo para referencia interna.",
-        "description": "Descripción",
-        "descriptionHelp": "Notas opcionales sobre este enlace.",
-        "save": "Guardar enlace",
+        "slug": "Slug (Short URL)",
+        "slugHelp": "Solo letras minúsculas, números y guiones (por ejemplo, 'discord', 'meeting-link')",
+        "destination": "URL de Destino",
+        "destinationHelp": "URL completa a la que este enlace debe redirigir (por ejemplo, 'https://discord.gg/xyz')",
+        "title": "Título",
+        "titleHelp": "Nombre legible por humanos para este enlace",
+        "description": "Descripción (Opcional)",
+        "descriptionHelp": "Notas o descripción opcional para referencia interna",
+        "save": "Guardar",
         "cancel": "Cancelar",
         "saving": "Guardando...",
         "deletedWarning": "Este enlace ha sido eliminado"
       },
       "toasts": {
-        "created": "Enlace creado correctamente",
-        "updated": "Enlace actualizado correctamente",
-        "createError": "Error al crear el enlace",
-        "updateError": "Error al actualizar el enlace",
+        "created": "Enlace creado con éxito",
+        "updated": "Enlace actualizado con éxito",
+        "createError": "Error al guardar el enlace",
+        "updateError": "Error al guardar el enlace",
         "loadError": "Error al cargar los datos del enlace"
       }
     },
@@ -783,7 +783,7 @@
           "reloaded": "Plantillas recargadas",
           "loadError": "Error al cargar las plantillas",
           "deleteSuccess": "Plantilla eliminada correctamente",
-          "deleteError": "Error al eliminar la plantilla",
+          "deleteError": "Error al eliminar the plantilla",
           "restoreSuccess": "Plantilla restaurada correctamente",
           "restoreError": "Error al restaurar la plantilla"
         }
@@ -806,6 +806,7 @@
           "effect": "Efecto",
           "effect_allow": "Permitir",
           "effect_deny": "Denegar",
+          "wildcard": "Todos (*)",
           "actions": "Acciones",
           "action_manage": "Gestionar (Todo)",
           "action_read": "Leer",
@@ -836,6 +837,7 @@
         "title": "Gestión de usuarios",
         "editTitle": "Editar usuario"
       },
+      "impersonating": "Suplantando a",
       "list": {
         "reload": "Recargar usuarios",
         "search": "Buscar usuarios...",
@@ -876,9 +878,9 @@
     "events": {
       "title": "Eventos",
       "page": {
-        "title": "Gestión de eventos",
-        "createTitle": "Crear nuevo evento",
-        "editTitle": "Editar evento"
+        "title": "Gestión de Eventos",
+        "createTitle": "Crear Nuevo Evento",
+        "editTitle": "Editar Evento"
       },
       "breadcrumbs": {
         "new": "Nuevo evento"
@@ -886,9 +888,9 @@
       "list": {
         "reload": "Recargar",
         "create": "Crear evento",
-        "search": "Buscar eventos...",
-        "noEvents": "No se han encontrado eventos. ¡Crea el primero!",
-        "noResults": "Ningún evento coincide con tu búsqueda.",
+        "search": "Buscar eventos",
+        "noEvents": "No hay eventos para mostrar.",
+        "noResults": "No se encontraron resultados para la búsqueda.",
         "showDeleted": "Mostrar eventos eliminados",
         "status_active": "Activo",
         "status_inactive": "Inactivo",
@@ -897,11 +899,11 @@
         "status_deleted": "Eliminado",
         "columns": {
           "status": "Estado",
-          "clicks": "Clics"
+          "clicks": "Clicks"
         },
         "toasts": {
-          "reloaded": "Lista de eventos recargada",
-          "loadError": "Error al cargar los eventos",
+          "reloaded": "Lista recargada",
+          "loadError": "No se pudieron cargar los eventos",
           "deleteSuccess": "Evento eliminado correctamente",
           "deleteError": "Error al eliminar el evento",
           "restoreSuccess": "Evento restaurado correctamente",
@@ -909,17 +911,17 @@
         }
       },
       "form": {
-        "title": "Título del evento",
-        "slug": "Slug",
-        "description": "Descripción corta",
-        "date": "Fecha del evento",
+        "title": "Título del Evento",
+        "slug": "Slug (URL amigable)",
+        "description": "Descripción",
+        "date": "Fecha y Hora",
         "location": "Ubicación",
-        "image": "URL de la imagen de cabecera",
+        "image": "URL de la imagen",
         "status": "Estado",
-        "url": "URL de registro (externa)",
-        "blogUrl": "URL del blog externa",
-        "markdownContent": "Contenido",
-        "save": "Guardar evento",
+        "url": "Enlace Externo (Meetup, etc.)",
+        "blogUrl": "URL del post del blog",
+        "markdownContent": "Contenido (Markdown)",
+        "save": "Guardar",
         "cancel": "Cancelar",
         "saving": "Guardando...",
         "deletedWarning": "Este evento ha sido eliminado"
@@ -933,112 +935,112 @@
       }
     },
     "hackathons": {
-      "title": "Hackatones",
+      "title": "Hackathons",
       "page": {
-        "title": "Gestión de hackatones",
-        "createTitle": "Crear nuevo hackatón",
-        "editTitle": "Editar hackatón"
+        "title": "Gestión de Hackathons",
+        "createTitle": "Crear Nuevo Hackathon",
+        "editTitle": "Editar Hackathon"
       },
       "list": {
         "reload": "Recargar",
-        "create": "Crear hackatón",
-        "search": "Buscar hackatones...",
-        "noHackathons": "No se han encontrado hackatones.",
-        "noResults": "Ningún hackatón coincide con tu búsqueda.",
-        "showDeleted": "Mostrar hackatones eliminados",
+        "create": "Crear hackathon",
+        "search": "Buscar hackathons...",
+        "noHackathons": "No hay hackathons para mostrar.",
+        "noResults": "No hay resultados para la búsqueda",
+        "showDeleted": "Mostrar hackathons eliminados",
         "columns": {
           "status": "Estado"
         },
         "toasts": {
-          "reloaded": "Lista de hackatones recargada",
-          "loadError": "Error al cargar los hackatones",
-          "deleteSuccess": "Hackatón eliminado correctamente",
-          "deleteError": "Error al eliminar el hackatón",
-          "restoreSuccess": "Hackatón restaurado correctamente",
-          "restoreError": "Error al restaurar el hackatón"
+          "reloaded": "Lista recargada",
+          "loadError": "No se pudieron cargar los hackathons",
+          "deleteSuccess": "Hackathon eliminado correctamente",
+          "deleteError": "Error al eliminar el hackathon",
+          "restoreSuccess": "Hackathon restaurado correctamente",
+          "restoreError": "Error al restaurar el hackathon"
         }
       },
       "form": {
-        "title": "Título del hackatón",
+        "title": "Título",
         "slug": "Slug",
-        "date": "Fecha de inicio",
-        "endDate": "Fecha de fin",
+        "date": "Fecha de Inicio",
+        "endDate": "Fecha de Fin",
         "location": "Ubicación",
-        "save": "Guardar hackatón",
+        "save": "Guardar",
         "cancel": "Cancelar",
         "saving": "Guardando...",
-        "deletedWarning": "Este hackatón ha sido eliminado"
+        "deletedWarning": "Este hackathon ha sido eliminado"
       },
       "toasts": {
-        "created": "Hackatón creado correctamente",
-        "updated": "Hackatón actualizado correctamente",
-        "createError": "Error al crear el hackatón",
-        "updateError": "Error al actualizar el hackatón",
-        "loadError": "Error al cargar los datos del hackatón"
+        "created": "Hackathon creado correctamente",
+        "updated": "Hackathon actualizado correctamente",
+        "createError": "Error al crear el hackathon",
+        "updateError": "Error al actualizar el hackathon",
+        "loadError": "Error al cargar los datos del hackathon"
       },
       "breadcrumbs": {
-        "new": "Nuevo hackatón",
-        "intermission": "Intermedio",
+        "new": "Nuevo hackathon",
+        "intermission": "Página entre Charlas",
         "certificates": "Certificados",
         "tracks": "Tracks",
         "teams": "Equipos",
-        "selection": "Evento de selección"
+        "selection": "Evento de Selección"
       },
       "navigation": {
         "categories": {
           "tracks": "Gestión de tracks",
           "teams": "Gestión de equipos",
-          "intermission": "Info del intermedio",
+          "intermission": "Página entre Charlas",
           "certificates": "Ajustes de certificados"
         },
         "tracks": "Gestión de tracks",
-        "selection": "Evento de selección",
+        "selection": "Evento de Selección",
         "teams": "Gestión de equipos",
-        "intermission": "Info del intermedio",
+        "intermission": "Página entre Charlas",
         "certificates": "Ajustes de certificados"
       },
       "intermission": {
         "sections": {
-          "general": "Ajustes generales",
-          "schedule": "Horario del evento",
-          "carousel": "Diapositivas del carrusel",
-          "sponsors": "Gestión de patrocinadores",
-          "carouselEditor": "Editor de contenido de diapositiva",
-          "layoutTree": "Árbol de diseño",
-          "properties": "Propiedades del elemento"
+          "general": "General",
+          "schedule": "Horario",
+          "carousel": "Carrusel",
+          "sponsors": "Patrocinadores",
+          "carouselEditor": "Editor de diseño de diapositiva",
+          "layoutTree": "Árbol de Diseño",
+          "properties": "Propiedades"
         },
         "fields": {
-          "organizerLogoUrl": "URL del logo del organizador",
+          "organizerLogoUrl": "URL del Logo del Organizador",
           "startTime": "Inicio",
           "endTime": "Fin",
           "title": "Título de la actividad",
           "actions": "Acciones",
-          "sponsorName": "Nombre del patrocinador",
-          "logoUrl": "URL del logo",
-          "tier": "Nivel (Tier)",
-          "carouselLabel": "Nombre de la diapositiva",
+          "sponsorName": "Nombre",
+          "logoUrl": "URL del Logo",
+          "tier": "Nivel",
+          "carouselLabel": "Etiqueta (opcional)",
           "carouselDuration": "Duración (s)",
-          "direction": "Dirección de apilado",
-          "gap": "Espacio (px)",
-          "alignItems": "Alineación transversal",
-          "justifyContent": "Alineación principal",
-          "padding": "Padding (px/%)",
-          "content": "Contenido de texto",
-          "variant": "Estilo de texto",
-          "fontSize": "Tamaño de fuente",
-          "fontWeight": "Grosor de fuente",
-          "alignment": "Alineación del texto",
-          "color": "Color del texto",
-          "qrValue": "Enlace/Datos del QR",
-          "size": "Tamaño del QR",
-          "cornerSize": "Tamaño de esquina",
-          "cornerColor": "Color de esquina",
-          "imageUrl": "URL de la imagen",
-          "height": "Altura de la imagen",
-          "objectFit": "Ajuste del objeto (Object Fit)",
+          "direction": "Dirección",
+          "gap": "Espaciado (Gap)",
+          "alignItems": "Alinear Ítems",
+          "justifyContent": "Justificar Contenido",
+          "padding": "Relleno (ej. 20px 40px)",
+          "content": "Contenido",
+          "variant": "Variante",
+          "fontSize": "Tamaño de Fuente (ej. 4rem)",
+          "fontWeight": "Peso de Fuente (ej. 800)",
+          "alignment": "Alineación",
+          "color": "Color (hex o var)",
+          "qrValue": "Valor QR",
+          "size": "Tamaño (px)",
+          "cornerSize": "Tamaño de Esquina (px)",
+          "cornerColor": "Color de Esquina (opcional)",
+          "imageUrl": "URL de Imagen",
+          "height": "Altura (ej. 200px)",
+          "objectFit": "Ajuste de Objeto",
           "flexGrow": "Flex Grow",
-          "flexBasis": "Flex Basis (px/%)",
-          "logoSize": "Tamaño del logo",
+          "flexBasis": "Flex Basis / Ancho (si es fila)",
+          "logoSize": "Tamaño del Logo (%)",
           "errors": {
             "scheduleMissing": "Falta información obligatoria en algunas actividades",
             "sponsorMissing": "Falta información obligatoria en algunos patrocinadores"
@@ -1050,108 +1052,108 @@
           "addSlide": "Añadir diapositiva",
           "show": "Mostrar",
           "hide": "Ocultar",
-          "done": "Hecho",
+          "done": "Guardar",
           "cancel": "Cancelar"
         },
         "helpers": {
           "organizerLogo": "Este logo aparece en la esquina superior de la pantalla de intermedio.",
-          "noSchedule": "No hay actividades definidas para este hackatón.",
-          "noCarousel": "No hay diapositivas en el carrusel. Añade una para empezar.",
-          "noSponsors": "No hay patrocinadores definidos.",
-          "addChild": "Añadir elemento dentro de este contenedor:",
+          "noSchedule": "No hay entradas en el horario.",
+          "noCarousel": "No hay elementos en el carrusel. Añade uno para empezar.",
+          "noSponsors": "No hay patrocinadores añadidos.",
+          "addChild": "Añadir Hijo",
           "flexBasis": "Anular el tamaño por defecto de este elemento.",
-          "selectElement": "Selecciona un elemento del árbol para editar sus propiedades.",
+          "selectElement": "Selecciona un elemento para editar sus propiedades",
           "noImage": "[Sin URL de imagen]",
-          "googleColors": "¡Usa #4285F4, #EA4335, #FBBC04, #34A853 para un toque GDG!",
-          "recommendedSize": "Recomendado: 25-30% del tamaño del QR."
+          "googleColors": "Dejar vacío para colores predeterminados de Google",
+          "recommendedSize": "Recomendado: 15-25%"
         },
         "elementTypes": {
           "slide": "Diapositiva",
-          "container": "Contenedor de diseño",
-          "text": "Elemento de texto",
-          "qr": "Código QR",
-          "image": "Elemento de imagen",
-          "spacer": "Espaciador flexible"
+          "container": "Contenedor",
+          "text": "Texto",
+          "qr": "QR",
+          "image": "Imagen",
+          "spacer": "Espaciador"
         },
         "values": {
           "hidden": "OCULTO",
-          "column": "Vertical (Columna)",
-          "row": "Horizontal (Fila)",
+          "column": "Columna",
+          "row": "Fila",
           "start": "Inicio",
           "center": "Centro",
-          "end": "Final",
+          "end": "Fin",
           "stretch": "Estirar",
-          "spaceBetween": "Espacio entre",
-          "spaceAround": "Espacio alrededor",
-          "h1": "Título principal (H1)",
-          "h2": "Título de sección (H2)",
-          "h3": "Subtítulo (H3)",
-          "body": "Texto de cuerpo",
+          "spaceBetween": "Espacio Entre",
+          "spaceAround": "Espacio Alrededor",
+          "h1": "H1 (Héroe)",
+          "h2": "H2 (Título)",
+          "h3": "H3 (Subtítulo)",
+          "body": "Cuerpo",
           "left": "Izquierda",
           "right": "Derecha",
-          "contain": "Contener (Completo)",
-          "cover": "Cubrir (Llenar)"
+          "contain": "Contener",
+          "cover": "Cubrir"
         }
       },
       "certificates": {
         "sections": {
-          "general": "Ajustes de certificados",
-          "signatures": "Firmas por defecto"
+          "general": "Configuración de Certificados",
+          "signatures": "Firmas Predeterminadas"
         },
         "fields": {
-          "title": "Anular título del certificado",
+          "title": "Sobrescribir Título (opcional)",
           "signatureName": "Nombre",
-          "signatureRole": "Rol",
-          "signatureImageUrl": "URL de la imagen de la firma",
-          "designId": "Diseño del certificado",
+          "signatureRole": "Cargo",
+          "signatureImageUrl": "URL de Imagen de Firma",
+          "designId": "ID de Diseño",
           "errors": {
             "signatureMissing": "Falta información en algunas firmas"
           }
         },
         "values": {
           "designs": {
-            "default": "Diseño por defecto"
+            "default": "Predeterminado"
           }
         },
         "actions": {
-          "addSignature": "Añadir firma"
+          "addSignature": "Añadir Firma"
         },
         "helpers": {
-          "titleOverride": "El nombre actual del hackatón es: {name}. Usa este campo para cambiar el título en los certificados."
+          "titleOverride": "Deja vacío para usar el título del hackathon: {name}. Si se establece, se usará para todos los certificados."
         }
       },
       "tracks": {
-        "title": "Tracks de Hackatón",
+        "title": "Tracks de Hackathon",
         "sections": {
           "general": "Información general",
-          "rubric": "Rúbrica de puntuación"
+          "rubric": "Rúbricas de Evaluación"
         },
         "list": {
           "reload": "Recargar",
           "search": "Buscar tracks...",
           "showDeleted": "Mostrar tracks eliminados",
-          "noTracks": "No se han encontrado tracks.",
-          "noResults": "Ningún track coincide con tu búsqueda."
+          "noTracks": "No hay tracks para mostrar.",
+          "noResults": "No se encontraron resultados."
         },
         "fields": {
-          "name": "Nombre del track",
+          "name": "Nombre del Track",
           "judges": "Jueces",
-          "rubricName": "Nombre del criterio",
-          "rubricWeight": "Peso (puntos)",
+          "rubricName": "Nombre del Criterio",
+          "rubricWeight": "Peso",
           "errors": {
-            "rubricMissing": "Falta información en algunos elementos de la rúbrica"
+            "rubricMissing": "Falta información en algunas rúbricas"
           }
         },
         "actions": {
           "addTrack": "Añadir track",
-          "addCriterion": "Añadir criterio",
-          "createTrack": "Crear track",
-          "editTrack": "Editar track"
+          "addCriterion": "Añadir Criterio",
+          "createTrack": "Crear Track",
+          "editTrack": "Editar Track"
         },
         "toasts": {
-          "created": "Track creado correctamente",
-          "updated": "Track actualizado correctamente",
-          "deleted": "Track eliminado correctamente",
+          "created": "Track creado",
+          "updated": "Track actualizado",
+          "deleted": "Track eliminado",
           "error": "Ocurrió un error al gestionar los tracks"
         },
         "breadcrumbs": {
@@ -1160,20 +1162,20 @@
         "deletedWarning": "Este track ha sido eliminado"
       },
       "teams": {
-        "title": "Equipos de Hackatón",
+        "title": "Equipos de Hackathon",
         "page": {
           "title": "Gestión de equipos",
-          "createTitle": "Crear nuevo equipo",
+          "createTitle": "Crear equipo",
           "editTitle": "Editar equipo"
         },
         "list": {
           "reload": "Recargar",
           "search": "Buscar equipos...",
           "showDeleted": "Mostrar equipos inactivos",
-          "noTeams": "No se han encontrado equipos.",
-          "noResults": "Ningún equipo coincide con tu búsqueda.",
+          "noTeams": "No hay equipos para mostrar.",
+          "noResults": "No se encontraron resultados.",
           "columns": {
-            "password": "Credenciales",
+            "password": "Contraseña",
             "members": "Miembros"
           },
           "toasts": {
@@ -1188,21 +1190,21 @@
           }
         },
         "form": {
-          "save": "Guardar equipo",
+          "save": "Guardar",
           "cancel": "Cancelar",
-          "saving": "Guardando equipo..."
+          "saving": "Guardando..."
         },
         "fields": {
-          "name": "Nombre del equipo",
+          "name": "Nombre del Equipo",
           "track": "Track",
-          "password": "Contraseña de acceso",
-          "projectDescription": "Descripción del proyecto",
-          "members": "Miembros del equipo",
+          "password": "Contraseña",
+          "projectDescription": "Descripción del Proyecto",
+          "members": "Miembros",
           "isActive": "Está activo"
         },
         "toasts": {
-          "created": "Equipo creado correctamente",
-          "updated": "Equipo actualizado correctamente",
+          "created": "Equipo creado",
+          "updated": "Equipo actualizado",
           "createError": "Error al crear el equipo",
           "updateError": "Error al actualizar el equipo",
           "loadError": "Error al cargar los datos del equipo"
@@ -1244,7 +1246,7 @@
             "error": "Ocurrió un error al gestionar las plantillas"
           },
           "helpers": {
-            "inheritedFromHackathon": "Este valor se hereda de los ajustes del hackatón",
+            "inheritedFromHackathon": "Este valor se hereda de los ajustes del hackathon",
             "inheritedFromTeam": "Los destinatarios se determinan por los miembros del equipo"
           },
           "breadcrumbs": {
@@ -1258,24 +1260,24 @@
     "certificates": {
       "title": "Gestión de Certificados",
       "page": {
-        "title": "Certificados",
-        "createTitle": "Emitir certificado individual",
-        "editTitle": "Editar certificado",
+        "title": "Gestión de Certificados",
+        "createTitle": "Crear Nuevo Certificado",
+        "editTitle": "Editar Certificado",
         "templateCreateTitle": "Crear plantilla de certificado",
         "templateEditTitle": "Editar plantilla de certificado"
       },
       "list": {
         "reload": "Recargar",
         "search": "Buscar certificados...",
-        "noCertificates": "No se han encontrado certificados.",
-        "noResults": "Ningún resultado coincide con tu búsqueda.",
+        "noCertificates": "No hay certificados para mostrar.",
+        "noResults": "No se encontraron resultados.",
         "showDeleted": "Mostrar inactivos",
         "tabs": {
           "individual": "Individual",
           "templates": "Plantillas"
         },
         "columns": {
-          "recipient": "Destinatario",
+          "recipient": "Receptor",
           "type": "Tipo",
           "source": "Origen",
           "status": "Estado"
@@ -1287,37 +1289,37 @@
         "status_deleted": "Eliminado"
       },
       "toasts": {
-        "created": "Certificado creado correctamente",
-        "updated": "Certificado actualizado correctamente",
-        "deleted": "Certificado eliminado correctamente",
-        "revoked": "Certificado revocado correctamente",
+        "created": "Certificado creado",
+        "updated": "Certificado actualizado",
+        "deleted": "Certificado eliminado",
+        "revoked": "Certificado revocado",
         "unrevoked": "Certificado restaurado correctamente",
         "error": "Ocurrió un error al gestionar los certificados",
         "templateCreated": "Plantilla creada correctamente",
         "templateUpdated": "Plantilla actualizada correctamente"
       },
       "form": {
-        "recipient": "Destinatario (ID de usuario o Nombre)",
-        "type": "Tipo de certificado",
-        "startDate": "Fecha de inicio",
-        "endDate": "Fecha de fin",
-        "title": "Título",
+        "recipient": "Destinatario",
+        "type": "Tipo de Certificado",
+        "startDate": "Fecha de Inicio",
+        "endDate": "Fecha de Fin",
+        "title": "Título del Certificado",
         "description": "Descripción",
-        "designId": "Diseño",
+        "designId": "ID de Diseño",
         "signatures": "Firmas",
         "template": "Plantilla vinculada",
-        "hackathon": "Hackatón vinculado",
+        "hackathon": "Hackathon vinculado",
         "team": "Equipo vinculado",
         "recipients": "Lista de destinatarios",
         "revoked": "Revocado",
-        "save": "Guardar",
+        "save": "Guardar Certificado",
         "cancel": "Cancelar",
         "saving": "Guardando...",
         "hours": "Horas",
-        "grade": "Nota/Calificación",
+        "grade": "Calificación",
         "instructors": "Instructores",
-        "rank": "Rango/Clasificación",
-        "group": "Grupo",
+        "rank": "Puesto / Posición",
+        "group": "Grupo / Equipo",
         "role": "Rol",
         "roles": {
           "ATTENDEE": "Asistente",
@@ -1326,13 +1328,13 @@
           "ORGANIZER": "Organizador"
         },
         "deletedWarning": "Este certificado ha sido eliminado.",
-        "addSignature": "Añadir firma"
+        "addSignature": "Añadir Firma"
       },
       "types": {
-        "COURSE_COMPLETION": "Finalización de curso",
-        "EVENT_ACHIEVEMENT": "Logro en evento",
+        "COURSE_COMPLETION": "Finalización de Curso",
+        "EVENT_ACHIEVEMENT": "Logro de Evento",
         "PARTICIPATION": "Participación",
-        "VOLUNTEER": "Voluntariado"
+        "VOLUNTEER": "Servicio de Voluntariado"
       },
       "breadcrumbs": {
         "new": "Nuevo certificado"
@@ -1341,24 +1343,24 @@
     "breadcrumbs": {
       "admin": "Admin",
       "blog": "Blog",
-      "newsletter": "Boletín",
+      "newsletter": "Newsletter",
       "events": "Eventos",
       "giveaways": "Sorteos",
       "links": "Enlaces",
       "permissions": "Permisos",
       "certificates": "Certificados",
-      "hackathons": "Hackatones"
+      "hackathons": "Hackathons"
     },
     "navigation": {
       "blog": "Blog",
-      "newsletter": "Boletín",
+      "newsletter": "Newsletter",
       "events": "Eventos",
       "giveaways": "Sorteos",
-      "hackathons": "Hackatones",
+      "hackathons": "Hackathons",
       "tracks": "Tracks",
       "selection": "Selección",
       "teams": "Equipos",
-      "intermission": "Intermedio",
+      "intermission": "Página entre Charlas",
       "games": "Juegos",
       "links": "Enlaces",
       "users": "Usuarios",
@@ -1368,7 +1370,7 @@
       "hackathon-tracks": "Tracks",
       "hackathon-track-selection": "Selección de tracks",
       "hackathon-teams": "Equipos",
-      "hackathon-intermission": "Intermedio",
+      "hackathon-intermission": "Página entre Charlas",
       "hackathon-certificates": "Ajustes de certificados",
       "categories": {
         "articles": "Artículos",
@@ -1383,13 +1385,13 @@
   },
   "hackathon": {
     "intermission": {
-      "pageTitle": "Página de intermedio",
-      "pageDescription": "Página de intermedio para un Hackatón organizado por GDG UAM",
+      "pageTitle": "Página de Espera",
+      "pageDescription": "Página de intermedio para un Hackathon organizado por GDG UAM",
       "mobile": {
         "title": "Vista no disponible",
-        "description": "La página de intermedio solo está disponible en pantallas de PC."
+        "description": "Esta página solo está disponible en pantallas de PC."
       },
-      "scheduleTitle": "Horario del evento"
+      "scheduleTitle": "Horario del Evento"
     }
   }
 }

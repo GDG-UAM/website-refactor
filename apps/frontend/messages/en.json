@@ -806,6 +806,7 @@
           "effect": "Effect",
           "effect_allow": "Allow",
           "effect_deny": "Deny",
+          "wildcard": "All (*)",
           "actions": "Actions",
           "action_manage": "Manage (All)",
           "action_read": "Read",
@@ -836,6 +837,7 @@
         "title": "User Management",
         "editTitle": "Edit User"
       },
+      "impersonating": "Impersonating",
       "list": {
         "reload": "Reload Users",
         "search": "Search users...",

@@ -50,13 +50,14 @@ function trackSessionKey(key: string, userId: string): void {
  * Call this when a user's data changes (role, permissions, etc.)
  */
 export function invalidateUserSessions(userId: string): void {
-    const keys = userSessionKeys.get(userId);
-    if (keys) {
-        for (const key of keys) {
-            sessionCache.delete(key); // dispose callback will clean up keyToUser
-        }
-        userSessionKeys.delete(userId);
-    }
+    // Disabled for now
+    // const keys = userSessionKeys.get(userId);
+    // if (keys) {
+    //     for (const key of keys) {
+    //         sessionCache.delete(key); // dispose callback will clean up keyToUser
+    //     }
+    //     userSessionKeys.delete(userId);
+    // }
 }
 
 /**

@@ -290,7 +290,7 @@ export function TeamCertificateTemplateFormPage({ hackathonId, teamId, templateI
             <AdminFormBuilder
                 title={isEdit ? m["admin.hackathons.teams.certificates.page.editTitle"]() : m["admin.hackathons.teams.certificates.page.createTitle"]()}
                 id={templateId}
-                resource="admin.certificates.templates"
+                resource={`admin.hackathons.${hackathonId}.teams.${teamId}.certificates.templates`}
                 action={isEdit ? "update" : "create"}
                 fields={fields}
                 data={data}
