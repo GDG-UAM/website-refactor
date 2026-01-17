@@ -3,6 +3,7 @@ import { admin } from "better-auth/plugins";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "./db";
 import { LRUCache } from "lru-cache";
+import { ObjectId } from "mongodb";
 
 // Track which cache keys belong to which user (for invalidation)
 const userSessionKeys = new Map<string, Set<string>>();
@@ -14,7 +15,7 @@ const keyToUser = new Map<string, string>();
 const sessionCache = new LRUCache<string, string>({
     max: 1000,
     ttl: 3 * 60 * 1000, // 3 minutes in milliseconds
-    dispose: (value, key) => {
+    dispose: (_value, key) => {
         // Clean up tracking maps when a session key expires or is evicted
         const userId = keyToUser.get(key);
         if (userId) {
@@ -46,18 +47,62 @@ function trackSessionKey(key: string, userId: string): void {
 }
 
 /**
- * Invalidate all cached sessions for a specific user
+ * Update all cached sessions for a specific user
  * Call this when a user's data changes (role, permissions, etc.)
  */
-export function invalidateUserSessions(userId: string): void {
-    // Disabled for now
-    // const keys = userSessionKeys.get(userId);
-    // if (keys) {
-    //     for (const key of keys) {
-    //         sessionCache.delete(key); // dispose callback will clean up keyToUser
-    //     }
-    //     userSessionKeys.delete(userId);
-    // }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function updateUserSessions(userId: string, user?: any): Promise<void> {
+    if (!user) {
+        // Lazy import to avoid circular dependency at module load time
+        const db = await import("./db");
+        try {
+            const { userRepository } = db.getRepositories();
+            user = await userRepository.findById(userId);
+        } catch {
+            // Fallback to direct client if repositories not initialized yet
+            user = await client.db();
+            user = await client
+                .db()
+                .collection("user")
+                .findOne({ _id: new ObjectId(userId) });
+        }
+        if (!user) return;
+    }
+
+    // Ensure user object is a plain object and has id instead of _id
+    // to match the format Better Auth uses in the session cache
+    if (user._id) {
+        user = {
+            ...user,
+            id: user._id.toString()
+        };
+        delete user._id;
+    }
+
+    const keys = userSessionKeys.get(userId);
+    if (keys) {
+        // Copy keys to array since we'll be modifying the tracking during iteration
+        const keyArray = Array.from(keys);
+        for (const key of keyArray) {
+            const cachedValue = sessionCache.get(key);
+            if (cachedValue) {
+                try {
+                    const parsed = JSON.parse(cachedValue);
+                    parsed.user = user;
+
+                    // Preserve the TTL if possible
+                    const remaining = sessionCache.getRemainingTTL(key);
+                    sessionCache.set(key, JSON.stringify(parsed), {
+                        ttl: remaining > 0 ? remaining : 3 * 60 * 1000
+                    });
+
+                    trackSessionKey(key, userId);
+                } catch {
+                    // Ignore parsing errors
+                }
+            }
+        }
+    }
 }
 
 /**
@@ -298,7 +343,7 @@ export const auth = betterAuth({
                     trackSessionKey(key, userId);
                 }
             } catch {
-                // Value might not be JSON or might not contain userId - that's fine
+                // Ignore parsing errors
             }
         },
         delete: async (key) => {
@@ -329,17 +374,5 @@ export const auth = betterAuth({
                 }
             }
         })
-    ],
-    databaseHooks: {
-        user: {
-            update: {
-                after: async (user, _context) => {
-                    // Invalidate cached sessions when user data changes (role, permissions, etc.)
-                    if (user.id) {
-                        invalidateUserSessions(user.id);
-                    }
-                }
-            }
-        }
-    }
+    ]
 });

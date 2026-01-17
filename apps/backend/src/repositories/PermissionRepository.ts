@@ -1,6 +1,6 @@
 import { Collection, ObjectId } from "mongodb";
 import type { PermissionTemplate } from "./types";
-import { invalidateUserSessions } from "../lib/auth";
+import { updateUserSessions } from "../lib/auth";
 
 export class PermissionRepository {
     constructor(private collection: Collection<PermissionTemplate>) {}
@@ -8,11 +8,13 @@ export class PermissionRepository {
     /**
      * Maps legacy permission templates structure to the new granular permissions format
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private mapLegacyTemplate(template: any): PermissionTemplate {
         if (template.permissions && Array.isArray(template.permissions)) {
             return template as PermissionTemplate;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const permissions: any[] = [];
 
         // Map grants
@@ -214,11 +216,17 @@ export class PermissionRepository {
         const templateIds = user.templatesUsed || [];
         const templatePermissions = await this.computeTemplatePermissions(templateIds, userCollection);
 
-        // Update user document
-        await userCollection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatePermissions, updatedAt: new Date() } });
+        // Update user document and get the updated result to pass fresh data to session cache
+        const updatedUser = await userCollection.findOneAndUpdate(
+            { _id: new ObjectId(userId) },
+            { $set: { templatePermissions, updatedAt: new Date() } },
+            { returnDocument: "after" }
+        );
 
-        // Invalidate cached sessions for this user
-        invalidateUserSessions(userId);
+        if (!updatedUser) return;
+
+        // Pass the freshly updated user to updateUserSessions
+        await updateUserSessions(userId, updatedUser);
     }
 
     /**

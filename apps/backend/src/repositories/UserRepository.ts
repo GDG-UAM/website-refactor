@@ -1,6 +1,6 @@
 import { Collection, ObjectId, Document } from "mongodb";
 import type { User, SerializablePermission } from "./types";
-import { invalidateUserSessions } from "../lib/auth";
+import { updateUserSessions } from "../lib/auth";
 
 // Role template name constants
 const ROLE_TEMPLATE_PREFIX = "role:";
@@ -37,6 +37,7 @@ export class UserRepository {
         search?: string;
         roles?: string[];
     }): Promise<{ items: User[]; total: number; page: number; pageSize: number }> {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const query: any = {};
 
         if (search) {
@@ -103,7 +104,11 @@ export class UserRepository {
         }
 
         // Invalidate cached sessions for this user
-        invalidateUserSessions(userId);
+        if (result) {
+            await updateUserSessions(userId, result);
+        } else {
+            await updateUserSessions(userId);
+        }
 
         return result;
     }
@@ -159,7 +164,7 @@ export class UserRepository {
     async updateIndividualPermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
         await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { individualPermissions: permissions, updatedAt: new Date() } });
         // Invalidate cached sessions for this user
-        invalidateUserSessions(userId);
+        await updateUserSessions(userId);
     }
 
     /**
@@ -168,7 +173,7 @@ export class UserRepository {
     async updateTemplatePermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
         await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatePermissions: permissions, updatedAt: new Date() } });
         // Invalidate cached sessions for this user
-        invalidateUserSessions(userId);
+        await updateUserSessions(userId);
     }
 
     /**
@@ -177,7 +182,7 @@ export class UserRepository {
     async updateTemplatesUsed(userId: string, templateIds: string[]): Promise<void> {
         await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatesUsed: templateIds, updatedAt: new Date() } });
         // Invalidate cached sessions for this user
-        invalidateUserSessions(userId);
+        await updateUserSessions(userId);
     }
 
     /**
@@ -189,6 +194,11 @@ export class UserRepository {
             { $set: { ...updates, updatedAt: new Date() } },
             { returnDocument: "after" }
         );
+
+        if (result) {
+            await updateUserSessions(userId, result);
+        }
+
         return result;
     }
 
@@ -218,6 +228,7 @@ export class UserRepository {
     async update(userId: string, data: Partial<User>): Promise<User | null> {
         const { role, templatesUsed, individualPermissions, ...otherData } = data;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const updateData: any = { ...otherData, updatedAt: new Date() };
         if (role !== undefined) updateData.role = role;
         if (templatesUsed !== undefined) updateData.templatesUsed = templatesUsed;
@@ -233,17 +244,17 @@ export class UserRepository {
 
         // Handle role synchronization if role changed
         if (role !== undefined && role !== null && role !== oldUser.role) {
+            // syncRoleTemplates calls recomputeUserTemplatePermissions which updates the session cache
             await this.syncRoleTemplates(userId, role, oldUser.role || undefined);
         } else if (templatesUsed !== undefined || individualPermissions !== undefined) {
             // Recompute permissions if templates or individual permissions changed
+            // recomputeUserTemplatePermissions will call updateUserSessions with fresh data from DB
             if (this.permissionRepository) {
                 await this.permissionRepository.recomputeUserTemplatePermissions(userId, this.collection as unknown as Collection<Document>);
+            } else {
+                // If no permission repository, update sessions with fresh data from DB
+                await updateUserSessions(userId);
             }
-        }
-
-        // Invalidate cached sessions if role, permissions, or templates changed
-        if (role !== undefined || templatesUsed !== undefined || individualPermissions !== undefined) {
-            invalidateUserSessions(userId);
         }
 
         return result;

@@ -4,7 +4,7 @@ import { useMemo, useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import * as m from "#/paraglide/messages";
-import { getLocale } from "#/paraglide/runtime";
+import { getLocale, setLocale, locales as availableLocales } from "#/paraglide/runtime";
 import { CollapsableMenuButton } from "#/components/Buttons";
 import { AITranslationBanner } from "#/components/ai/translation/AITranslationBanner";
 import { useAITranslation } from "#/components/ai/translation/AITranslationProvider";
@@ -53,10 +53,11 @@ function useLocaleLabels() {
     return { labels, locale } as const;
 }
 
-export default function Navbar({ locale: initialLocale }: { locale?: string }) {
+export default function Navbar({ locale: initialLocale }: { locale?: (typeof availableLocales)[number] }) {
     const { data: session } = useSession();
     const isLoggedIn = !!session?.user;
     const pathname = usePathname();
+    setLocale(initialLocale || "en");
     const { labels } = useLocaleLabels();
     const [open, setOpen] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
