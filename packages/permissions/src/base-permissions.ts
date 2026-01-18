@@ -22,14 +22,10 @@ export interface PermissionUser {
 export function applyBasePermissions(builder: AbilityBuilder, userId: string): void {
     builder.can("read", `users.${userId}`);
 
-    // Default public permissions for events
-    builder.can("read", "events", { status: "published" });
-
-    // Default public permissions for articles
-    builder.can("read", "articles", { status: { $in: ["published", "url_only"] } });
-
     // Users can read their own events (regardless of status)
     builder.can("read", "events.*", { createdBy: userId });
+    builder.can("read", "articles.newsletter.*", { createdBy: userId });
+    builder.can("read", "articles.blog.*", { createdBy: userId });
 }
 
 /**

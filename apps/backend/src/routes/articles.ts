@@ -87,11 +87,11 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
     .use(permissionsPlugin)
     .get(
         "/:slug",
-        async ({ params: { slug }, query: { type }, locale, set, ability }) => {
+        async ({ params: { slug }, query: { type }, locale, set }) => {
             const { articleRepository } = db.getRepositories();
             const article = await articleRepository.findBySlug(slug, type as ArticleType, { incrementView: true });
 
-            if (!article || !ability.can("read", `articles.${article._id}`, article)) {
+            if (!article || article.status === "draft" || (article.publishedAt && article.publishedAt > new Date())) {
                 set.status = 404;
                 return { error: "Not found" };
             }

@@ -79,7 +79,7 @@ export const eventsRoutes = new Elysia({ prefix: "/events" })
     .use(permissionsPlugin)
     .get(
         "/:id",
-        async ({ params: { id }, set, ability }) => {
+        async ({ params: { id }, set }) => {
             const { eventRepository } = db.getRepositories();
             // Try slug first
             let event = await eventRepository.findBySlug(id);
@@ -93,7 +93,7 @@ export const eventsRoutes = new Elysia({ prefix: "/events" })
                 }
             }
 
-            if (!event || ability.cannot("read", `events.${id}`, event)) {
+            if (!event || event.status === "draft") {
                 set.status = 404;
                 return { error: "Event not found" };
             }
