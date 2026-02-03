@@ -5,7 +5,9 @@ WORKDIR /app
 # Stage 2: Dependencies (Only what's needed for the backend)
 FROM base AS installer
 COPY package.json bun.lock turbo.json ./
+
 COPY apps/backend/package.json ./apps/backend/
+COPY apps/frontend/package.json ./apps/frontend/
 COPY packages/permissions/package.json ./packages/permissions/
 
 # This installs only the backend and its workspace dependencies (permissions)
