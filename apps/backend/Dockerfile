@@ -16,16 +16,18 @@ RUN bun install --frozen-lockfile --production --filter=backend --filter=@gdg-ua
 
 # Stage 3: Runner
 FROM base AS runner
-# Copy only the node_modules from the installer stage
-COPY --from=installer /app/node_modules ./node_modules
-COPY --from=installer /app/apps/backend/node_modules ./apps/backend/node_modules
-COPY --from=installer /app/packages/permissions ./packages/permissions
+WORKDIR /app
 
-# Copy the actual backend source code
+# 1. Copy the HOISTED node_modules from the root
+COPY --from=installer /app/node_modules ./node_modules
+
+# 2. Copy the workspace packages (the local code)
+COPY --from=installer /app/packages/permissions ./packages/permissions
 COPY apps/backend ./apps/backend
 
 # Expose backend port
 EXPOSE 3001
 
+# Set the working directory to the backend app
 WORKDIR /app/apps/backend
 CMD ["bun", "run", "start"]
