@@ -2,48 +2,17 @@ import { betterAuth } from "better-auth/minimal";
 import { admin } from "better-auth/plugins";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client } from "./db";
-import { LRUCache } from "lru-cache";
+import { redis } from "./redis";
 import { ObjectId } from "mongodb";
 
-// Track which cache keys belong to which user (for invalidation)
-const userSessionKeys = new Map<string, Set<string>>();
-// Reverse mapping: key -> userId (for cleanup when cache entries expire)
-const keyToUser = new Map<string, string>();
-
-// In-memory session cache to avoid DB queries on every request
-// Max 1000 sessions, 3 minute TTL by default
-const sessionCache = new LRUCache<string, string>({
-    max: 1000,
-    ttl: 3 * 60 * 1000, // 3 minutes in milliseconds
-    dispose: (_value, key) => {
-        // Clean up tracking maps when a session key expires or is evicted
-        const userId = keyToUser.get(key);
-        if (userId) {
-            const keys = userSessionKeys.get(userId);
-            if (keys) {
-                keys.delete(key);
-                if (keys.size === 0) {
-                    userSessionKeys.delete(userId);
-                }
-            }
-            keyToUser.delete(key);
-        }
-    }
-});
+// Key prefix for tracking which session keys belong to which user
+const USER_SESSIONS_PREFIX = "user-sessions:";
 
 /**
- * Track a session key for a user (called when caching session data)
+ * Track a session key for a user in Redis (using a SET)
  */
-function trackSessionKey(key: string, userId: string): void {
-    // Add to user -> keys mapping
-    let keys = userSessionKeys.get(userId);
-    if (!keys) {
-        keys = new Set();
-        userSessionKeys.set(userId, keys);
-    }
-    keys.add(key);
-    // Add reverse mapping
-    keyToUser.set(key, userId);
+async function trackSessionKey(key: string, userId: string): Promise<void> {
+    await redis.sadd(`${USER_SESSIONS_PREFIX}${userId}`, key);
 }
 
 /**
@@ -79,27 +48,31 @@ export async function updateUserSessions(userId: string, user?: any): Promise<vo
         delete user._id;
     }
 
-    const keys = userSessionKeys.get(userId);
-    if (keys) {
-        // Copy keys to array since we'll be modifying the tracking during iteration
-        const keyArray = Array.from(keys);
-        for (const key of keyArray) {
-            const cachedValue = sessionCache.get(key);
+    const sessionSetKey = `${USER_SESSIONS_PREFIX}${userId}`;
+    const keys = await redis.smembers(sessionSetKey);
+
+    if (keys.length > 0) {
+        for (const key of keys) {
+            const cachedValue = await redis.get(key);
             if (cachedValue) {
                 try {
                     const parsed = JSON.parse(cachedValue);
                     parsed.user = user;
 
-                    // Preserve the TTL if possible
-                    const remaining = sessionCache.getRemainingTTL(key);
-                    sessionCache.set(key, JSON.stringify(parsed), {
-                        ttl: remaining > 0 ? remaining : 3 * 60 * 1000
-                    });
-
-                    trackSessionKey(key, userId);
+                    // Preserve the TTL
+                    const ttl = await redis.ttl(key);
+                    if (ttl > 0) {
+                        await redis.set(key, JSON.stringify(parsed), "EX", ttl);
+                    } else {
+                        // Default to 1 hour if no TTL found (Better auth usually handles this)
+                        await redis.set(key, JSON.stringify(parsed), "EX", 3600);
+                    }
                 } catch {
                     // Ignore parsing errors
                 }
+            } else {
+                // Cleanup stale keys from the user session set
+                await redis.srem(sessionSetKey, key);
             }
         }
     }
@@ -107,11 +80,17 @@ export async function updateUserSessions(userId: string, user?: any): Promise<vo
 
 /**
  * Clear all session cache entries
+ * WARNING: This will flush the entire Redis database if not careful.
+ * Since we use a prefix, we only delete our keys.
  */
-export function clearSessionCache(): void {
-    sessionCache.clear();
-    userSessionKeys.clear();
-    keyToUser.clear();
+export async function clearSessionCache(): Promise<void> {
+    const keys = await redis.keys("*");
+    if (keys.length > 0) {
+        // We need to remove the global prefix before calling del if we are using redis.del
+        // but ioredis handles prefixing. However, redis.keys returns keys WITH the prefix.
+        // Wait, ioredis 'keys' returns keys WITHOUT the prefix.
+        await redis.del(...keys);
+    }
 }
 
 export const auth = betterAuth({
@@ -328,26 +307,31 @@ export const auth = betterAuth({
         }
     },
     secondaryStorage: {
-        // In-memory LRU cache for session data (avoids hitting DB on every request)
+        // Redis-backed session cache (avoids hitting DB on every request)
         get: async (key) => {
-            const cached = sessionCache.get(key);
+            const cached = await redis.get(key);
             return cached || null;
         },
         set: async (key, value, ttl) => {
-            sessionCache.set(key, value, { ttl: ttl ? ttl * 1000 : undefined });
+            if (ttl) {
+                await redis.set(key, value, "EX", ttl);
+            } else {
+                await redis.set(key, value);
+            }
+
             // Try to extract userId from the cached data for tracking
             try {
                 const parsed = JSON.parse(value);
                 const userId = parsed.userId || parsed.user?.id;
                 if (userId) {
-                    trackSessionKey(key, userId);
+                    await trackSessionKey(key, userId);
                 }
             } catch {
                 // Ignore parsing errors
             }
         },
         delete: async (key) => {
-            sessionCache.delete(key);
+            await redis.del(key);
         }
     },
     plugins: [

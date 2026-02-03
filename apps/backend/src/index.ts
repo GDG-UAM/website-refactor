@@ -4,6 +4,7 @@ import { swagger } from "@elysiajs/swagger";
 import { csrfPlugin } from "./plugins/csrf";
 import { permissionsPlugin } from "./plugins/permissions";
 import { auth } from "./lib/auth";
+import "./lib/redis"; // Initialize redis connection
 import {
     adminRoutes,
     settingsRoutes,
@@ -20,6 +21,8 @@ import {
 import db from "./lib/db";
 import { initializeDefaults } from "./lib/init";
 import { initSentry, Sentry } from "./sentry";
+import sharp from "sharp";
+sharp.cache(false);
 
 initSentry();
 
