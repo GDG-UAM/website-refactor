@@ -10,7 +10,7 @@ const CreateEventSchema = t.Object({
     description: t.Optional(t.String()),
     date: t.Date(),
     location: t.Optional(t.String()),
-    image: t.Optional(t.String()),
+    image: t.Optional(t.Nullable(t.String())),
     status: t.Union([t.Literal("draft"), t.Literal("published")]),
     url: t.Optional(t.String()),
     blogUrl: t.Optional(t.String()),

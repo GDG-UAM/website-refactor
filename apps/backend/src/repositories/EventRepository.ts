@@ -10,7 +10,7 @@ export type EventInput = {
     description?: string;
     date: Date;
     location?: string;
-    image?: string;
+    image?: string | null;
     status?: EventStatus;
     url?: string;
     markdownContent: string;
@@ -46,11 +46,12 @@ export class EventRepository {
         const event: Event = {
             _id: new ObjectId(),
             ...input,
+            image: input.image || undefined,
             markdownContent: processedMarkdown,
             slug,
-            imageBlurHash,
-            imageWidth,
-            imageHeight,
+            imageBlurHash: imageBlurHash || undefined,
+            imageWidth: imageWidth || undefined,
+            imageHeight: imageHeight || undefined,
             status: input.status || "draft",
             isActive: true,
             createdBy: userId,
@@ -83,9 +84,9 @@ export class EventRepository {
                     updates.imageHeight = blurResult.height;
                 }
             } else {
-                updates.imageBlurHash = null;
-                updates.imageWidth = null;
-                updates.imageHeight = null;
+                updates.imageBlurHash = undefined;
+                updates.imageWidth = undefined;
+                updates.imageHeight = undefined;
             }
         }
 
