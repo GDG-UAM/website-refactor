@@ -68,6 +68,7 @@ export const Card = styled.article`
     display: flex;
     flex-direction: column;
     margin-top: -25px;
+    overflow: hidden;
 
     @media (max-width: 768px) {
         margin-top: 0;
@@ -75,9 +76,6 @@ export const Card = styled.article`
 `;
 
 export const Badge = styled.span<{ $visible?: boolean; $past?: boolean }>`
-    position: absolute;
-    top: 12px;
-    right: 12px;
     padding: 4px 8px;
     border-radius: 999px;
     font-weight: 700;
@@ -86,11 +84,6 @@ export const Badge = styled.span<{ $visible?: boolean; $past?: boolean }>`
     background: color-mix(in oklab, var(--google-${({ $past }) => ($past ? "yellow" : "green")}), var(--color-white) 78%);
     color: var(--google-${({ $past }) => ($past ? "yellow" : "green")});
     border: 1px solid color-mix(in oklab, var(--google-${({ $past }) => ($past ? "yellow" : "green")}), var(--color-white) 50%);
-    opacity: ${({ $visible }) => ($visible ? 1 : 0)};
-    transform: translateY(${({ $visible }) => ($visible ? "0" : "-6px")});
-    transition:
-        opacity 0.2s ease,
-        transform 0.2s ease;
     pointer-events: none;
 `;
 

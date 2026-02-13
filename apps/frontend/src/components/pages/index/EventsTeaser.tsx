@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { PlainButton } from "#/components/Buttons";
 import LocalTimeWithSettings from "#/components/LocalTimeWithSettings";
 import {
@@ -123,10 +124,56 @@ const Icon = ({ path }: { path: string }) => (
     </svg>
 );
 
+// ---------- Animation Variants ----------
+const cardContentVariants = {
+    enter: (direction: number) => ({
+        x: direction > 0 ? 50 : -50,
+        opacity: 0
+    }),
+    center: {
+        x: 0,
+        opacity: 1
+    },
+    exit: (direction: number) => ({
+        x: direction > 0 ? -50 : 50,
+        opacity: 0
+    })
+};
+
+const textOnlyVariants = {
+    enter: (direction: number) => ({
+        x: direction > 0 ? 20 : -20,
+        opacity: 0
+    }),
+    center: {
+        x: 0,
+        opacity: 1
+    },
+    exit: (direction: number) => ({
+        x: direction > 0 ? -20 : 20,
+        opacity: 0
+    })
+};
+
+const badgeVariants = {
+    enter: {
+        y: -20,
+        opacity: 0
+    },
+    center: {
+        y: 0,
+        opacity: 1
+    },
+    exit: {
+        y: -20,
+        opacity: 0
+    }
+};
+
 // ---------- Componente ----------
 const FALLBACK_COMMUNITY_URL = "https://gdguam.es/l/gdg-community";
 
-export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000, className, timeZone = "Europe/Madrid" }: EventsTeaserProps) {
+export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 3000, className, timeZone = "Europe/Madrid" }: EventsTeaserProps) {
     const locale = getLocale();
     const [isSmallScreen, setIsSmallScreen] = useState(false);
 
@@ -212,6 +259,7 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000
     const [activeSlug, setActiveSlug] = useState<string | undefined>(nearestEventSlug);
     const [paused, setPaused] = useState(false);
     const rotRef = useRef<number | null>(null);
+    const [direction, setDirection] = useState(0);
 
     // Helpers to pause/resume rotation instantly (avoid interval race on hover)
     const pauseRotation = () => {
@@ -236,9 +284,16 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000
         }
         rotRef.current = window.setInterval(() => {
             setActiveSlug((prev) => {
-                if (!prev) return points[0].slug;
+                if (!prev) {
+                    setDirection(1);
+                    return points[0].slug;
+                }
                 const idx = points.findIndex((p) => p.slug === prev);
-                if (idx === -1) return points[0].slug;
+                if (idx === -1) {
+                    setDirection(1);
+                    return points[0].slug;
+                }
+                setDirection(1);
                 return points[(idx + 1) % points.length].slug;
             });
         }, rotateMs) as unknown as number;
@@ -253,10 +308,16 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000
     // Accesibilidad: seleccionar con teclado o hover
     const onPointEnter = (slug: string) => {
         pauseRotation();
+        const currentIdx = points.findIndex((p) => p.slug === activeSlug);
+        const newIdx = points.findIndex((p) => p.slug === slug);
+        setDirection(newIdx > currentIdx ? 1 : -1);
         setActiveSlug(slug);
     };
     const onPointFocus = (slug: string) => {
         pauseRotation();
+        const currentIdx = points.findIndex((p) => p.slug === activeSlug);
+        const newIdx = points.findIndex((p) => p.slug === slug);
+        setDirection(newIdx > currentIdx ? 1 : -1);
         setActiveSlug(slug);
     };
     const onPointBlur = () => resumeRotation();
@@ -299,12 +360,55 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000
                 </Copy>
 
                 <Card aria-live="polite" aria-atomic="true">
-                    <Badge $visible={activeEvent?.slug === nearestEventSlug}>{m["index.events.nextEvent"]()}</Badge>
-                    <Badge $visible={activeEvent?.startDate < now} $past>
-                        {m["index.events.pastEvent"]()}
-                    </Badge>
+                    <AnimatePresence mode="wait">
+                        {activeEvent?.slug === nearestEventSlug && (
+                            <motion.div
+                                key="next-badge"
+                                variants={badgeVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ duration: 0.2 }}
+                                style={{ position: "absolute", top: "8px", right: "8px" }}
+                            >
+                                <Badge $visible={true}>{m["index.events.nextEvent"]()}</Badge>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                    <AnimatePresence mode="wait">
+                        {activeEvent?.startDate < now && (
+                            <motion.div
+                                key="past-badge"
+                                variants={badgeVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{ duration: 0.2 }}
+                                style={{ position: "absolute", top: "8px", right: "8px" }}
+                            >
+                                <Badge $visible={true} $past>
+                                    {m["index.events.pastEvent"]()}
+                                </Badge>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                     <CardHeader>
-                        <CardTitle>{activeEvent?.title}</CardTitle>
+                        <AnimatePresence mode="wait" custom={direction}>
+                            <motion.div
+                                key={activeSlug}
+                                custom={direction}
+                                variants={cardContentVariants}
+                                initial="enter"
+                                animate="center"
+                                exit="exit"
+                                transition={{
+                                    x: { type: "spring", stiffness: 300, damping: 30 },
+                                    opacity: { duration: 0.2 }
+                                }}
+                            >
+                                <CardTitle>{activeEvent?.title}</CardTitle>
+                            </motion.div>
+                        </AnimatePresence>
                         {/* {activeEvent?.description && <CardSubtitle>{activeEvent.description}</CardSubtitle>} */}
                     </CardHeader>
 
@@ -313,13 +417,29 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000
                             <dd>
                                 <DateText>
                                     <Icon path="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z" />
-                                    <LocalTimeWithSettings
-                                        iso={(activeEvent?.startDate ?? now).toISOString()}
-                                        dateOnly={false}
-                                        compact
-                                        locale={locale}
-                                        timeZone={timeZone}
-                                    />
+                                    <AnimatePresence mode="wait" custom={direction}>
+                                        <motion.span
+                                            key={activeSlug + "-date"}
+                                            custom={direction}
+                                            variants={textOnlyVariants}
+                                            initial="enter"
+                                            animate="center"
+                                            exit="exit"
+                                            transition={{
+                                                x: { type: "spring", stiffness: 300, damping: 30 },
+                                                opacity: { duration: 0.2 }
+                                            }}
+                                            style={{ display: "inline-block" }}
+                                        >
+                                            <LocalTimeWithSettings
+                                                iso={(activeEvent?.startDate ?? now).toISOString()}
+                                                dateOnly={false}
+                                                compact
+                                                locale={locale}
+                                                timeZone={timeZone}
+                                            />
+                                        </motion.span>
+                                    </AnimatePresence>
                                 </DateText>
                             </dd>
                         </MetaRow>
@@ -328,7 +448,23 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000
                                 <dd>
                                     <LocationText>
                                         <Icon path="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
-                                        <span>{activeEvent.location}</span>
+                                        <AnimatePresence mode="wait" custom={direction}>
+                                            <motion.span
+                                                key={activeSlug + "-location"}
+                                                custom={direction}
+                                                variants={textOnlyVariants}
+                                                initial="enter"
+                                                animate="center"
+                                                exit="exit"
+                                                transition={{
+                                                    x: { type: "spring", stiffness: 300, damping: 30 },
+                                                    opacity: { duration: 0.2 }
+                                                }}
+                                                style={{ display: "inline-block" }}
+                                            >
+                                                {activeEvent.location}
+                                            </motion.span>
+                                        </AnimatePresence>
                                     </LocationText>
                                 </dd>
                             </MetaRow>
