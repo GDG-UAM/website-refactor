@@ -88,7 +88,9 @@ export const Badge = styled.span<{ $visible?: boolean; $past?: boolean }>`
     border: 1px solid color-mix(in oklab, var(--google-${({ $past }) => ($past ? "yellow" : "green")}), var(--color-white) 50%);
     opacity: ${({ $visible }) => ($visible ? 1 : 0)};
     transform: translateY(${({ $visible }) => ($visible ? "0" : "-6px")});
-    transition: opacity 0.2s ease, transform 0.2s ease;
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
     pointer-events: none;
 `;
 
@@ -101,6 +103,11 @@ export const CardTitle = styled.h3`
     font-weight: 800;
     font-size: clamp(1.25rem, 2.4vw, 1.6rem);
     line-height: 1.2;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: calc(1.2em * 3); /* Ensures 3 lines are always occupied */
 `;
 
 export const CardSubtitle = styled.p`
@@ -286,7 +293,9 @@ export const PointButton = styled.button<{ $color: BrandColor }>`
     color: currentColor;
     margin-top: 1.25px;
     ${(p) => dotColor(p.$color)};
-    transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1.2), box-shadow 0.2s ease;
+    transition:
+        transform 0.2s cubic-bezier(0.2, 0.8, 0.4, 1.2),
+        box-shadow 0.2s ease;
     pointer-events: auto;
 
     &:hover {

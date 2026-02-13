@@ -173,10 +173,11 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 2000
 
     // Puntos con su % X sobre el eje
     const points = useMemo(() => {
-        return eventsInPeriod.map((e) => ({
+        const colors: BrandColor[] = ["blue", "green", "red", "yellow"];
+        return eventsInPeriod.map((e, index) => ({
             ...e,
             x: percentBetween(periodStart, periodEnd, e.startDate),
-            color: e.color ?? "blue"
+            color: e.color ?? colors[index % colors.length]
         }));
     }, [eventsInPeriod, periodStart, periodEnd]);
 
