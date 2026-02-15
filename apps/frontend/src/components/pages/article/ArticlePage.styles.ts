@@ -2,7 +2,7 @@ import styled, { keyframes } from "styled-components";
 
 export const PageContainer = styled.section`
     padding: 40px 32px 80px;
-    max-width: min(900px, calc(100vw - 76px));
+    max-width: 900px;
     width: 100%;
     margin: 0 auto;
     position: relative;

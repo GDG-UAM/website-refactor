@@ -72,7 +72,7 @@ export default async function CertificatePublicPage({ params }: { params: Promis
         <main
             style={{
                 padding: "40px 32px 80px",
-                maxWidth: "min(900px, calc(100vw - 76px))",
+                maxWidth: "900px",
                 width: "100%",
                 margin: "0 auto"
             }}
