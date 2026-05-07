@@ -83,6 +83,7 @@
     "accessibility": "Accessibility options",
     "restore": "Restore",
     "inspect": "Inspect",
+    "leaderboard": "Leaderboard",
     "impersonate": "Impersonate"
   },
   "footer": {
@@ -116,6 +117,7 @@
     "login": "Login",
     "logout": "Logout",
     "adminPanel": "Admin panel",
+    "evaluations": "Evaluations",
     "myProfile": "My profile",
     "myGiveaways": "My giveaways",
     "settings": "Settings",
@@ -1404,6 +1406,10 @@
     "otherTracks": "Other Tracks",
     "hackathonsLoading": "Loading hackathons...",
     "tracksLoading": "Loading tracks...",
+    "leaderboard": "Leaderboard",
+    "teamName": "Team Name",
+    "averageRating": "Average Rating",
+    "viewTeam": "View Team",
     "form": {
       "title": "Evaluate Team",
       "criterion": "Criterion",

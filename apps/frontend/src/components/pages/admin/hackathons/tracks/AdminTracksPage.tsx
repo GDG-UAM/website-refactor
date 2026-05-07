@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { api } from "#/lib/eden";
 import { AdminTable } from "#/components/pages/admin/AdminTable";
 import { textColumn, chipColumn, customColumn } from "#/components/pages/admin/AdminTableFactories";
-import { AddButton, EditButton, DeleteButton, RestoreButton, ViewButton } from "#/components/Buttons";
+import { AddButton, EditButton, DeleteButton, RestoreButton, ViewButton, LeaderboardButton } from "#/components/Buttons";
 import { newErrorToast, newInfoToast, newSuccessToast } from "#/components/Toast";
 import { usePermissions } from "#/providers/PermissionsProvider";
 import { FormControlLabel, Checkbox } from "@mui/material";
@@ -176,6 +176,12 @@ export function AdminTracksPage({ hackathonId, hackathon }: AdminTracksPageProps
 
                     return (
                         <>
+                            <LeaderboardButton
+                                onClick={() => router.push(`/admin/hackathons/${hackathonId}/tracks/${row._id}/leaderboard`)}
+                                ariaLabel="View leaderboard"
+                                iconSize={20}
+                                disabled={ability.cannot("read", `${resourceBase}.${row._id}`)}
+                            />
                             {canEditRow ? (
                                 <EditButton
                                     onClick={() => router.push(`/admin/hackathons/${hackathonId}/tracks/${row._id}`)}

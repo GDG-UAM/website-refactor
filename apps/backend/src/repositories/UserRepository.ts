@@ -24,6 +24,13 @@ export class UserRepository {
     }
 
     /**
+     * Find users by multiple IDs
+     */
+    async findByIds(userIds: string[]): Promise<User[]> {
+        return await this.collection.find({ _id: { $in: userIds.map((id) => new ObjectId(id)) } }).toArray();
+    }
+
+    /**
      * List users with pagination and search
      */
     async list({

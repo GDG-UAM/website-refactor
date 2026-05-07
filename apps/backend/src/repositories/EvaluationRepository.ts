@@ -65,6 +65,23 @@ export class EvaluationRepository {
         return result.deletedCount > 0;
     }
 
+    async getTrackLeaderboard(teamIds: ObjectId[]): Promise<{ teamId: string; averageScore: number; count: number }[]> {
+        const results = await this.collection.aggregate([
+            { $match: { teamId: { $in: teamIds } } },
+            { $group: {
+                _id: "$teamId",
+                averageScore: { $avg: "$totalScore" },
+                count: { $sum: 1 }
+            }}
+        ]).toArray();
+
+        return results.map(r => ({
+            teamId: r._id.toString(),
+            averageScore: r.averageScore,
+            count: r.count
+        }));
+    }
+
     async createIndexes(): Promise<void> {
         await this.collection.createIndex({ teamId: 1, judgeId: 1 }, { unique: true });
         await this.collection.createIndex({ judgeId: 1 });
