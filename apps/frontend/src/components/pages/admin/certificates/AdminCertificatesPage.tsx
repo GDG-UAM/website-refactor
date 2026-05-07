@@ -140,7 +140,8 @@ export function AdminCertificatesPage() {
         () => [
             textColumn<AdminCertificate>("recipient", m["admin.certificates.list.columns.recipient"](), (r) => r.recipient.name, {
                 bold: true,
-                subValue: (r) => r._id
+                subValue: (r) => r._id,
+                noTranslate: true
             }),
             textColumn<AdminCertificate>("type", m["admin.certificates.list.columns.type"](), (r) => {
                 const msgKey = `admin.certificates.types.${r.type}` as keyof typeof m;

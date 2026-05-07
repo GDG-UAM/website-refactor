@@ -111,12 +111,13 @@ export function AdminHackathonsPage() {
         () => [
             textColumn<AdminHackathon>("title", m["admin.hackathons.form.title"](), (r) => r.title, {
                 bold: true,
-                subValue: (r) => r.slug
+                subValue: (r) => r.slug,
+                noTranslate: true
             }),
             customColumn<AdminHackathon>("date", m["admin.hackathons.form.date"](), (r) => (
-                <HackathonDate>{new Date(r.date).toLocaleDateString()}</HackathonDate>
+                <HackathonDate   data-no-ai-translate>{new Date(r.date).toLocaleDateString()}</HackathonDate>
             )),
-            customColumn<AdminHackathon>("location", m["admin.hackathons.form.location"](), (r) => <HackathonLocation>{r.location}</HackathonLocation>),
+            customColumn<AdminHackathon>("location", m["admin.hackathons.form.location"](), (r) => <HackathonLocation data-no-ai-translate>{r.location}</HackathonLocation>),
             chipColumn<AdminHackathon, "active" | "deleted">(
                 "status",
                 m["admin.hackathons.list.columns.status"](),

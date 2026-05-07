@@ -100,13 +100,15 @@ export function AdminHackathonsFormPage({ id, initialData }: AdminHackathonsForm
     const handleSubmit = async (formData: HackathonFormData | Partial<HackathonFormData>) => {
         setSubmitting(true);
         try {
+            const { designId, ...restFormData } = formData;
             const payload = {
-                ...formData,
+                ...restFormData,
                 date: formData.date ? new Date(formData.date) : undefined,
                 endDate: formData.endDate ? new Date(formData.endDate) : null,
                 certificateDefaults: {
                     ...initialData?.certificateDefaults,
-                    designId: formData.designId
+                    designId: designId,
+                    signatures: initialData?.certificateDefaults?.signatures || []
                 }
             };
 

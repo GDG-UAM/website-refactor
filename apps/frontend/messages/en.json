@@ -1393,5 +1393,37 @@
       },
       "scheduleTitle": "Event Schedule"
     }
+  },
+    "evaluations": {
+    "pageTitle": "Evaluations",
+    "notEvaluated": "Not Evaluated",
+    "evaluated": "Evaluated",
+    "loading": "Loading teams...",
+    "selectHackathon": "Select Hackathon",
+    "yourTracks": "Your Tracks",
+    "otherTracks": "Other Tracks",
+    "hackathonsLoading": "Loading hackathons...",
+    "tracksLoading": "Loading tracks...",
+    "form": {
+      "title": "Evaluate Team",
+      "criterion": "Criterion",
+      "weight": "Weight",
+      "inputScore": "Input Score",
+      "totalScore": "Weighted Total Score",
+      "notesLabel": "Judge's Notes (Optional)",
+      "notesPlaceholder": "Write your thoughts about the team, their project, or presentation...",
+      "noDescription": "No description provided.",
+      "submit": "Submit Evaluation",
+      "delete": "Delete Evaluation",
+      "loading": "Loading...",
+      "teamNotFound": "Team not found.",
+      "toasts": {
+        "submitSuccess": "Evaluation submitted successfully",
+        "submitError": "Failed to submit evaluation",
+        "deleteSuccess": "Evaluation deleted successfully",
+        "deleteError": "Failed to delete evaluation",
+        "loadError": "Failed to load evaluation data"
+      }
+    }
   }
 }

@@ -13,14 +13,14 @@ export const textColumn = <T,>(
     key: string,
     header: string,
     getValue: (item: T) => string | number | null | undefined,
-    options?: { bold?: boolean; subValue?: (item: T) => ReactNode }
+    options?: { bold?: boolean; subValue?: (item: T) => ReactNode, noTranslate?: boolean }
 ): AdminTableColumn<T> => ({
     key,
     header,
     render: (item) => {
         const val = getValue(item);
         return (
-            <div>
+            <div data-no-ai-translate={options?.noTranslate}>
                 <div style={{ fontWeight: options?.bold ? 600 : 400 }}>{val ?? "—"}</div>
                 {options?.subValue && <div style={{ color: "#6b7280", fontSize: "12px" }}>{options.subValue(item)}</div>}
             </div>

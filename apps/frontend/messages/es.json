@@ -1393,5 +1393,37 @@
             },
             "scheduleTitle": "Horario del Evento"
         }
+    },
+    "evaluations": {
+        "pageTitle": "Evaluaciones",
+        "notEvaluated": "Sin evaluar",
+        "evaluated": "Evaluados",
+        "loading": "Cargando equipos...",
+        "selectHackathon": "Seleccionar Hackathon",
+        "yourTracks": "Tus Tracks",
+        "otherTracks": "Otros Tracks",
+        "hackathonsLoading": "Cargando hackathons...",
+        "tracksLoading": "Cargando tracks...",
+        "form": {
+            "title": "Evaluar Equipo",
+            "criterion": "Criterio",
+            "weight": "Peso",
+            "inputScore": "Ingresar Puntuación",
+            "totalScore": "Puntuación Total Ponderada",
+            "notesLabel": "Notas del Juez (Opcional)",
+            "notesPlaceholder": "Escribe tus pensamientos sobre el equipo, su proyecto o presentación...",
+            "noDescription": "No se proporcionó descripción.",
+            "submit": "Enviar Evaluación",
+            "delete": "Eliminar Evaluación",
+            "loading": "Cargando...",
+            "teamNotFound": "Equipo no encontrado.",
+            "toasts": {
+                "submitSuccess": "Evaluación enviada con éxito",
+                "submitError": "Error al enviar la evaluación",
+                "deleteSuccess": "Evaluación eliminada con éxito",
+                "deleteError": "Error al eliminar la evaluación",
+                "loadError": "Error al cargar los datos de evaluación"
+            }
+        }
     }
 }

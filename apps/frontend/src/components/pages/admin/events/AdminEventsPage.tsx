@@ -118,10 +118,11 @@ export function AdminEventsPage() {
             customColumn<AdminEvent>("image", "", (r) => (r.image ? <EventImage src={r.image} alt={r.title} /> : null), { width: "60px" }),
             textColumn<AdminEvent>("title", m["admin.events.form.title"](), (r) => r.title, {
                 bold: true,
-                subValue: (r) => r.slug
+                subValue: (r) => r.slug,
+                noTranslate: true
             }),
-            customColumn<AdminEvent>("date", m["admin.events.form.date"](), (r) => <EventDate>{new Date(r.date).toLocaleString()}</EventDate>),
-            customColumn<AdminEvent>("location", m["admin.events.form.location"](), (r) => <EventLocation>{r.location}</EventLocation>),
+            customColumn<AdminEvent>("date", m["admin.events.form.date"](), (r) => <EventDate data-no-ai-translate>{new Date(r.date).toLocaleString()}</EventDate>),
+            customColumn<AdminEvent>("location", m["admin.events.form.location"](), (r) => <EventLocation data-no-ai-translate>{r.location}</EventLocation>),
             chipColumn<AdminEvent, "published" | "draft" | "deleted">(
                 "status",
                 m["admin.events.list.columns.status"](),

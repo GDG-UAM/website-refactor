@@ -256,8 +256,10 @@ const SearchableID: React.FC<{
                             </React.Fragment>
                         )
                     }}
+                    data-no-ai-translate
                 />
             )}
+            data-no-ai-translate
         />
     );
 };
@@ -336,6 +338,7 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                                     value={lvl.selectedValue}
                                     onChange={(v) => handleLevelChange(idx, v)}
                                     disabled={disabled}
+                                    data-no-ai-translate
                                 />
                             );
                         } else if (lvl.options) {
@@ -369,7 +372,7 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                         style={{ minWidth: 0 }}
                     >
                         <ModalCaption>{m["admin.permissions.form.editor.current_path"]()}</ModalCaption>
-                        <MonoText>{tempRule.resource}</MonoText>
+                        <MonoText data-no-ai-translate>{tempRule.resource}</MonoText>
                     </FlexBox>
                 )}
             </ModalFieldWrapper>
@@ -432,7 +435,7 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                 {value.map((rule, idx) => (
                     <PermissionRuleItem key={idx}>
                         <RuleInfo>
-                            <RuleTitle>{rule.resource || "(Root)"}</RuleTitle>
+                            <RuleTitle data-no-ai-translate>{rule.resource || "(Root)"}</RuleTitle>
                             <BadgeRow>
                                 <EffectBadge $allow={rule.effect === "allow"}>
                                     {rule.effect === "allow"
@@ -633,9 +636,11 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                                                     textOverflow: "ellipsis"
                                                 }
                                             }}
+                                            data-no-ai-translate
                                         />
                                     )}
                                     sx={{ width: "100%" }}
+                                    data-no-ai-translate
                                 />
                             </FlexBox>
                         )}
@@ -665,6 +670,7 @@ export const AdminPermissionsField: React.FC<AdminPermissionsFieldProps> = ({ va
                                 error={conditionText.trim() !== "" && !isJsonValid}
                                 helperText={conditionText.trim() !== "" && !isJsonValid ? "Invalid JSON" : ""}
                                 sx={{ "& .MuiInputBase-root": { fontFamily: "monospace", fontSize: "0.8rem" } }}
+                                data-no-ai-translate
                             />
                         </FlexBox>
                     </FlexBox>

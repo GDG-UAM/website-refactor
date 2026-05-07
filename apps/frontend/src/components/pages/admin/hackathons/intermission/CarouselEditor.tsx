@@ -142,7 +142,7 @@ export const CarouselEditor: React.FC<{
     const renderTree = (element: CarouselElement, depth: number = 0, isFirst: boolean = true, isLast: boolean = true) => (
         <React.Fragment key={element.id}>
             <TreeItem $depth={depth} $selected={selectedId === element.id} onClick={() => setSelectedId(element.id)}>
-                <ElementTypeIcon $type={element.type}>
+                <ElementTypeIcon $type={element.type} data-no-ai-translate>
                     {element.type === "container" && "CO"}
                     {element.type === "text" && "TX"}
                     {element.type === "qr" && "QR"}

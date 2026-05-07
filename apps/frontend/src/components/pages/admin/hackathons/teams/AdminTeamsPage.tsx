@@ -156,12 +156,12 @@ export function AdminTeamsPage({ hackathonId, hackathon }: AdminTeamsPageProps) 
 
     const columns = useMemo(
         () => [
-            textColumn<AdminTeam>("name", m["admin.hackathons.teams.fields.name"](), (r) => r.name, { bold: true }),
+            textColumn<AdminTeam>("name", m["admin.hackathons.teams.fields.name"](), (r) => r.name, { bold: true, noTranslate: true }),
             textColumn<AdminTeam>("track", m["admin.hackathons.teams.fields.track"](), (r) => {
                 if (!r.trackId) return "-";
                 const track = tracks.find((t) => t._id === r.trackId);
                 return track ? track.name : r.trackId;
-            }),
+            }, {noTranslate: true}),
             customColumn<AdminTeam>("password", m["admin.hackathons.teams.list.columns.password"](), (r) => {
                 const resource = `admin.hackathons.${hackathonId}.teams.${r._id}`;
                 const canRead = ability.can("read", resource, { field: "password" });
@@ -170,14 +170,14 @@ export function AdminTeamsPage({ hackathonId, hackathon }: AdminTeamsPageProps) 
 
                 return (
                     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <code style={{ background: "#f3f4f6", padding: "2px 6px", borderRadius: "4px", fontSize: "14px" }}>{revealed || "********"}</code>
+                        <code style={{ background: "#f3f4f6", padding: "2px 6px", borderRadius: "4px", fontSize: "14px" }} data-no-ai-translate>{revealed || "********"}</code>
                         {canRead && !revealed && <ViewButton onClick={() => handleViewPassword(r._id)} slim iconSize={16} disabled={!r.isActive} />}
                         {canReload && <ReloadButton onClick={() => handleReloadPassword(r._id)} slim iconSize={16} disabled={!r.isActive} />}
                     </div>
                 );
             }),
             customColumn<AdminTeam>("members", m["admin.hackathons.teams.list.columns.members"](), (r) => (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }} data-no-ai-translate>
                     {r.users.map((u: string, i: number) => {
                         const isId = /^[0-9a-fA-F]{24}$/.test(u);
                         return (

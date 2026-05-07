@@ -91,7 +91,8 @@ export function AdminUsersPage() {
         () => [
             textColumn<AdminUser>("name", m["admin.users.list.columns.name"](), (r) => r.name, {
                 bold: true,
-                subValue: (r) => r.email
+                subValue: (r) => r.email,
+                noTranslate: true
             }),
             chipColumn<AdminUser, string>(
                 "role",

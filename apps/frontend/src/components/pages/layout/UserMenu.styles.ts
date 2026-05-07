@@ -42,6 +42,7 @@ export const UserMenuDivider = styled.hr`
     height: 1px;
     background: var(--navbar-user-divider-bg);
     margin: 6px 4px;
+    max-height: 0.5px;
 `;
 
 // Refined compact user menu list

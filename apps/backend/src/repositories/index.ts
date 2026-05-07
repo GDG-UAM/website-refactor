@@ -9,3 +9,4 @@ export * from "./TrackRepository";
 export * from "./TeamRepository";
 export * from "./CertificateRepository";
 export * from "./CertificateTemplateRepository";
+export * from "./EvaluationRepository";

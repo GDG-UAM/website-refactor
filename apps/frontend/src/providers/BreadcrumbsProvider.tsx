@@ -6,6 +6,7 @@ export type BreadcrumbItem = {
     label: string;
     href?: string;
     warning?: string | boolean;
+    noTranslate?: boolean;
 };
 
 interface BreadcrumbsContextType {

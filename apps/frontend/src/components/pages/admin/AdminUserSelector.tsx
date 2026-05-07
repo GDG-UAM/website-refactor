@@ -235,13 +235,14 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
                     onKeyDown={handleKeyDown}
                     disabled={disabled || (maxItems ? value.length >= maxItems : false)}
                     placeholder={value.length === 0 ? placeholder : ""}
+                    data-no-ai-translate
                 />
             </Control>
 
             {showDropdown && (q.trim() || results.length > 0) && (
                 <Dropdown>
                     {showRawOption && (
-                        <DropdownItem $active={highlightedIndex === 0} onClick={() => handleSelect(q.trim())} onMouseEnter={() => setHighlightedIndex(0)}>
+                        <DropdownItem $active={highlightedIndex === 0} onClick={() => handleSelect(q.trim())} onMouseEnter={() => setHighlightedIndex(0)} data-no-ai-translate>
                             <div
                                 style={{
                                     width: 24,
@@ -273,6 +274,7 @@ export const AdminUserSelector: React.FC<AdminUserSelectorProps> = ({
                                     $active={actualIdx === highlightedIndex}
                                     onClick={() => handleSelect(user)}
                                     onMouseEnter={() => setHighlightedIndex(actualIdx)}
+                                    data-no-ai-translate
                                 >
                                     <Avatar src={user.image || "/default-avatar.png"} alt={user.name} />
                                     <div style={{ display: "flex", flexDirection: "column" }}>

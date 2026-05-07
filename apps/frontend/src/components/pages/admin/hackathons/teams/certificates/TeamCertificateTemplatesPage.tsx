@@ -109,7 +109,8 @@ export function TeamCertificateTemplatesPage({ hackathonId, teamId, hackathon, t
     const columns = useMemo(
         () => [
             textColumn<AdminCertificateTemplate>("title", "Title", (r) => r.title, {
-                bold: true
+                bold: true,
+                noTranslate: true
             }),
             textColumn<AdminCertificateTemplate>("type", m["admin.hackathons.teams.certificates.list.columns.type"](), (r) => {
                 const msgKey = `admin.certificates.types.${r.type}` as keyof typeof m;
@@ -118,7 +119,8 @@ export function TeamCertificateTemplatesPage({ hackathonId, teamId, hackathon, t
             textColumn<AdminCertificateTemplate>(
                 "recipients",
                 m["admin.hackathons.teams.certificates.list.columns.recipients"](),
-                (r) => `${r.recipients?.length || 0} recipients`
+                (r) => `${r.recipients?.length || 0} recipients`,
+                { noTranslate: true }
             ),
             chipColumn<AdminCertificateTemplate, "active" | "deleted">(
                 "status",

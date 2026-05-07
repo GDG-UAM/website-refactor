@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "#/providers/SessionProvider";
 import { useHasSectionPermissions } from "#/providers/PermissionsProvider";
+import { useIsJudge } from "#/hooks/useIsJudge";
 import * as m from "#/paraglide/messages";
 import {
     AvatarButton,
@@ -22,6 +23,7 @@ export default function UserMenu() {
     const [mounted, setMounted] = useState(false);
     const ref = useRef<HTMLDivElement | null>(null);
     const hasAdminPermissions = useHasSectionPermissions("admin");
+    const { isJudge } = useIsJudge();
     // const { participating } = useGiveawaysParticipation({ revalidateOnFocus: false });
 
     useEffect(() => {
@@ -71,6 +73,20 @@ export default function UserMenu() {
                     </MenuItem>
                 )}
                 {hasAdminPermissions && <Divider />}
+                {isJudge && (
+                    <MenuItem role="none">
+                        <Link role="menuitem" href="/evaluations" onClick={() => setOpen(false)}>
+                            <IconSlot>
+                                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--navbar-user-menu-link-text)">
+                                    <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm221.5-198.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"/>
+                                    {/* <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z" /> */}
+                                </svg>
+                            </IconSlot>
+                            <span>Evaluations</span>
+                        </Link>
+                    </MenuItem>
+                )}
+                {isJudge && <Divider />}
                 <MenuItem role="none">
                     <Link role="menuitem" href={`/user/${session.user.id}`} onClick={() => setOpen(false)}>
                         <IconSlot>

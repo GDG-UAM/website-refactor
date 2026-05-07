@@ -125,13 +125,14 @@ export function AdminArticlesPage({ type }: AdminArticlesPageProps) {
                 (r) => r.title[locale] || r.title["en"] || Object.values(r.title)[0] || "No title",
                 {
                     bold: true,
-                    subValue: (r) => r.slug
+                    subValue: (r) => r.slug,
+                    noTranslate: true
                 }
             ),
             ...(type === "blog"
                 ? [
                       customColumn<AdminArticle>("authors", m["blog.authors"](), (r) => (
-                          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                          <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }} data-no-ai-translate>
                               {r.authors.map((u: string, i: number) => {
                                   const isId = /^[0-9a-fA-F]{24}$/.test(u);
                                   return (

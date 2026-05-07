@@ -302,9 +302,9 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                     );
                 case "select":
                     return (
-                        <TextField {...commonProps} select value={value ?? ""} onChange={(e) => handleFieldChange(e.target.value)}>
+                        <TextField {...commonProps} select value={value ?? ""} onChange={(e) => handleFieldChange(e.target.value)} data-no-ai-translate>
                             {field.options?.map((opt) => (
-                                <MenuItem key={JSON.stringify(opt.value)} value={opt.value}>
+                                <MenuItem key={JSON.stringify(opt.value)} value={opt.value} data-no-ai-translate>
                                     {opt.label}
                                 </MenuItem>
                             ))}

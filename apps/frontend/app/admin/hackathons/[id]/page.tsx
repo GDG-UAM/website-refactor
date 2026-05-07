@@ -71,9 +71,10 @@ export default async function AdminPage({ params }: { params: Promise<{ id: stri
                             label: m["admin.hackathons.navigation.selection"](),
                             type: "hackathon-track-selection",
                             href: `/admin/hackathons/${hackathon._id}/selection`,
-                            disabled:
-                                !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.trackSelection`)) ||
-                                (await hasSectionAccess(`adminSectionDenies.hackathonPage.${hackathon._id}.trackSelection`))
+                            // disabled:
+                            //     !(await hasSectionAccess(`admin.hackathons.${hackathon._id}.trackSelection`)) ||
+                            //     (await hasSectionAccess(`adminSectionDenies.hackathonPage.${hackathon._id}.trackSelection`))
+                            disabled: true
                         }
                     ]
                 }

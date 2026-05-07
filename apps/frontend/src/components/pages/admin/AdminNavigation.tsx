@@ -32,11 +32,12 @@ interface AdminContentProps {
     categories: {
         title: string;
         buttons: {
-            label: string;
+            label: string | React.ReactNode;
             type: AdminNavigationTypes;
             href: string;
             disabled?: boolean;
             openLinkHref?: string;
+            noTranslate?: boolean;
         }[];
     }[];
 }
@@ -47,6 +48,8 @@ export default function AdminContent({ title, categories }: AdminContentProps) {
     const handleNavigation = (href: string) => {
         router.push(href);
     };
+
+    console.log(categories)
 
     return (
         <Container>
@@ -66,6 +69,7 @@ export default function AdminContent({ title, categories }: AdminContentProps) {
                                                 onClick={() => handleNavigation(button.href)}
                                                 type={button.type}
                                                 disabled={button.disabled}
+                                                noTranslate={button.noTranslate}
                                             >
                                                 {button.label}
                                             </AdminNavigationButton>
@@ -77,6 +81,7 @@ export default function AdminContent({ title, categories }: AdminContentProps) {
                                             type={button.type}
                                             onClick={() => handleNavigation(button.href)}
                                             disabled={button.disabled}
+                                            noTranslate={button.noTranslate}
                                         >
                                             {button.label}
                                         </AdminNavigationButton>

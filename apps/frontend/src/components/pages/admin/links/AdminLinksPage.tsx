@@ -101,14 +101,16 @@ export function AdminLinksPage() {
     const columns = useMemo(
         () => [
             textColumn<AdminLink>("slug", m["admin.links.form.slug"](), (r) => `/${r.slug}`, {
-                bold: true
+                bold: true,
+                noTranslate: true
             }),
             textColumn<AdminLink>("title", m["admin.links.form.title"](), (r) => r.title, {
                 bold: true,
-                subValue: (r) => r.description
+                subValue: (r) => r.description,
+                noTranslate: true
             }),
             customColumn<AdminLink>("destination", m["admin.links.form.destination"](), (r) => (
-                <LinkDestination href={r.destination} target="_blank" rel="noopener">
+                <LinkDestination href={r.destination} target="_blank" rel="noopener" data-no-ai-translate>
                     {r.destination}
                 </LinkDestination>
             )),
@@ -120,7 +122,7 @@ export function AdminLinksPage() {
                 (status) => (status === "active" ? "success" : "error"),
                 "filled"
             ),
-            textColumn<AdminLink>("clicks", m["admin.links.list.columns.clicks"](), (r) => r.clicks.toLocaleString())
+            textColumn<AdminLink>("clicks", m["admin.links.list.columns.clicks"](), (r) => r.clicks.toLocaleString(), { noTranslate: true })
         ],
         []
     );

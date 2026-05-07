@@ -564,3 +564,29 @@ export const CertificateTemplateSchema = t.Object({
     createdAt: t.Optional(t.Date()),
     updatedAt: t.Optional(t.Date())
 });
+
+// ==================== Evaluation Types ====================
+
+export interface Evaluation {
+    _id: ObjectId;
+    teamId: ObjectId;
+    judgeId: string; // User ID
+    scores: Record<string, number>; // rubric item name -> score
+    totalScore: number; // computed average
+    notes?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
+export const EvaluationSchema = t.Object({
+    _id: t.Optional(t.Any()),
+    teamId: t.String(),
+    judgeId: t.Optional(t.String()),
+    scores: t.Record(t.String(), t.Number({ minimum: 0, maximum: 5 })),
+    totalScore: t.Optional(t.Number()),
+    notes: t.Optional(t.String()),
+    createdAt: t.Optional(t.Date()),
+    updatedAt: t.Optional(t.Date())
+});
+
+export type EvaluationInput = typeof EvaluationSchema.static;

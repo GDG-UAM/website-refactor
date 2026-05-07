@@ -16,7 +16,8 @@ import {
     linksRoutes,
     hackathonRoutes,
     badgesRoutes,
-    publicCertificateRoutes
+    publicCertificateRoutes,
+    evaluationsRoutes
 } from "./routes";
 import db from "./lib/db";
 import { initializeDefaults } from "./lib/init";
@@ -143,6 +144,7 @@ const app = new Elysia({ prefix: "/api" })
     .use(hackathonRoutes)
     .use(badgesRoutes)
     .use(publicCertificateRoutes)
+    .use(evaluationsRoutes)
     .get(
         "/health",
         () => {

@@ -9,9 +9,10 @@ import {
     TrackRepository,
     TeamRepository,
     CertificateRepository,
-    CertificateTemplateRepository
+    CertificateTemplateRepository,
+    EvaluationRepository
 } from "../repositories";
-import type { User, PermissionTemplate, Article, Event, Link, Hackathon, Track, Team, Certificate, CertificateTemplate } from "../repositories/types";
+import type { User, PermissionTemplate, Article, Event, Link, Hackathon, Track, Team, Certificate, CertificateTemplate, Evaluation } from "../repositories/types";
 
 interface MongoClientCache {
     client: MongoClient | null;
@@ -30,6 +31,7 @@ interface RepositoryCache {
     teamRepository: TeamRepository | null;
     certificateRepository: CertificateRepository | null;
     certificateTemplateRepository: CertificateTemplateRepository | null;
+    evaluationRepository: EvaluationRepository | null;
 }
 
 // Extend the global object to include mongo client cache
@@ -51,7 +53,8 @@ const repositoryCache: RepositoryCache =
         trackRepository: null,
         teamRepository: null,
         certificateRepository: null,
-        certificateTemplateRepository: null
+        certificateTemplateRepository: null,
+        evaluationRepository: null
     });
 
 // MongoDB Client for Better Auth - lazy initialization
@@ -100,7 +103,8 @@ async function initializeRepositories(): Promise<void> {
         repositoryCache.trackRepository &&
         repositoryCache.teamRepository &&
         repositoryCache.certificateRepository &&
-        repositoryCache.certificateTemplateRepository
+        repositoryCache.certificateTemplateRepository &&
+        repositoryCache.evaluationRepository
     ) {
         return; // Already initialized
     }
@@ -118,6 +122,7 @@ async function initializeRepositories(): Promise<void> {
     const teamCollection = db.collection<Team>("teams");
     const certificateCollection = db.collection<Certificate>("certificates");
     const certificateTemplateCollection = db.collection<CertificateTemplate>("certificatetemplates");
+    const evaluationCollection = db.collection<Evaluation>("evaluations");
 
     // Create permission repository first (no dependencies)
     const permissionRepo = new PermissionRepository(templateCollection);
@@ -134,6 +139,7 @@ async function initializeRepositories(): Promise<void> {
     const teamRepo = new TeamRepository(teamCollection);
     const certificateRepo = new CertificateRepository(certificateCollection);
     const certificateTemplateRepo = new CertificateTemplateRepository(certificateTemplateCollection, certificateRepo, hackathonRepo, teamRepo, userRepo);
+    const evaluationRepo = new EvaluationRepository(evaluationCollection);
 
     // Set cross-dependencies to allow synchronization
     hackathonRepo.setTemplateRepository(certificateTemplateRepo);
@@ -150,6 +156,7 @@ async function initializeRepositories(): Promise<void> {
     repositoryCache.teamRepository = teamRepo;
     repositoryCache.certificateRepository = certificateRepo;
     repositoryCache.certificateTemplateRepository = certificateTemplateRepo;
+    repositoryCache.evaluationRepository = evaluationRepo;
 
     // Create indexes
     await Promise.all([
@@ -161,7 +168,8 @@ async function initializeRepositories(): Promise<void> {
         hackathonRepo.createIndexes(),
         trackRepo.createIndexes(),
         teamRepo.createIndexes(),
-        certificateRepo.createIndexes()
+        certificateRepo.createIndexes(),
+        evaluationRepo.createIndexes()
     ]);
 }
 
@@ -184,7 +192,8 @@ export function getRepositories() {
         !repositoryCache.trackRepository ||
         !repositoryCache.teamRepository ||
         !repositoryCache.certificateRepository ||
-        !repositoryCache.certificateTemplateRepository
+        !repositoryCache.certificateTemplateRepository ||
+        !repositoryCache.evaluationRepository
     ) {
         throw new Error("Repositories not initialized. Call dbConnect() first.");
     }
@@ -199,7 +208,8 @@ export function getRepositories() {
         trackRepository: repositoryCache.trackRepository,
         teamRepository: repositoryCache.teamRepository,
         certificateRepository: repositoryCache.certificateRepository,
-        certificateTemplateRepository: repositoryCache.certificateTemplateRepository
+        certificateTemplateRepository: repositoryCache.certificateTemplateRepository,
+        evaluationRepository: repositoryCache.evaluationRepository
     };
 }
 

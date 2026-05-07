@@ -40,6 +40,7 @@ export interface CustomButtonProps {
     justify?: "center" | "flex-start" | "flex-end" | "space-between" | "space-around";
     type?: "button" | "submit" | "reset";
     showColorDisabled?: boolean;
+    noTranslate?: boolean;
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
@@ -68,6 +69,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
     dontUseContext = false,
     justify = "center",
     showColorDisabled = false,
+    noTranslate,
     children = null
 }) => {
     const [loading, setLoading] = useState(isLoading);
@@ -206,6 +208,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
             $disableHover={noHover}
             $fullWidth={fullWidth}
             $justify={justify}
+            data-no-ai-translate={noTranslate || undefined}
         >
             {loading && showSpinner ? (
                 <>

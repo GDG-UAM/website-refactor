@@ -108,9 +108,9 @@ export function AdminTracksPage({ hackathonId, hackathon }: AdminTracksPageProps
 
     const columns = useMemo(
         () => [
-            textColumn<AdminTrack>("name", m["admin.hackathons.tracks.fields.name"](), (r) => r.name, { bold: true }),
+            textColumn<AdminTrack>("name", m["admin.hackathons.tracks.fields.name"](), (r) => r.name, { bold: true, noTranslate: true }),
             customColumn<AdminTrack>("judges", m["admin.hackathons.tracks.fields.judges"](), (r) => (
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }}>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px" }} data-no-ai-translate>
                     {r.judges.map((u: string, i: number) => {
                         const isId = /^[0-9a-fA-F]{24}$/.test(u);
                         return (

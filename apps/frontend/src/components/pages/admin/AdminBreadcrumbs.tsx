@@ -5,6 +5,8 @@ import { Nav, List, Crumb, Sep, WarningContainer, CrumbAlign, CrumbAlignLink } f
 import { Tooltip } from "@mui/material";
 import { useBreadcrumbs, BreadcrumbItem } from "#/providers/BreadcrumbsProvider";
 import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
+import * as m from "#/paraglide/messages";
 
 type AdminBreadcrumbsProps = {
     items?: BreadcrumbItem[]; // Now optional
@@ -20,8 +22,15 @@ const crumbVariants = {
 
 export default function AdminBreadcrumbs({ items: propsItems, className, style }: AdminBreadcrumbsProps) {
     const { items: contextItems } = useBreadcrumbs();
+    const pathname = usePathname();
     const tempItems = propsItems || contextItems;
-    const items = tempItems.length > 0 ? tempItems : [{ label: "Admin", href: "/admin" }]; // Keep this default so the height doesn't change after the items load
+    
+    // Default breadcrumb based on path
+    const isEvaluationPath = pathname.startsWith("/evaluations");
+    const defaultLabel = isEvaluationPath ? m["evaluations.pageTitle"]() : m["admin.breadcrumbs.admin"]();
+    const defaultHref = isEvaluationPath ? "/evaluations" : "/admin";
+    
+    const items = tempItems.length > 0 ? tempItems : [{ label: defaultLabel, href: defaultHref }];
     const last = items.length - 1;
 
     return (
@@ -46,16 +55,22 @@ export default function AdminBreadcrumbs({ items: propsItems, className, style }
                         );
 
                         return (
-                            <React.Fragment key={it.href || i}>
-                                <Crumb variants={crumbVariants} initial="hidden" animate="visible" exit="exit">
-                                    {isLink ? <CrumbAlignLink href={it.href!}>{content}</CrumbAlignLink> : <CrumbAlign>{content}</CrumbAlign>}
-                                </Crumb>
-                                {i !== last && (
-                                    <Sep variants={crumbVariants} initial="hidden" animate="visible" exit="exit" key={`sep-${it.href || i}`}>
+                            <Crumb key={it.href || i} variants={crumbVariants} initial="hidden" animate="visible" exit="exit">
+                                {i !== 0 && (
+                                    <Sep variants={crumbVariants} initial="hidden" animate="visible" exit="exit">
                                         /
                                     </Sep>
-                                )}{" "}
-                            </React.Fragment>
+                                )}
+                                {isLink ? (
+                                    <CrumbAlignLink href={it.href!} data-no-ai-translate={it.noTranslate}>
+                                        {content}
+                                    </CrumbAlignLink>
+                                ) : (
+                                    <CrumbAlign data-no-ai-translate={it.noTranslate}>
+                                        {content}
+                                    </CrumbAlign>
+                                )}
+                            </Crumb>
                         );
                     })}
                 </AnimatePresence>

@@ -98,7 +98,8 @@ export function AdminPermissionsPage() {
         () => [
             textColumn<AdminPermissionTemplate>("name", m["admin.permissions.form.name"](), (r) => r.name, {
                 bold: true,
-                subValue: (r) => r.description || m["admin.permissions.list.noTemplates"]()
+                subValue: (r) => r.description || m["admin.permissions.list.noTemplates"](),
+                noTranslate: true
             }),
             chipColumn<AdminPermissionTemplate, string>(
                 "isActive",

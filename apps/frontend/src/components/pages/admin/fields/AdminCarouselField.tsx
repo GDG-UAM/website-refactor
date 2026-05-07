@@ -121,9 +121,9 @@ export const AdminCarouselField: React.FC<AdminCarouselFieldProps> = ({
                 {value.map((slide, idx) => (
                     <CarouselPreview key={slide.id}>
                         <SlideInfo $hidden={slide.hidden}>
-                            <SlideTitle>{slide.label || `${m["admin.hackathons.intermission.elementTypes.slide"]()} ${idx + 1}`}</SlideTitle>
+                            <SlideTitle data-no-ai-translate>{slide.label || `${m["admin.hackathons.intermission.elementTypes.slide"]()} ${idx + 1}`}</SlideTitle>
                             <BadgeRow>
-                                <DurationBadge>{slide.duration}s</DurationBadge>
+                                <DurationBadge data-no-ai-translate>{slide.duration}s</DurationBadge>
                                 {slide.hidden && <HiddenText>{m["admin.hackathons.intermission.values.hidden"]()}</HiddenText>}
                             </BadgeRow>
                         </SlideInfo>
