@@ -154,9 +154,9 @@ export function AdminTeamLeaderboardDetailPage({ hackathonId, trackId, teamId, t
     const [loading, setLoading] = useState(true);
 
     useRegisterBreadcrumbs([
-        { label: trackName || trackId, href: `/admin/hackathons/${hackathonId}/tracks/${trackId}`, noTranslate: !!trackName },
+        { label: trackName || trackId, noTranslate: !!trackName },
         { label: m["evaluations.leaderboard"](), href: `/admin/hackathons/${hackathonId}/tracks/${trackId}/leaderboard` },
-        { label: data?.name || teamId, href: `/admin/hackathons/${hackathonId}/tracks/${trackId}/leaderboard/${teamId}`, noTranslate: !!data?.name }
+        { label: data?.name || teamId, noTranslate: !!data?.name }
     ]);
 
     useEffect(() => {

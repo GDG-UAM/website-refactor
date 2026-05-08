@@ -57,6 +57,7 @@ export class TeamRepository {
         delete (updates as any).createdBy;
         delete (updates as any).createdAt;
 
+        if (!ObjectId.isValid(id)) return null;
         const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
         if (result && input.users) {
@@ -67,6 +68,7 @@ export class TeamRepository {
     }
 
     async reloadPassword(id: string): Promise<Team | null> {
+        if (!ObjectId.isValid(id)) return null;
         const newPassword = generatePassword();
         const result = await this.collection.findOneAndUpdate(
             { _id: new ObjectId(id) },
@@ -77,6 +79,7 @@ export class TeamRepository {
     }
 
     async delete(id: string): Promise<boolean> {
+        if (!ObjectId.isValid(id)) return false;
         const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { isActive: false, updatedAt: new Date() } });
         if (result.modifiedCount > 0) {
             await this.templateRepository?.syncTemplatesByTeam(id);
@@ -86,6 +89,7 @@ export class TeamRepository {
     }
 
     async findById(id: string, options?: { includeInactive?: boolean }): Promise<Team | null> {
+        if (!ObjectId.isValid(id)) return null;
         const query: Filter<Team> = { _id: new ObjectId(id) };
         if (!options?.includeInactive) {
             query.isActive = true;
@@ -106,8 +110,8 @@ export class TeamRepository {
 
         const filter: Filter<Team> = {};
         if (!includeInactive) filter.isActive = true;
-        if (hackathonId) filter.hackathonId = new ObjectId(hackathonId);
-        if (trackId) filter.trackId = new ObjectId(trackId);
+        if (hackathonId && ObjectId.isValid(hackathonId)) filter.hackathonId = new ObjectId(hackathonId);
+        if (trackId && ObjectId.isValid(trackId)) filter.trackId = new ObjectId(trackId);
 
         if (search) {
             filter.name = { $regex: search, $options: "i" };

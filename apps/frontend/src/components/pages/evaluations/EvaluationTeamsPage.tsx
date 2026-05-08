@@ -51,7 +51,7 @@ export function EvaluationTeamsPage({ hackathonId, trackId }: { hackathonId: str
         {
             title: m["evaluations.evaluated"](),
             buttons: evaluated.map(t => ({
-                label: `(${t.evaluation!.totalScore.toFixed(1)}★) ${t.name}`,
+                label: `(${t.evaluation!.totalScore.toFixed(2)}★) ${t.name}`,
                 type: "hackathon-teams" as const,
                 href: `/evaluations/${hackathonId}/${trackId}/${t._id}`,
                 noTranslate: true

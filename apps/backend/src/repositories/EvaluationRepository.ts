@@ -6,6 +6,7 @@ export class EvaluationRepository {
 
     async upsert(input: EvaluationInput, judgeId: string, rubric: { name: string; weight: number }[]): Promise<Evaluation> {
         const now = new Date();
+        if (!ObjectId.isValid(input.teamId)) throw new Error("Invalid teamId");
         const teamId = new ObjectId(input.teamId);
 
         // Compute total score (weighted average of rubric items)
@@ -42,6 +43,7 @@ export class EvaluationRepository {
     }
 
     async findByTeamAndJudge(teamId: string, judgeId: string): Promise<Evaluation | null> {
+        if (!ObjectId.isValid(teamId)) return null;
         return await this.collection.findOne({ teamId: new ObjectId(teamId), judgeId });
     }
 
@@ -50,17 +52,20 @@ export class EvaluationRepository {
     }
 
     async findByTeam(teamId: string): Promise<Evaluation[]> {
+        if (!ObjectId.isValid(teamId)) return [];
         return await this.collection.find({ teamId: new ObjectId(teamId) }).toArray();
     }
 
     async findByTeamsAndJudge(teamIds: string[], judgeId: string): Promise<Evaluation[]> {
+        const validTeamIds = teamIds.filter(id => ObjectId.isValid(id)).map(id => new ObjectId(id));
         return await this.collection.find({ 
-            teamId: { $in: teamIds.map(id => new ObjectId(id)) },
+            teamId: { $in: validTeamIds },
             judgeId 
         }).toArray();
     }
 
     async delete(teamId: string, judgeId: string): Promise<boolean> {
+        if (!ObjectId.isValid(teamId)) return false;
         const result = await this.collection.deleteOne({ teamId: new ObjectId(teamId), judgeId });
         return result.deletedCount > 0;
     }

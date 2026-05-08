@@ -18,10 +18,14 @@ interface BreadcrumbsContextType {
 const BreadcrumbsContext = createContext<BreadcrumbsContextType | undefined>(undefined);
 
 export function BreadcrumbsProvider({ children }: { children: React.ReactNode }) {
-    const [registry, setRegistry] = useState<Record<string, BreadcrumbItem[]>>({});
+    const [registry, setRegistry] = useState<Record<string, { items: BreadcrumbItem[]; order: number }>>({});
+    const counter = React.useRef(0);
 
     const register = useCallback((id: string, items: BreadcrumbItem[]) => {
-        setRegistry((prev) => ({ ...prev, [id]: items }));
+        setRegistry((prev) => {
+            const order = prev[id]?.order ?? counter.current++;
+            return { ...prev, [id]: { items, order } };
+        });
     }, []);
 
     const unregister = useCallback((id: string) => {
@@ -35,13 +39,18 @@ export function BreadcrumbsProvider({ children }: { children: React.ReactNode })
     // Sort by href length or depth to ensure root is always first
     // Items without href (current page) should be last
     const items = useMemo(() => {
-        return Object.values(registry)
-            .flat()
+        const groups = Object.entries(registry).map(([id, group]) => {
+            const depths = group.items.map((it) => (it.href ? it.href.split("/").length : Infinity));
+            const minDepth = Math.min(...depths);
+            return { items: group.items, minDepth, order: group.order };
+        });
+
+        return groups
             .sort((a, b) => {
-                const depthA = a.href ? a.href.split("/").length : Infinity;
-                const depthB = b.href ? b.href.split("/").length : Infinity;
-                return depthA - depthB;
-            });
+                if (a.minDepth !== b.minDepth) return a.minDepth - b.minDepth;
+                return a.order - b.order;
+            })
+            .flatMap((g) => g.items);
     }, [registry]);
 
     return <BreadcrumbsContext.Provider value={{ register, unregister, items }}>{children}</BreadcrumbsContext.Provider>;

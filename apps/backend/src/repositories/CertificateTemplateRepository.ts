@@ -35,8 +35,8 @@ export class CertificateTemplateRepository {
         const template: CertificateTemplate = {
             _id: new ObjectId(),
             recipients: input.recipients || [],
-            hackathonId: input.hackathonId ? new ObjectId(input.hackathonId) : undefined,
-            teamId: input.teamId ? new ObjectId(input.teamId) : undefined,
+            hackathonId: input.hackathonId && ObjectId.isValid(input.hackathonId.toString()) ? new ObjectId(input.hackathonId) : undefined,
+            teamId: input.teamId && ObjectId.isValid(input.teamId.toString()) ? new ObjectId(input.teamId) : undefined,
             designId: input.designId,
             signatures: input.signatures,
             startDate: input.startDate ? new Date(input.startDate) : undefined,
@@ -64,11 +64,12 @@ export class CertificateTemplateRepository {
         if (!existing) return null;
 
         const updates: any = { ...input, updatedAt: new Date() };
-        if (input.hackathonId) updates.hackathonId = new ObjectId(input.hackathonId);
-        if (input.teamId) updates.teamId = new ObjectId(input.teamId);
+        if (input.hackathonId && ObjectId.isValid(input.hackathonId.toString())) updates.hackathonId = new ObjectId(input.hackathonId);
+        if (input.teamId && ObjectId.isValid(input.teamId.toString())) updates.teamId = new ObjectId(input.teamId);
         if (input.startDate) updates.startDate = new Date(input.startDate);
         if (input.endDate) updates.endDate = new Date(input.endDate);
 
+        if (!ObjectId.isValid(id)) return null;
         const updated = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
         if (updated) {
@@ -83,6 +84,7 @@ export class CertificateTemplateRepository {
     }
 
     async delete(id: string): Promise<boolean> {
+        if (!ObjectId.isValid(id)) return false;
         const result = await this.collection.findOneAndUpdate(
             { _id: new ObjectId(id) },
             { $set: { isActive: false, updatedAt: new Date() } },
@@ -96,6 +98,7 @@ export class CertificateTemplateRepository {
     }
 
     async findById(id: string): Promise<CertificateTemplate | null> {
+        if (!ObjectId.isValid(id)) return null;
         return await this.collection.findOne({ _id: new ObjectId(id) });
     }
 
@@ -125,7 +128,7 @@ export class CertificateTemplateRepository {
             if (team) {
                 const resolvedRecipients = [];
                 for (const u of team.users) {
-                    if (/^[0-9a-fA-F]{24}$/.test(u)) {
+                    if (ObjectId.isValid(u)) {
                         const user = await this.userRepo.findById(u);
                         resolvedRecipients.push({
                             name: user?.displayName || user?.name || u,
@@ -193,6 +196,7 @@ export class CertificateTemplateRepository {
     }
 
     async syncTemplatesByHackathon(hackathonId: string): Promise<void> {
+        if (!ObjectId.isValid(hackathonId)) return;
         const templates = await this.collection.find({ hackathonId: new ObjectId(hackathonId) }).toArray();
         for (const template of templates) {
             // We need a userId for generation, we'll use the creator of the template or system
@@ -201,6 +205,7 @@ export class CertificateTemplateRepository {
     }
 
     async syncTemplatesByTeam(teamId: string): Promise<void> {
+        if (!ObjectId.isValid(teamId)) return;
         const templates = await this.collection.find({ teamId: new ObjectId(teamId) }).toArray();
         for (const template of templates) {
             await this.update(template._id.toString(), {}, template.createdBy);
@@ -221,10 +226,10 @@ export class CertificateTemplateRepository {
         if (search) {
             filter.title = { $regex: search, $options: "i" };
         }
-        if (teamId) {
+        if (teamId && ObjectId.isValid(teamId)) {
             filter.teamId = new ObjectId(teamId);
         }
-        if (hackathonId) {
+        if (hackathonId && ObjectId.isValid(hackathonId)) {
             filter.hackathonId = new ObjectId(hackathonId);
         }
 

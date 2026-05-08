@@ -29,7 +29,7 @@ export class CertificateRepository {
             ...input,
             startDate: input.startDate ? new Date(input.startDate) : undefined,
             endDate: input.endDate ? new Date(input.endDate) : undefined,
-            templateId: input.templateId ? new ObjectId(input.templateId) : undefined,
+            templateId: input.templateId && ObjectId.isValid(input.templateId.toString()) ? new ObjectId(input.templateId) : undefined,
             source: input.templateId ? "auto" : "manual",
             revoked: false,
             isActive: true,
@@ -56,15 +56,17 @@ export class CertificateRepository {
             updates.endDate = input.endDate ? new Date(input.endDate) : null;
         }
         if (input.templateId !== undefined) {
-            updates.templateId = input.templateId ? new ObjectId(input.templateId) : null;
+            updates.templateId = input.templateId && ObjectId.isValid(input.templateId.toString()) ? new ObjectId(input.templateId) : null;
         }
 
+        if (!ObjectId.isValid(id)) return null;
         const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
         return result;
     }
 
     async delete(id: string, soft: boolean = true): Promise<boolean> {
+        if (!ObjectId.isValid(id)) return false;
         if (soft) {
             const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { isActive: false, updatedAt: new Date() } });
             return result.modifiedCount > 0;
@@ -75,6 +77,7 @@ export class CertificateRepository {
     }
 
     async findById(id: string, options?: { includeInactive?: boolean }): Promise<Certificate | null> {
+        if (!ObjectId.isValid(id)) return null;
         const query: Filter<Certificate> = { _id: new ObjectId(id) };
         if (!options?.includeInactive) {
             query.isActive = true;
@@ -145,7 +148,7 @@ export class CertificateRepository {
 
         const filter: Filter<Certificate> = {};
         if (!includeInactive) filter.isActive = true;
-        if (templateId) filter.templateId = new ObjectId(templateId);
+        if (templateId && ObjectId.isValid(templateId)) filter.templateId = new ObjectId(templateId);
         if (recipient) filter["recipient.userId"] = recipient;
         if (params.type && params.type !== "all") filter.type = params.type as CertificateType;
 
@@ -216,11 +219,13 @@ export class CertificateRepository {
     }
 
     async revoke(id: string): Promise<boolean> {
+        if (!ObjectId.isValid(id)) return false;
         const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { revoked: true, updatedAt: new Date() } });
         return result.modifiedCount > 0;
     }
 
     async deleteByTemplateId(templateId: string | ObjectId, soft: boolean = true): Promise<void> {
+        if (!ObjectId.isValid(templateId.toString())) return;
         const tid = new ObjectId(templateId);
         if (soft) {
             await this.collection.updateMany({ templateId: tid }, { $set: { isActive: false, updatedAt: new Date() } });

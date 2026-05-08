@@ -68,6 +68,7 @@ export class HackathonRepository {
             delete updates.certificateDefaults;
         }
 
+        if (!ObjectId.isValid(id)) return null;
         const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
         if (result && (input.certificateDefaults || input.title || input.date || input.endDate)) {
@@ -78,6 +79,7 @@ export class HackathonRepository {
     }
 
     async delete(id: string): Promise<boolean> {
+        if (!ObjectId.isValid(id)) return false;
         const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { isActive: false, updatedAt: new Date() } });
         if (result.modifiedCount > 0) {
             await this.templateRepository?.syncTemplatesByHackathon(id);
@@ -87,6 +89,7 @@ export class HackathonRepository {
     }
 
     async findById(id: string, options?: { includeInactive?: boolean }): Promise<Hackathon | null> {
+        if (!ObjectId.isValid(id)) return null;
         const query: Filter<Hackathon> = { _id: new ObjectId(id) };
         if (!options?.includeInactive) {
             query.isActive = true;

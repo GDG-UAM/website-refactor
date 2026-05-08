@@ -28,8 +28,8 @@ export function AdminTrackLeaderboardPage({ hackathonId, trackId, trackName }: A
     const router = useRouter();
 
     useRegisterBreadcrumbs([
-        { label: trackName || trackId, href: `/admin/hackathons/${hackathonId}/tracks/${trackId}`, noTranslate: !!trackName },
-        { label: m["evaluations.leaderboard"](), href: `/admin/hackathons/${hackathonId}/tracks/${trackId}/leaderboard` }
+        { label: trackName || trackId, noTranslate: !!trackName },
+        { label: m["evaluations.leaderboard"]() }
     ]);
 
     const [rows, setRows] = useState<LeaderboardTeam[]>([]);
@@ -64,7 +64,7 @@ export function AdminTrackLeaderboardPage({ hackathonId, trackId, trackName }: A
             textColumn<LeaderboardTeam>("name", m["evaluations.teamName"](), (r) => r.name, { bold: true, noTranslate: true }),
             customColumn<LeaderboardTeam>("score", m["evaluations.averageRating"](), (r) => (
                 <div style={{ fontWeight: 500 }}>
-                    {r.averageScore.toFixed(1)}★ <span style={{ opacity: 0.7, fontWeight: 400 }}>({r.evaluationsCount})</span>
+                    {r.averageScore.toFixed(2)}★ <span style={{ opacity: 0.7, fontWeight: 400 }}>({r.evaluationsCount})</span>
                 </div>
             ))
         ],

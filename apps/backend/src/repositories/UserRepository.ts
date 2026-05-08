@@ -20,6 +20,10 @@ export class UserRepository {
      * Find user by ID
      */
     async findById(userId: string): Promise<User | null> {
+        if (!ObjectId.isValid(userId)) {
+            // If it's not a valid ObjectId, it might be a string ID (common in social logins)
+            return await this.collection.findOne({ _id: userId as any });
+        }
         return await this.collection.findOne({ _id: new ObjectId(userId) });
     }
 
@@ -27,7 +31,14 @@ export class UserRepository {
      * Find users by multiple IDs
      */
     async findByIds(userIds: string[]): Promise<User[]> {
-        return await this.collection.find({ _id: { $in: userIds.map((id) => new ObjectId(id)) } }).toArray();
+        const objectIds = userIds.filter((id) => ObjectId.isValid(id)).map((id) => new ObjectId(id));
+        const stringIds = userIds.filter((id) => !ObjectId.isValid(id));
+
+        return await this.collection
+            .find({
+                $or: [{ _id: { $in: objectIds as any } }, { _id: { $in: stringIds as any } }]
+            })
+            .toArray();
     }
 
     /**
@@ -95,8 +106,9 @@ export class UserRepository {
         }
 
         // Update the role
+        const query: any = ObjectId.isValid(userId) ? { _id: new ObjectId(userId) } : { _id: userId };
         const result = await this.collection.findOneAndUpdate(
-            { _id: new ObjectId(userId) },
+            query,
             { $set: { role, updatedAt: new Date() } },
             { returnDocument: "after" }
         );
@@ -169,7 +181,8 @@ export class UserRepository {
      * Update individual permissions for a user
      */
     async updateIndividualPermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
-        await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { individualPermissions: permissions, updatedAt: new Date() } });
+        const query: any = ObjectId.isValid(userId) ? { _id: new ObjectId(userId) } : { _id: userId };
+        await this.collection.updateOne(query, { $set: { individualPermissions: permissions, updatedAt: new Date() } });
         // Invalidate cached sessions for this user
         await updateUserSessions(userId);
     }
@@ -178,7 +191,8 @@ export class UserRepository {
      * Update template permissions for a user (computed from templates)
      */
     async updateTemplatePermissions(userId: string, permissions: SerializablePermission[]): Promise<void> {
-        await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatePermissions: permissions, updatedAt: new Date() } });
+        const query: any = ObjectId.isValid(userId) ? { _id: new ObjectId(userId) } : { _id: userId };
+        await this.collection.updateOne(query, { $set: { templatePermissions: permissions, updatedAt: new Date() } });
         // Invalidate cached sessions for this user
         await updateUserSessions(userId);
     }
@@ -187,7 +201,8 @@ export class UserRepository {
      * Update templates used by a user
      */
     async updateTemplatesUsed(userId: string, templateIds: string[]): Promise<void> {
-        await this.collection.updateOne({ _id: new ObjectId(userId) }, { $set: { templatesUsed: templateIds, updatedAt: new Date() } });
+        const query: any = ObjectId.isValid(userId) ? { _id: new ObjectId(userId) } : { _id: userId };
+        await this.collection.updateOne(query, { $set: { templatesUsed: templateIds, updatedAt: new Date() } });
         // Invalidate cached sessions for this user
         await updateUserSessions(userId);
     }
@@ -196,8 +211,9 @@ export class UserRepository {
      * Update user settings (flat field updates)
      */
     async updateSettings(userId: string, updates: Record<string, unknown>): Promise<User | null> {
+        const query: any = ObjectId.isValid(userId) ? { _id: new ObjectId(userId) } : { _id: userId };
         const result = await this.collection.findOneAndUpdate(
-            { _id: new ObjectId(userId) },
+            query,
             { $set: { ...updates, updatedAt: new Date() } },
             { returnDocument: "after" }
         );
@@ -213,7 +229,8 @@ export class UserRepository {
      * Check if user exists
      */
     async exists(userId: string): Promise<boolean> {
-        const count = await this.collection.countDocuments({ _id: new ObjectId(userId) });
+        const query: any = ObjectId.isValid(userId) ? { _id: new ObjectId(userId) } : { _id: userId };
+        const count = await this.collection.countDocuments(query);
         return count > 0;
     }
 
@@ -245,7 +262,8 @@ export class UserRepository {
         const oldUser = await this.findById(userId);
         if (!oldUser) return null;
 
-        const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(userId) }, { $set: updateData }, { returnDocument: "after" });
+        const query: any = ObjectId.isValid(userId) ? { _id: new ObjectId(userId) } : { _id: userId };
+        const result = await this.collection.findOneAndUpdate(query, { $set: updateData }, { returnDocument: "after" });
 
         if (!result) return null;
 

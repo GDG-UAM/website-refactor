@@ -35,17 +35,20 @@ export class TrackRepository {
     async update(id: string, input: Partial<Omit<TrackInput, "hackathonId">>): Promise<Track | null> {
         const updates: Record<string, unknown> = { ...input, updatedAt: new Date() };
 
+        if (!ObjectId.isValid(id)) return null;
         const result = await this.collection.findOneAndUpdate({ _id: new ObjectId(id) }, { $set: updates }, { returnDocument: "after" });
 
         return result;
     }
 
     async delete(id: string): Promise<boolean> {
+        if (!ObjectId.isValid(id)) return false;
         const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { isActive: false, updatedAt: new Date() } });
         return result.modifiedCount > 0;
     }
 
     async findById(id: string, options?: { includeInactive?: boolean }): Promise<Track | null> {
+        if (!ObjectId.isValid(id)) return null;
         const query: Filter<Track> = { _id: new ObjectId(id) };
         if (!options?.includeInactive) {
             query.isActive = true;
@@ -54,6 +57,7 @@ export class TrackRepository {
     }
 
     async listByHackathon(hackathonId: string, options?: { includeInactive?: boolean }): Promise<Track[]> {
+        if (!ObjectId.isValid(hackathonId)) return [];
         const query: Filter<Track> = { hackathonId: new ObjectId(hackathonId) };
         if (!options?.includeInactive) {
             query.isActive = true;
@@ -70,6 +74,7 @@ export class TrackRepository {
     }): Promise<{ items: Track[]; total: number; page: number; pageSize: number }> {
         const { hackathonId, search, page = 1, pageSize = 10, includeInactive = false } = params;
 
+        if (!ObjectId.isValid(hackathonId)) return { items: [], total: 0, page, pageSize };
         const filter: Filter<Track> = { hackathonId: new ObjectId(hackathonId) };
         if (!includeInactive) filter.isActive = true;
 
