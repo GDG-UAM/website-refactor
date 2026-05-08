@@ -55,7 +55,7 @@ export default function AdminBreadcrumbs({ items: propsItems, className, style }
                         );
 
                         return (
-                            <Crumb key={it.href || i} variants={crumbVariants} initial="hidden" animate="visible" exit="exit">
+                            <Crumb key={`${it.label}-${i}`} variants={crumbVariants} initial="hidden" animate="visible" exit="exit">
                                 {i !== 0 && (
                                     <Sep variants={crumbVariants} initial="hidden" animate="visible" exit="exit">
                                         /

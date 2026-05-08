@@ -1135,6 +1135,7 @@
                     "search": "Buscar tracks...",
                     "showDeleted": "Mostrar tracks eliminados",
                     "noTracks": "No hay tracks para mostrar.",
+                    "noTeams": "No hay equipos para mostrar.",
                     "noResults": "No se encontraron resultados."
                 },
                 "fields": {

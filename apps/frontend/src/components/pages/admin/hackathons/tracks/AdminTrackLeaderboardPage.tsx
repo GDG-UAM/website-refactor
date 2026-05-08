@@ -85,7 +85,7 @@ export function AdminTrackLeaderboardPage({ hackathonId, trackId, trackName }: A
                 loading={loading}
                 onReload={load}
                 reloadLabel={m["admin.hackathons.tracks.list.reload"]()}
-                emptyMessage={m["admin.hackathons.tracks.list.noTracks"]()}
+                emptyMessage={m["admin.hackathons.tracks.list.noTeams"]()}
                 rowActions={(row) => (
                     <ViewButton
                         onClick={() => router.push(`/admin/hackathons/${hackathonId}/tracks/${trackId}/leaderboard/${row._id}`)}

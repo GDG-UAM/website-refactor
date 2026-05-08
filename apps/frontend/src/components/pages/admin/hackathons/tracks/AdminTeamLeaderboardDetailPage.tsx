@@ -153,11 +153,16 @@ export function AdminTeamLeaderboardDetailPage({ hackathonId, trackId, teamId, t
     const [data, setData] = useState<TeamDetail | null>(null);
     const [loading, setLoading] = useState(true);
 
-    useRegisterBreadcrumbs([
+    const breadcrumbs = [
         { label: trackName || trackId, noTranslate: !!trackName },
-        { label: m["evaluations.leaderboard"](), href: `/admin/hackathons/${hackathonId}/tracks/${trackId}/leaderboard` },
-        { label: data?.name || teamId, noTranslate: !!data?.name }
-    ]);
+        { label: m["evaluations.leaderboard"](), href: `/admin/hackathons/${hackathonId}/tracks/${trackId}/leaderboard` }
+    ];
+
+    if (data?.name) {
+        breadcrumbs.push({ label: data.name, noTranslate: true });
+    }
+
+    useRegisterBreadcrumbs(breadcrumbs);
 
     useEffect(() => {
         async function load() {
