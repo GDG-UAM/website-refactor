@@ -282,7 +282,9 @@
       "timeline": "Event timeline",
       "youAreHere": "You are here",
       "timelineSR": "Hover over or focus on a point to see details. The card rotates automatically.",
-      "mainCopy_events": "Events"
+      "mainCopy_events": "Events",
+      "summerBreak": "Summer Break",
+      "winterBreak": "Winter Break"
     }
   },
   "auth": {
@@ -558,6 +560,10 @@
     "loading": "Loading events...",
     "error": "Error",
     "noEvents": "No events to show.",
+    "noUpcomingEvents": {
+      "text": "It seems we're taking a break.",
+      "button": "Check out past events"
+    },
     "share": {
       "title": "Share",
       "description": "Share the event \"{title}\" on {date}.",

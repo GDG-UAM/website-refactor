@@ -306,34 +306,38 @@ export const auth = betterAuth({
             enabled: false // Disabled due to complex JSON fields exceeding cookie size limits
         }
     },
-    secondaryStorage: {
-        // Redis-backed session cache (avoids hitting DB on every request)
-        get: async (key) => {
-            const cached = await redis.get(key);
-            return cached || null;
-        },
-        set: async (key, value, ttl) => {
-            if (ttl) {
-                await redis.set(key, value, "EX", ttl);
-            } else {
-                await redis.set(key, value);
-            }
+    ...(process.env.NODE_ENV !== "development"
+        ? {
+              secondaryStorage: {
+                  // Redis-backed session cache (avoids hitting DB on every request)
+                  get: async (key) => {
+                      const cached = await redis.get(key);
+                      return cached || null;
+                  },
+                  set: async (key, value, ttl) => {
+                      if (ttl) {
+                          await redis.set(key, value, "EX", ttl);
+                      } else {
+                          await redis.set(key, value);
+                      }
 
-            // Try to extract userId from the cached data for tracking
-            try {
-                const parsed = JSON.parse(value);
-                const userId = parsed.userId || parsed.user?.id;
-                if (userId) {
-                    await trackSessionKey(key, userId);
-                }
-            } catch {
-                // Ignore parsing errors
-            }
-        },
-        delete: async (key) => {
-            await redis.del(key);
-        }
-    },
+                      // Try to extract userId from the cached data for tracking
+                      try {
+                          const parsed = JSON.parse(value);
+                          const userId = parsed.userId || parsed.user?.id;
+                          if (userId) {
+                              await trackSessionKey(key, userId);
+                          }
+                      } catch {
+                          // Ignore parsing errors
+                      }
+                  },
+                  delete: async (key) => {
+                      await redis.del(key);
+                  }
+              }
+          }
+        : {}),
     plugins: [
         admin({
             defaultRole: "user",

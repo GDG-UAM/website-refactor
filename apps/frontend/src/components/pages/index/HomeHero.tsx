@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as m from "#/paraglide/messages";
 import { ChevronDownButton, PlainButton } from "#/components/Buttons";
+import { ExternalLinkIcon } from "#/components/ExternalLinkIcon";
 import {
     AfterTitle,
     ButtonStack,
@@ -89,7 +90,10 @@ export default function HomeHero({ joinHref = "https://gdguam.es/l/gdg-community
 
                         <ButtonStack>
                             <PlainButton hasBorder slim onClick={() => openLink(joinHref, true)}>
-                                {m["index.hero.joinChapter"]()}
+                                <span>
+                                    {m["index.hero.joinChapter"]()}
+                                    <ExternalLinkIcon />
+                                </span>
                             </PlainButton>
                             <PlainButton noBackground slim color="secondary" onClick={() => openLink(aboutHref, false)}>
                                 {m["index.hero.learnMore"]()}

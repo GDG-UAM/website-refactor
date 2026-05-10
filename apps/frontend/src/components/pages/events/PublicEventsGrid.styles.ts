@@ -32,3 +32,19 @@ export const EventsGrid = styled.div`
     gap: 32px;
     margin-top: 32px;
 `;
+
+export const EmptyState = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    margin-top: 64px;
+    text-align: center;
+
+    p {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin: 0;
+    }
+`;
+

@@ -7,7 +7,8 @@ import AudioVisualizer from "#/components/markdown/components/AudioPlayerVisuali
 import IframeEmbed from "#/components/markdown/components/IframeEmbed";
 import MarkdownImage from "#/components/markdown/components/MarkdownImage";
 import { OpenLinkButton } from "#/components/Buttons";
-import parse, { type DOMNode, type Element } from "html-react-parser";
+import { ExternalLinkIcon } from "#/components/ExternalLinkIcon";
+import parse, { type DOMNode, type Element, domToReact, HTMLReactParserOptions } from "html-react-parser";
 import { Wrapper } from "./RenderMarkdown.styles";
 import * as m from "#/paraglide/messages";
 
@@ -52,7 +53,8 @@ export function RenderMarkdown({ markdown, html, className, style }: RenderMarkd
         const isTag = (node: DOMNode): node is Element => {
             return (node as Element).type === "tag";
         };
-        return parse(resolvedHtml, {
+
+        const options: HTMLReactParserOptions = {
             replace(node) {
                 if (isTag(node) && node.name === "usermention") {
                     const id = (node.attribs && node.attribs["data-id"]) || null;
@@ -67,7 +69,6 @@ export function RenderMarkdown({ markdown, html, className, style }: RenderMarkd
                     return <AudioVisualizer audioUrl={url} bars={bars} mobileBars={mobileBars} />;
                 }
                 if (isTag(node) && node.name === "seemorebutton") {
-                    console.log("Rendering seemorebutton", node);
                     const href = (node.attribs && node.attribs["data-href"]) || "";
                     const text = (node.attribs && node.attribs["data-text"]) || m["markdown.components.seeMoreButton"]();
                     const label = (node.attribs && node.attribs["data-label"]) || m["markdown.components.seeMoreButton"]();
@@ -96,9 +97,35 @@ export function RenderMarkdown({ markdown, html, className, style }: RenderMarkd
                     const height = heightStr ? parseInt(heightStr, 10) : undefined;
                     return <MarkdownImage src={src} alt={alt} title={title} blur={blur} width={width} height={height} />;
                 }
+
+                if (isTag(node) && node.name === "a") {
+                    const href = node.attribs?.href || "";
+                    let isExternal = false;
+                    if (typeof window !== "undefined" && (href.startsWith("http://") || href.startsWith("https://"))) {
+                        try {
+                            const url = new URL(href, window.location.href);
+                            isExternal = url.origin !== window.location.origin;
+                        } catch {
+                            isExternal = !href.includes(window.location.host);
+                        }
+                    }
+
+                    if (isExternal) {
+                        return (
+                            <a {...node.attribs} target="_blank" rel="noopener noreferrer">
+                                <span>
+                                    {domToReact(node.children as DOMNode[], options)}
+                                    <ExternalLinkIcon />
+                                </span>
+                            </a>
+                        );
+                    }
+                }
                 return undefined;
             }
-        });
+        };
+
+        return parse(resolvedHtml, options);
     }, [resolvedHtml]);
 
     return (

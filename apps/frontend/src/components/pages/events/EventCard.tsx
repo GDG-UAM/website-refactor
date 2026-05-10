@@ -83,6 +83,7 @@ export function EventCard({ event, skeleton, onShare }: EventCardProps) {
                         borderRadius={3.5}
                         hasBorder={false}
                         aria-label={`Share ${event.title}`}
+                        style={{ marginTop: "-2px", marginLeft: "-2px" }}
                     />
                 </ShareButtonWrapper>
             )}

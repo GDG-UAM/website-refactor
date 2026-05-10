@@ -542,6 +542,10 @@ export const ChevronDownButton: React.FC<Omit<CustomButtonProps, PropsToOmit>> =
     return <CustomButton path="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" color={color} ariaLabel={ariaLabel ?? m["buttons.down"]()} {...props} />;
 };
 
+export const RightArrowButton: React.FC<Omit<CustomButtonProps, PropsToOmit>> = ({ ariaLabel, color = "primary", ...props }) => {
+    return <CustomButton path="m600-200-57-56 184-184H80v-80h647L544-704l56-56 280 280-280 280Z" color={color} ariaLabel={ariaLabel ?? m["buttons.next"]()} {...props} />;
+};
+
 export const ManageButton: React.FC<Omit<CustomButtonProps, PropsToOmit>> = ({ ariaLabel, color = "primary", ...props }) => {
     return (
         <CustomButton

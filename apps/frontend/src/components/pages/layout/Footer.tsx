@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as m from "#/paraglide/messages";
 import { Socials } from "#/components/Socials";
 import { RichText } from "#/components/RichText";
+import { ExternalLinkIcon } from "#/components/ExternalLinkIcon";
 import { Copyright, Disclaimer, DisclaimerSection, FooterLink, Inner, LinkList, Section, Title, FooterWrapper } from "./Footer.styles";
 
 export default function Footer() {
@@ -28,6 +29,7 @@ export default function Footer() {
                                         style={{ lineBreak: "anywhere" }}
                                     >
                                         https://developers.google.com/community/gdg
+                                        <ExternalLinkIcon/>
                                     </a>
                                 )
                             }}

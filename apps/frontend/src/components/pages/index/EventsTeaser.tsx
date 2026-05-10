@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { PlainButton } from "#/components/Buttons";
+import { ExternalLinkIcon } from "#/components/ExternalLinkIcon";
 import LocalTimeWithSettings from "#/components/LocalTimeWithSettings";
 import {
     Axis,
@@ -34,7 +35,9 @@ import {
     SrOnly,
     Tick,
     Timeline,
-    TimelinePadding
+    TimelinePadding,
+    VacationLabel,
+    VacationLine
 } from "./EventsTeaser.styles";
 import Link from "next/link";
 import * as m from "#/paraglide/messages";
@@ -177,12 +180,23 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 3000
     const locale = getLocale();
     const [isSmallScreen, setIsSmallScreen] = useState(false);
 
+    const [screenWidth, setScreenWidth] = useState(1200);
+
     useEffect(() => {
         const mediaQuery = window.matchMedia("(max-width: 768px)");
         setIsSmallScreen(mediaQuery.matches);
-        const handler = (e: MediaQueryListEvent) => setIsSmallScreen(e.matches);
-        mediaQuery.addEventListener("change", handler);
-        return () => mediaQuery.removeEventListener("change", handler);
+        setScreenWidth(window.innerWidth);
+
+        const mqHandler = (e: MediaQueryListEvent) => setIsSmallScreen(e.matches);
+        const resHandler = () => setScreenWidth(window.innerWidth);
+
+        mediaQuery.addEventListener("change", mqHandler);
+        window.addEventListener("resize", resHandler);
+
+        return () => {
+            mediaQuery.removeEventListener("change", mqHandler);
+            window.removeEventListener("resize", resHandler);
+        };
     }, []);
 
     const now = useMemo(() => {
@@ -254,6 +268,118 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 3000
 
     // Cursor "You are here"
     const todayPercent = useMemo(() => percentBetween(periodStart, periodEnd, now), [periodStart, periodEnd, now]);
+
+    const eventGap = useMemo(() => {
+        const gap = 2162 / screenWidth + 1.25;
+        return Math.max(3, Math.min(10, Math.round(gap)));
+    }, [screenWidth]);
+
+    // Vacation periods logic
+    const vacationSections = useMemo(() => {
+        const rawSections: {
+            start: Date;
+            end: Date;
+            title: string;
+            color: string;
+            labelColor: string;
+            groupId: string;
+        }[] = [];
+
+        const startYear = periodStart.getFullYear();
+        const endYear = periodEnd.getFullYear();
+
+        for (let year = startYear - 1; year <= endYear; year++) {
+            const defs = [
+                {
+                    id: `summer-${year}`,
+                    title: m["index.events.summerBreak"](),
+                    start: new Date(year, 5, 1), // 1 June
+                    end: new Date(year, 7, 31, 21, 59, 59), // 31 August
+                    color: "#fdd663",
+                    labelColor: "#b06000"
+                },
+                {
+                    id: `winter-${year}`,
+                    title: m["index.events.winterBreak"](),
+                    start: new Date(year, 11, 23),
+                    end: new Date(year + 1, 0, 25, 23, 59, 59),
+                    color: "#aecbfa",
+                    labelColor: "#1967d2"
+                }
+            ];
+
+            defs.forEach((v) => {
+                // Initial section
+                let currentSections = [{ start: v.start, end: v.end }];
+
+                // Cut by events
+                points.forEach((p) => {
+                    const eventDate = p.startDate;
+                    const cutStart = addDays(eventDate, -eventGap);
+                    const cutEnd = addDays(eventDate, eventGap);
+
+                    const nextSections: { start: Date; end: Date }[] = [];
+                    currentSections.forEach((sec) => {
+                        if (cutEnd <= sec.start || cutStart >= sec.end) {
+                            nextSections.push(sec);
+                        } else {
+                            if (cutStart > sec.start) {
+                                nextSections.push({ start: sec.start, end: cutStart });
+                            }
+                            if (cutEnd < sec.end) {
+                                nextSections.push({ start: cutEnd, end: sec.end });
+                            }
+                        }
+                    });
+                    currentSections = nextSections;
+                });
+
+                // Add to raw list if they overlap with period view
+                currentSections.forEach((sec) => {
+                    const clipStart = new Date(Math.max(ms(sec.start), ms(periodStart)));
+                    const clipEnd = new Date(Math.min(ms(sec.end), ms(periodEnd)));
+
+                    if (clipStart < clipEnd) {
+                        rawSections.push({
+                            start: clipStart,
+                            end: clipEnd,
+                            title: v.title,
+                            color: v.color,
+                            labelColor: v.labelColor,
+                            groupId: v.id
+                        });
+                    }
+                });
+            });
+        }
+
+        // For each groupId, find the longest section and keep the title only there
+        const groups = new Set(rawSections.map((s) => s.groupId));
+        const finalSections = rawSections.map((s) => ({ ...s, showTitle: false }));
+
+        groups.forEach((gid) => {
+            const groupSections = finalSections.filter((s) => s.groupId === gid);
+            if (groupSections.length === 0) return;
+
+            let longest = groupSections[0];
+            groupSections.forEach((s) => {
+                if (ms(s.end) - ms(s.start) > ms(longest.end) - ms(longest.start)) {
+                    longest = s;
+                }
+            });
+
+            // Only show title if duration is > 15 days (heuristic for space)
+            // Wait, "If space is sufficient"
+            // Let's check the width in percentage
+            const widthPct = percentBetween(periodStart, periodEnd, longest.end) - percentBetween(periodStart, periodEnd, longest.start);
+            if (widthPct > 10) {
+                // 10% of timeline width seems reasonable for a short label
+                longest.showTitle = true;
+            }
+        });
+
+        return finalSections;
+    }, [periodStart, periodEnd, points, eventGap]);
 
     // Estado de selección/rotación
     const [activeSlug, setActiveSlug] = useState<string | undefined>(nearestEventSlug);
@@ -480,7 +606,10 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 3000
                             color="primary"
                             disabled={activeEvent?.startDate < now}
                         >
-                            {m["index.events.join"]()}
+                            <span>
+                                {m["index.events.join"]()}
+                                <ExternalLinkIcon />
+                            </span>
                         </PlainButton>
                         <PlainButton
                             hasBorder
@@ -513,6 +642,21 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 3000
                                 </Month>
                             ))}
                         </Months>
+
+                        {/* Vacation periods */}
+                        {vacationSections.map((sec, i) => {
+                            const left = percentBetween(periodStart, periodEnd, sec.start);
+                            const right = percentBetween(periodStart, periodEnd, sec.end);
+                            return (
+                                <VacationLine
+                                    key={`${sec.groupId}-${i}`}
+                                    $color={sec.color}
+                                    style={{ left: `${left}%`, width: `${right - left}%` }}
+                                >
+                                    {sec.showTitle && <VacationLabel style={{ color: sec.labelColor }}>{sec.title}</VacationLabel>}
+                                </VacationLine>
+                            );
+                        })}
 
                         {/* Place points inside the Axis so they align to the top border */}
                         <Points role="listbox" aria-label="Eventos cercanos">

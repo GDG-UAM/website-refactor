@@ -8,6 +8,7 @@ import * as m from "#/paraglide/messages";
 import { serverApi } from "#/lib/eden-server";
 import { cache } from "react";
 import PageReveal from "#/components/PageReveal";
+import { ExternalLinkIcon } from "#/components/ExternalLinkIcon";
 
 export const revalidate = 60;
 
@@ -102,7 +103,10 @@ export default async function EventPublicPage(context: { params: Promise<{ slug:
                     {event.url ? (
                         <div style={{ marginTop: 20 }}>
                             <Link href={event.url} target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", fontWeight: 600 }}>
-                                {m["events.registerMoreInfo"]()}
+                                <span>
+                                    {m["events.registerMoreInfo"]()}
+                                    <ExternalLinkIcon />
+                                </span>
                             </Link>
                         </div>
                     ) : null}

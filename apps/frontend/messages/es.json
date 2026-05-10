@@ -282,7 +282,9 @@
             "timeline": "Línea temporal de eventos",
             "youAreHere": "Estás aquí",
             "timelineSR": "Pasa el cursor o enfoca un punto para ver detalles. La tarjeta rota automáticamente cada 40 segundos.",
-            "mainCopy_events": "Eventos"
+            "mainCopy_events": "Eventos",
+            "summerBreak": "Vacaciones de Verano",
+            "winterBreak": "Vacaciones de Invierno"
         }
     },
     "auth": {
@@ -558,6 +560,10 @@
         "loading": "Cargando eventos...",
         "error": "Error",
         "noEvents": "No hay eventos para mostrar.",
+        "noUpcomingEvents": {
+            "text": "Parece que nos estamos tomando un descanso.",
+            "button": "Ver eventos pasados"
+        },
         "share": {
             "title": "Compartir",
             "description": "Comparte el evento \"{title}\" del día {date}.",

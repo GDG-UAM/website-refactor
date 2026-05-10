@@ -165,6 +165,31 @@ export const Axis = styled.div`
     border-top: 2px solid var(--color-gray-200);
 `;
 
+export const VacationLine = styled.div<{ $color: string }>`
+    position: absolute;
+    top: -10px;
+    top: -2px;
+    height: 3px;
+    background: ${(p) => p.$color};
+    border-radius: 999px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+export const VacationLabel = styled.span`
+    position: absolute;
+    bottom: 6px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+    padding: 0 4px;
+    letter-spacing: 0.02em;
+`;
+
 export const Months = styled.div`
     position: relative;
     height: 100%;

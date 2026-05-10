@@ -2,12 +2,12 @@
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { EventCard } from "./EventCard";
-import { CopyButton, PlainButton } from "#/components/Buttons";
+import { CopyButton, PlainButton, RightArrowButton } from "#/components/Buttons";
 import Modal from "#/components/Modal";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import { useSearchParams, useRouter } from "next/navigation";
-import { PageWrapper, Header, Title, Filters, EventsGrid } from "./PublicEventsGrid.styles";
+import { PageWrapper, Header, Title, Filters, EventsGrid, EmptyState } from "./PublicEventsGrid.styles";
 import { getLocale } from "#/paraglide/runtime";
 import { useEvents, EventItem } from "#/providers/EventsProvider";
 import { m } from "#/paraglide/messages";
@@ -136,7 +136,20 @@ export function PublicEventsGrid() {
                 )}
             </AnimatePresence>
 
-            {!loading && !error && !cacheLoading && !cacheError && sortedEvents.length === 0 && <p>{m["events.noEvents"]()}</p>}
+            {!loading && !error && !cacheLoading && !cacheError && sortedEvents.length === 0 && (
+                <EmptyState>
+                    {dateStatus === "upcoming" ? (
+                        <>
+                            <p>{m["events.noUpcomingEvents.text"]()}</p>
+                            <RightArrowButton onClick={() => setDateStatus("past")} color="secondary">
+                                {m["events.noUpcomingEvents.button"]()}
+                            </RightArrowButton>
+                        </>
+                    ) : (
+                        <p>{m["events.noEvents"]()}</p>
+                    )}
+                </EmptyState>
+            )}
 
             {!loading && !error && !cacheLoading && !cacheError && (
                 <AnimatePresence mode="popLayout">
