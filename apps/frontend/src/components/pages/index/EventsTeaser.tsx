@@ -486,143 +486,166 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 3000
                 </Copy>
 
                 <Card aria-live="polite" aria-atomic="true">
-                    <AnimatePresence mode="wait">
-                        {activeEvent?.slug === nearestEventSlug && (
-                            <motion.div
-                                key="next-badge"
-                                variants={badgeVariants}
-                                initial="enter"
-                                animate="center"
-                                exit="exit"
-                                transition={{ duration: 0.2 }}
-                                style={{ position: "absolute", top: "8px", right: "8px" }}
-                            >
-                                <Badge $visible={true}>{m["index.events.nextEvent"]()}</Badge>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                    <AnimatePresence mode="wait">
-                        {activeEvent?.startDate < now && (
-                            <motion.div
-                                key="past-badge"
-                                variants={badgeVariants}
-                                initial="enter"
-                                animate="center"
-                                exit="exit"
-                                transition={{ duration: 0.2 }}
-                                style={{ position: "absolute", top: "8px", right: "8px" }}
-                            >
-                                <Badge $visible={true} $past>
-                                    {m["index.events.pastEvent"]()}
-                                </Badge>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
-                    <CardHeader>
-                        <AnimatePresence mode="wait" custom={direction}>
-                            <motion.div
-                                key={activeSlug}
-                                custom={direction}
-                                variants={cardContentVariants}
-                                initial="enter"
-                                animate="center"
-                                exit="exit"
-                                transition={{
-                                    x: { type: "spring", stiffness: 300, damping: 30 },
-                                    opacity: { duration: 0.2 }
-                                }}
-                            >
-                                <CardTitle>{activeEvent?.title}</CardTitle>
-                            </motion.div>
-                        </AnimatePresence>
-                        {/* {activeEvent?.description && <CardSubtitle>{activeEvent.description}</CardSubtitle>} */}
-                    </CardHeader>
-
-                    <Meta>
-                        <MetaRow>
-                            <dd>
-                                <DateText>
-                                    <Icon path="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z" />
-                                    <AnimatePresence mode="wait" custom={direction}>
-                                        <motion.span
-                                            key={activeSlug + "-date"}
-                                            custom={direction}
-                                            variants={textOnlyVariants}
-                                            initial="enter"
-                                            animate="center"
-                                            exit="exit"
-                                            transition={{
-                                                x: { type: "spring", stiffness: 300, damping: 30 },
-                                                opacity: { duration: 0.2 }
-                                            }}
-                                            style={{ display: "inline-block" }}
-                                        >
-                                            <LocalTimeWithSettings
-                                                iso={(activeEvent?.startDate ?? now).toISOString()}
-                                                dateOnly={false}
-                                                compact
-                                                locale={locale}
-                                                timeZone={timeZone}
-                                            />
-                                        </motion.span>
-                                    </AnimatePresence>
-                                </DateText>
-                            </dd>
-                        </MetaRow>
-                        {activeEvent?.location && (
-                            <MetaRow>
-                                <dd>
-                                    <LocationText>
-                                        <Icon path="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
-                                        <AnimatePresence mode="wait" custom={direction}>
-                                            <motion.span
-                                                key={activeSlug + "-location"}
-                                                custom={direction}
-                                                variants={textOnlyVariants}
-                                                initial="enter"
-                                                animate="center"
-                                                exit="exit"
-                                                transition={{
-                                                    x: { type: "spring", stiffness: 300, damping: 30 },
-                                                    opacity: { duration: 0.2 }
-                                                }}
-                                                style={{ display: "inline-block" }}
-                                            >
-                                                {activeEvent.location}
-                                            </motion.span>
-                                        </AnimatePresence>
-                                    </LocationText>
-                                </dd>
-                            </MetaRow>
-                        )}
-                    </Meta>
-
-                    <CardFooter>
-                        <PlainButton
-                            hasBorder
-                            slim
-                            onClick={() => openLink(activeEvent?.joinURL || FALLBACK_COMMUNITY_URL, true)}
-                            aria-label={m["index.events.join"]()}
-                            color="primary"
-                            disabled={activeEvent?.startDate < now}
+                    {points.length === 0 ? (
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                flex: 1,
+                                textAlign: "center",
+                                gap: "16px"
+                            }}
                         >
-                            <span>
-                                {m["index.events.join"]()}
-                                <ExternalLinkIcon />
-                            </span>
-                        </PlainButton>
-                        <PlainButton
-                            hasBorder
-                            slim
-                            onClick={() => openLink(activeEvent.moreInfoURL as string, false)}
-                            aria-label={m["index.events.moreInfo"]()}
-                            noBackground={true}
-                            color="secondary"
-                            disabled={!activeEvent?.moreInfoURL || activeEvent?.moreInfoURL === "#"}
-                        >
-                            {m["index.events.moreInfo"]()}
-                        </PlainButton>
-                    </CardFooter>
+                            <p style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600, color: "var(--google-dark-gray)" }}>
+                                {m["events.noUpcomingEvents.text"]()}
+                            </p>
+                            <PlainButton hasBorder slim onClick={() => openLink("/events?status=past", false)} color="secondary">
+                                {m["events.noUpcomingEvents.button"]()}
+                            </PlainButton>
+                        </div>
+                    ) : (
+                        <>
+                            <AnimatePresence mode="wait">
+                                {activeEvent?.slug === nearestEventSlug && (
+                                    <motion.div
+                                        key="next-badge"
+                                        variants={badgeVariants}
+                                        initial="enter"
+                                        animate="center"
+                                        exit="exit"
+                                        transition={{ duration: 0.2 }}
+                                        style={{ position: "absolute", top: "8px", right: "8px" }}
+                                    >
+                                        <Badge $visible={true}>{m["index.events.nextEvent"]()}</Badge>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                            <AnimatePresence mode="wait">
+                                {activeEvent?.startDate < now && (
+                                    <motion.div
+                                        key="past-badge"
+                                        variants={badgeVariants}
+                                        initial="enter"
+                                        animate="center"
+                                        exit="exit"
+                                        transition={{ duration: 0.2 }}
+                                        style={{ position: "absolute", top: "8px", right: "8px" }}
+                                    >
+                                        <Badge $visible={true} $past>
+                                            {m["index.events.pastEvent"]()}
+                                        </Badge>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                            <CardHeader>
+                                <AnimatePresence mode="wait" custom={direction}>
+                                    <motion.div
+                                        key={activeSlug}
+                                        custom={direction}
+                                        variants={cardContentVariants}
+                                        initial="enter"
+                                        animate="center"
+                                        exit="exit"
+                                        transition={{
+                                            x: { type: "spring", stiffness: 300, damping: 30 },
+                                            opacity: { duration: 0.2 }
+                                        }}
+                                    >
+                                        <CardTitle>{activeEvent?.title}</CardTitle>
+                                    </motion.div>
+                                </AnimatePresence>
+                                {/* {activeEvent?.description && <CardSubtitle>{activeEvent.description}</CardSubtitle>} */}
+                            </CardHeader>
+
+                            <Meta>
+                                <MetaRow>
+                                    <dd>
+                                        <DateText>
+                                            <Icon path="M200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z" />
+                                            <AnimatePresence mode="wait" custom={direction}>
+                                                <motion.span
+                                                    key={activeSlug + "-date"}
+                                                    custom={direction}
+                                                    variants={textOnlyVariants}
+                                                    initial="enter"
+                                                    animate="center"
+                                                    exit="exit"
+                                                    transition={{
+                                                        x: { type: "spring", stiffness: 300, damping: 30 },
+                                                        opacity: { duration: 0.2 }
+                                                    }}
+                                                    style={{ display: "inline-block" }}
+                                                >
+                                                    <LocalTimeWithSettings
+                                                        iso={(activeEvent?.startDate ?? now).toISOString()}
+                                                        dateOnly={false}
+                                                        compact
+                                                        locale={locale}
+                                                        timeZone={timeZone}
+                                                    />
+                                                </motion.span>
+                                            </AnimatePresence>
+                                        </DateText>
+                                    </dd>
+                                </MetaRow>
+                                {activeEvent?.location && (
+                                    <MetaRow>
+                                        <dd>
+                                            <LocationText>
+                                                <Icon path="M480-480q33 0 56.5-23.5T560-560q0-33-23.5-56.5T480-640q-33 0-56.5 23.5T400-560q0 33 23.5 56.5T480-480Zm0 294q122-112 181-203.5T720-552q0-109-69.5-178.5T480-800q-101 0-170.5 69.5T240-552q0 71 59 162.5T480-186Zm0 106Q319-217 239.5-334.5T160-552q0-150 96.5-239T480-880q127 0 223.5 89T800-552q0 100-79.5 217.5T480-80Zm0-480Z" />
+                                                <AnimatePresence mode="wait" custom={direction}>
+                                                    <motion.span
+                                                        key={activeSlug + "-location"}
+                                                        custom={direction}
+                                                        variants={textOnlyVariants}
+                                                        initial="enter"
+                                                        animate="center"
+                                                        exit="exit"
+                                                        transition={{
+                                                            x: { type: "spring", stiffness: 300, damping: 30 },
+                                                            opacity: { duration: 0.2 }
+                                                        }}
+                                                        style={{ display: "inline-block" }}
+                                                    >
+                                                        {activeEvent.location}
+                                                    </motion.span>
+                                                </AnimatePresence>
+                                            </LocationText>
+                                        </dd>
+                                    </MetaRow>
+                                )}
+                            </Meta>
+
+                            <CardFooter>
+                                <PlainButton
+                                    hasBorder
+                                    slim
+                                    onClick={() => openLink(activeEvent?.joinURL || FALLBACK_COMMUNITY_URL, true)}
+                                    aria-label={m["index.events.join"]()}
+                                    color="primary"
+                                    disabled={activeEvent?.startDate < now}
+                                >
+                                    <span>
+                                        {m["index.events.join"]()}
+                                        <ExternalLinkIcon />
+                                    </span>
+                                </PlainButton>
+                                <PlainButton
+                                    hasBorder
+                                    slim
+                                    onClick={() => openLink(activeEvent.moreInfoURL as string, false)}
+                                    aria-label={m["index.events.moreInfo"]()}
+                                    noBackground={true}
+                                    color="secondary"
+                                    disabled={!activeEvent?.moreInfoURL || activeEvent?.moreInfoURL === "#"}
+                                >
+                                    {m["index.events.moreInfo"]()}
+                                </PlainButton>
+                            </CardFooter>
+                        </>
+                    )}
                 </Card>
             </Grid>
 
@@ -648,11 +671,7 @@ export default function EventsTeaser({ events, periodMonths = 3, rotateMs = 3000
                             const left = percentBetween(periodStart, periodEnd, sec.start);
                             const right = percentBetween(periodStart, periodEnd, sec.end);
                             return (
-                                <VacationLine
-                                    key={`${sec.groupId}-${i}`}
-                                    $color={sec.color}
-                                    style={{ left: `${left}%`, width: `${right - left}%` }}
-                                >
+                                <VacationLine key={`${sec.groupId}-${i}`} $color={sec.color} style={{ left: `${left}%`, width: `${right - left}%` }}>
                                     {sec.showTitle && <VacationLabel style={{ color: sec.labelColor }}>{sec.title}</VacationLabel>}
                                 </VacationLine>
                             );
