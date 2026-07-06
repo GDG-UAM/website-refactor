@@ -9,6 +9,7 @@ async function getSharp(): Promise<SharpFn> {
     if (!sharpFn) {
         const sharpModule = await import("sharp");
         sharpFn = sharpModule.default;
+        sharpFn.cache(false);
     }
     return sharpFn;
 }
@@ -33,27 +34,60 @@ export interface BlurHashResult {
  * @param imageUrl - The URL of the image to generate a BlurHash for
  * @returns The BlurHash result with hash string and dimensions, or null if generation fails
  */
-export async function generateBlurHash(imageUrl: string): Promise<BlurHashResult | null> {
+export async function generateBlurHash(imageUrl: string, signal?: AbortSignal): Promise<BlurHashResult | null> {
     try {
-        const response = await fetch(imageUrl);
+        const response = await fetch(imageUrl, { signal });
         if (!response.ok) {
             console.error(`Failed to fetch image: ${response.status} ${response.statusText}`);
             return null;
         }
 
-        const buffer = Buffer.from(await response.arrayBuffer());
+        const contentLength = response.headers.get("content-length");
+        if (contentLength && parseInt(contentLength, 10) > 10 * 1024 * 1024) {
+            console.error(`Image is too large: ${contentLength} bytes`);
+            return null;
+        }
+
+        const reader = response.body?.getReader();
+        if (!reader) {
+            console.error("No response body reader");
+            return null;
+        }
+
+        const chunks: Uint8Array[] = [];
+        let totalLength = 0;
+        const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (value) {
+                if (totalLength + value.length > MAX_SIZE) {
+                    console.error("Image exceeded maximum size limit of 10MB");
+                    await reader.cancel();
+                    return null;
+                }
+                chunks.push(value);
+                totalLength += value.length;
+            }
+        }
+
+        const buffer = Buffer.concat(chunks);
 
         // Dynamically import sharp to avoid blocking module loading
         const sharp = await getSharp();
 
+        // Create sharp instance
+        const sharpInstance = sharp(buffer);
+
         // Get original image dimensions first
-        const metadata = await sharp(buffer).metadata();
+        const metadata = await sharpInstance.metadata();
         const originalWidth = metadata.width || 0;
         const originalHeight = metadata.height || 0;
 
         // Resize to small dimensions for faster encoding
         // Using 32x32 as a good balance between quality and performance
-        const { data, info } = await sharp(buffer).resize(32, 32, { fit: "inside" }).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+        const { data, info } = await sharpInstance.resize(32, 32, { fit: "inside" }).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
 
         // Encode with 4x3 components (good balance of detail vs string length)
         const blurHash = encode(new Uint8ClampedArray(data), info.width, info.height, 4, 3);

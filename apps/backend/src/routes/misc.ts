@@ -24,7 +24,32 @@ export const miscRoutes = new Elysia({ prefix: "/misc" }).get(
                 return { error: "Failed to fetch page" };
             }
 
-            const html = await response.text();
+            const reader = response.body?.getReader();
+            if (!reader) {
+                set.status = 500;
+                return { error: "Failed to read response body" };
+            }
+
+            const chunks: Uint8Array[] = [];
+            let totalLength = 0;
+            const MAX_SIZE = 1 * 1024 * 1024; // 1MB
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                if (value) {
+                    if (totalLength + value.length > MAX_SIZE) {
+                        chunks.push(value.slice(0, MAX_SIZE - totalLength));
+                        totalLength = MAX_SIZE;
+                        await reader.cancel();
+                        break;
+                    }
+                    chunks.push(value);
+                    totalLength += value.length;
+                }
+            }
+
+            const html = Buffer.concat(chunks).toString("utf-8");
             let title: string | null = null;
             const ogTitleMatch = html.match(/<meta\s+property=["']og:title["']\s+content=["']([^"']+)["']/i);
             if (ogTitleMatch) title = ogTitleMatch[1];

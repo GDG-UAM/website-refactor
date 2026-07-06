@@ -72,17 +72,21 @@ async function processImage(
         return { url, alt, title };
     }
 
+    let timeoutId: Timer | undefined;
+    const controller = new AbortController();
+
     try {
-        // Add timeout to prevent hanging on slow URLs
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        const timeoutPromise = new Promise<null>((_, reject) => {
+            timeoutId = setTimeout(() => {
+                controller.abort();
+                reject(new Error("BlurHash generation timeout"));
+            }, timeout);
+        });
 
         const blurResult = await Promise.race([
-            generateBlurHash(url),
-            new Promise<null>((_, reject) => setTimeout(() => reject(new Error("BlurHash generation timeout")), timeout))
+            generateBlurHash(url, controller.signal),
+            timeoutPromise
         ]);
-
-        clearTimeout(timeoutId);
 
         if (blurResult) {
             return {
@@ -98,6 +102,10 @@ async function processImage(
     } catch (error) {
         console.warn(`Failed to generate BlurHash for ${url}:`, error);
         return { url, alt, title };
+    } finally {
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
     }
 }
 
@@ -157,8 +165,24 @@ export async function processMarkdownSave(markdown: string): Promise<string> {
 
     if (matches.length === 0) return markdown;
 
-    // Process all images in parallel
-    const processedImages = await Promise.allSettled(matches.map((m) => processImage(m.url, m.alt, m.title)));
+    // Process all images sequentially to avoid parallel memory spikes
+    const processedImages: Array<PromiseSettledResult<{
+        url: string;
+        alt: string;
+        title?: string;
+        blur?: string;
+        width?: number;
+        height?: number;
+    }>> = [];
+
+    for (const m of matches) {
+        try {
+            const val = await processImage(m.url, m.alt, m.title);
+            processedImages.push({ status: "fulfilled", value: val });
+        } catch (err: any) {
+            processedImages.push({ status: "rejected", reason: err });
+        }
+    }
 
     // Build result by replacing matches in reverse order (to preserve indices)
     let result = markdown;

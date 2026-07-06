@@ -84,12 +84,15 @@ export async function updateUserSessions(userId: string, user?: any): Promise<vo
  * Since we use a prefix, we only delete our keys.
  */
 export async function clearSessionCache(): Promise<void> {
-    const keys = await redis.keys("*");
-    if (keys.length > 0) {
-        // We need to remove the global prefix before calling del if we are using redis.del
-        // but ioredis handles prefixing. However, redis.keys returns keys WITH the prefix.
-        // Wait, ioredis 'keys' returns keys WITHOUT the prefix.
-        await redis.del(...keys);
+    const stream = redis.scanStream({
+        match: "*",
+        count: 100
+    });
+
+    for await (const resultKeys of stream) {
+        if (resultKeys.length > 0) {
+            await redis.del(...resultKeys);
+        }
     }
 }
 
