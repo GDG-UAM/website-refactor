@@ -409,6 +409,64 @@
             }
         }
     },
+    "links": {
+        "pageTitle": "Enlaces",
+        "pageDescription": "Todos los enlaces de GDG on Campus UAM en un solo lugar: redes sociales, comunidad, próximos eventos y más.",
+        "title": "GDG on Campus UAM",
+        "bio": "Comunidad tecnológica de estudiantes de la Universidad Autónoma de Madrid. Charlas, talleres, hackathons y mucha diversión.",
+        "copied": "Enlace copiado al portapapeles",
+        "nextEvent": "Próximo evento",
+        "sections": {
+            "community": "Únete a la comunidad",
+            "explore": "Explora"
+        },
+        "items": {
+            "home": {
+                "title": "Nuestra web",
+                "description": "gdguam.es"
+            },
+            "gdgCommunity": {
+                "title": "Únete en GDG Community",
+                "description": "Hazte miembro y recibe avisos de nuevos eventos"
+            },
+            "whatsapp": {
+                "title": "Comunidad de WhatsApp",
+                "description": "Anuncios y chat con otros miembros"
+            },
+            "instagram": {
+                "title": "Instagram",
+                "description": "Fotos, stories y lo mejor de cada evento"
+            },
+            "linkedin": {
+                "title": "LinkedIn",
+                "description": "Noticias, colaboraciones y oportunidades"
+            },
+            "email": {
+                "title": "Escríbenos",
+                "description": "gdguam@gmail.com"
+            },
+            "events": {
+                "title": "Eventos",
+                "description": "Próximos eventos y eventos pasados"
+            },
+            "newsletter": {
+                "title": "Newsletter",
+                "description": "Ponte al día de todo lo que hemos hecho"
+            },
+            "blog": {
+                "title": "Blog",
+                "description": "Artículos, guías y novedades del equipo"
+            },
+            "about": {
+                "title": "Sobre nosotros",
+                "description": "Nuestra misión y el equipo detrás de la comunidad"
+            },
+            "contact": {
+                "title": "Contacto y patrocinio",
+                "description": "Dudas, propuestas de charlas o colaboraciones"
+            }
+        }
+    },
     "userProfile": {
         "pageTitle": "Perfil",
         "pageDescription": " ",

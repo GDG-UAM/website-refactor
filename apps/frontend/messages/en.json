@@ -409,6 +409,64 @@
       }
     }
   },
+  "links": {
+    "pageTitle": "Links",
+    "pageDescription": "All of GDG on Campus UAM's links in one place: our socials, community, upcoming events and more.",
+    "title": "GDG on Campus UAM",
+    "bio": "Student tech community at Universidad Autónoma de Madrid. Talks, workshops, hackathons and a lot of fun.",
+    "copied": "Link copied to clipboard",
+    "nextEvent": "Next event",
+    "sections": {
+      "community": "Join the community",
+      "explore": "Explore"
+    },
+    "items": {
+      "home": {
+        "title": "Our website",
+        "description": "gdguam.es"
+      },
+      "gdgCommunity": {
+        "title": "Join us on GDG Community",
+        "description": "Become a member and get notified about new events"
+      },
+      "whatsapp": {
+        "title": "WhatsApp community",
+        "description": "Announcements and chat with other members"
+      },
+      "instagram": {
+        "title": "Instagram",
+        "description": "Photos, stories and event highlights"
+      },
+      "linkedin": {
+        "title": "LinkedIn",
+        "description": "News, collaborations and opportunities"
+      },
+      "email": {
+        "title": "Email us",
+        "description": "gdguam@gmail.com"
+      },
+      "events": {
+        "title": "Events",
+        "description": "Upcoming and past events"
+      },
+      "newsletter": {
+        "title": "Newsletter",
+        "description": "Catch up on everything we've been up to"
+      },
+      "blog": {
+        "title": "Blog",
+        "description": "Articles, guides and updates from the team"
+      },
+      "about": {
+        "title": "About us",
+        "description": "Our mission and the team behind the community"
+      },
+      "contact": {
+        "title": "Contact & sponsorship",
+        "description": "Questions, talk proposals or collaborations"
+      }
+    }
+  },
   "userProfile": {
     "pageTitle": "Profile",
     "pageDescription": " ",
@@ -1403,7 +1461,7 @@
       "scheduleTitle": "Event Schedule"
     }
   },
-    "evaluations": {
+  "evaluations": {
     "pageTitle": "Evaluations",
     "notEvaluated": "Not Evaluated",
     "evaluated": "Evaluated",

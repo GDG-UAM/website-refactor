@@ -246,7 +246,7 @@ export const CollapsableMenuButton: React.FC<Omit<CustomButtonProps, PropsToOmit
     );
 };
 
-interface ConfigSocials {
+export interface ConfigSocials {
     baseUrl: string;
     iconPath: string;
     isPathElement?: boolean;
@@ -255,7 +255,7 @@ interface ConfigSocials {
     hoverColor: string;
 }
 
-const SocialMedia: Record<string, ConfigSocials> = {
+export const SocialMedia: Record<string, ConfigSocials> = {
     instagram: {
         baseUrl: "https://instagram.com/",
         iconPath:

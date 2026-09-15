@@ -275,6 +275,23 @@
     --footer-copyright-text: var(--google-light-gray);
 }
 
+/* Links page */
+:root {
+    --links-title-text: #202124;
+    --links-bio-text: var(--google-light-gray);
+    --links-section-title-text: var(--google-light-gray);
+    --links-avatar-bg: var(--color-white);
+    --links-avatar-ring: conic-gradient(var(--google-green) 0 25%, var(--google-yellow) 0 50%, var(--google-blue) 0 75%, var(--google-red) 0);
+    --links-card-border: var(--color-gray-200);
+    --links-card-shadow: 0 4px 12px color-mix(in srgb, var(--color-black) 5%, transparent);
+    --links-card-title-text: var(--google-dark-gray);
+    --links-card-description-text: var(--google-light-gray);
+    --links-card-arrow-text: var(--color-gray-400);
+    --links-featured-badge-bg: color-mix(in srgb, var(--google-red) 10%, transparent);
+    --links-featured-badge-text: var(--google-red);
+    --links-skeleton-bg: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%);
+}
+
 /* Markdown */
 :root {
     /* Base */
