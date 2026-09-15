@@ -1,15 +1,6 @@
-import styled, { createGlobalStyle, css, keyframes } from "styled-components";
+import styled, { createGlobalStyle, css } from "styled-components";
 import { motion } from "framer-motion";
 import Link from "next/link";
-
-const shimmer = keyframes`
-    0% {
-        background-position: 100% 50%;
-    }
-    100% {
-        background-position: 0 50%;
-    }
-`;
 
 // Standalone page: hide the global navbar and footer
 export const GlobalLinksStyle = createGlobalStyle`
@@ -220,13 +211,4 @@ export const FeaturedBadge = styled.span`
     text-transform: uppercase;
     background: var(--links-featured-badge-bg);
     color: var(--links-featured-badge-text);
-`;
-
-export const FeaturedSkeleton = styled.div`
-    height: 100px;
-    border-radius: 16px;
-    border: 2px solid var(--links-card-border);
-    background: var(--links-skeleton-bg);
-    background-size: 400% 100%;
-    animation: ${shimmer} 1.4s ease infinite;
 `;

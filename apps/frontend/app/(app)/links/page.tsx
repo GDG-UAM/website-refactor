@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import * as m from "#/paraglide/messages";
 import { getLocale } from "#/paraglide/runtime";
@@ -19,7 +19,6 @@ import {
     ExternalCard,
     FeaturedBadge,
     FeaturedImage,
-    FeaturedSkeleton,
     GlobalLinksStyle,
     IconBubble,
     InternalCard,
@@ -30,6 +29,9 @@ import {
     ShareWrapper,
     Title
 } from "./page.styles";
+
+// Upper bound on how long the entrance animation waits for the next event to load
+const MAX_EVENT_WAIT_MS = 1500;
 
 const CHEVRON_PATH = "M504-480 320-664l56-56 240 240-240 240-56-56 184-184Z";
 
@@ -189,6 +191,15 @@ function LinkCard({ item }: { item: LinkItem }) {
 
 export default function LinksPage() {
     const upcoming = useEvents("upcoming");
+    const [waitExpired, setWaitExpired] = useState(false);
+
+    useEffect(() => {
+        const timeout = setTimeout(() => setWaitExpired(true), MAX_EVENT_WAIT_MS);
+        return () => clearTimeout(timeout);
+    }, []);
+
+    // Reveal everything at once when the events request settles, so the featured card doesn't shift the links
+    const ready = (upcoming.hasFetched && !upcoming.isLoading) || waitExpired;
 
     const nextEvent = useMemo(() => {
         if (!upcoming.items.length) return null;
@@ -219,7 +230,7 @@ export default function LinksPage() {
     return (
         <PageContainer>
             <GlobalLinksStyle />
-            <Column initial="hidden" animate="visible" variants={containerVariants}>
+            <Column initial="hidden" animate={ready ? "visible" : "hidden"} variants={containerVariants}>
                 <Profile variants={itemVariants}>
                     <ShareWrapper>
                         <ShareButton onClick={handleShare} color="default" iconSize={20} dontUseContext />
@@ -233,26 +244,22 @@ export default function LinksPage() {
                     <Bio>{m["links.bio"]()}</Bio>
                 </Profile>
 
-                {!upcoming.hasFetched || upcoming.isLoading ? (
-                    <FeaturedSkeleton aria-hidden="true" />
-                ) : (
-                    nextEvent && (
-                        <InternalCard href={`/events/${nextEvent.slug}`} $accent="var(--google-red)" {...cardMotion}>
-                            <FeaturedImage>
-                                <Image src={nextEvent.image || "/logo/196x196.webp"} alt="" fill sizes="72px" />
-                            </FeaturedImage>
-                            <CardText>
-                                <FeaturedBadge>{m["links.nextEvent"]()}</FeaturedBadge>
-                                <CardTitle>{nextEvent.title}</CardTitle>
-                                <CardDescription>
-                                    <LocalTimeWithSettings iso={new Date(nextEvent.date).toISOString()} compact locale={getLocale()} />
-                                </CardDescription>
-                            </CardText>
-                            <CardArrow>
-                                <SvgIcon path={CHEVRON_PATH} />
-                            </CardArrow>
-                        </InternalCard>
-                    )
+                {nextEvent && (
+                    <InternalCard href={`/events/${nextEvent.slug}`} $accent="var(--google-red)" {...cardMotion}>
+                        <FeaturedImage>
+                            <Image src={nextEvent.image || "/logo/196x196.webp"} alt="" fill sizes="72px" />
+                        </FeaturedImage>
+                        <CardText>
+                            <FeaturedBadge>{m["links.nextEvent"]()}</FeaturedBadge>
+                            <CardTitle>{nextEvent.title}</CardTitle>
+                            <CardDescription>
+                                <LocalTimeWithSettings iso={new Date(nextEvent.date).toISOString()} compact locale={getLocale()} />
+                            </CardDescription>
+                        </CardText>
+                        <CardArrow>
+                            <SvgIcon path={CHEVRON_PATH} />
+                        </CardArrow>
+                    </InternalCard>
                 )}
 
                 <Section variants={containerVariants}>

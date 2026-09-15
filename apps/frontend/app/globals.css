@@ -289,7 +289,6 @@
     --links-card-arrow-text: var(--color-gray-400);
     --links-featured-badge-bg: color-mix(in srgb, var(--google-red) 10%, transparent);
     --links-featured-badge-text: var(--google-red);
-    --links-skeleton-bg: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%);
 }
 
 /* Markdown */
