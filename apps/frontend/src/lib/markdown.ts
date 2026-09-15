@@ -2,6 +2,7 @@ import sanitizeHtml from "sanitize-html";
 import { marked, MarkedExtension, type Token } from "marked";
 import hljs from "highlight.js";
 import { markedHighlight } from "marked-highlight";
+import { INLINE_SOURCES } from "./markdownSyntax";
 
 // Configure marked for GitHub-flavored markdown features
 marked.setOptions({
@@ -166,7 +167,7 @@ marked.use({
                 const attrs = cap[1] || "";
                 const url = extractAttr(attrs, "url");
                 const bars = extractAttr(attrs, "bars") || "100";
-                const mobileBars = extractAttr(attrs, "bars-mobile") || "50";
+                const mobileBars = extractAttr(attrs, "bars-mobile") || extractAttr(attrs, "mobileBars") || "50";
                 return {
                     type: "audio_player_inline",
                     raw: cap[0],
@@ -196,7 +197,7 @@ marked.use({
                 const attrs = cap[1] || "";
                 const url = extractAttr(attrs, "url");
                 const bars = extractAttr(attrs, "bars") || "100";
-                const mobileBars = extractAttr(attrs, "bars-mobile") || "50";
+                const mobileBars = extractAttr(attrs, "bars-mobile") || extractAttr(attrs, "mobileBars") || "50";
                 return { type: "audio_player_block", raw: cap[0], url, bars, mobileBars } as Token & {
                     url: string;
                     bars: string;
@@ -368,7 +369,7 @@ marked.use({
                 return src.indexOf("~");
             },
             tokenizer(src: string) {
-                const cap = /^~(?!~)(.+?)~/.exec(src);
+                const cap = new RegExp(`^${INLINE_SOURCES.sub}`).exec(src);
                 if (cap) {
                     return { type: "sub", raw: cap[0], text: cap[1] } as InlineToken;
                 }
@@ -386,7 +387,7 @@ marked.use({
                 return src.indexOf("^");
             },
             tokenizer(src: string) {
-                const cap = /^\^(?!\^)(.+?)\^/.exec(src);
+                const cap = new RegExp(`^${INLINE_SOURCES.sup}`).exec(src);
                 if (cap) {
                     return { type: "sup", raw: cap[0], text: cap[1] } as InlineToken;
                 }
@@ -404,7 +405,7 @@ marked.use({
                 return src.indexOf("==");
             },
             tokenizer(src: string) {
-                const cap = /^==(.+?)==/.exec(src);
+                const cap = new RegExp(`^${INLINE_SOURCES.mark}`).exec(src);
                 if (cap) {
                     return { type: "mark", raw: cap[0], text: cap[1] } as InlineToken;
                 }
@@ -422,7 +423,7 @@ marked.use({
                 return src.indexOf("[^");
             },
             tokenizer(src: string) {
-                const cap = /^\[\^([^\]]+)\]/.exec(src);
+                const cap = new RegExp(`^${INLINE_SOURCES.footnoteRef}`).exec(src);
                 if (cap) {
                     const id = cap[1];
                     if (currentFootnotes && currentFootnotes.has(id)) {
