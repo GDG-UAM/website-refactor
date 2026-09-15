@@ -8,6 +8,23 @@ export const GlobalLinksStyle = createGlobalStyle`
     footer {
         display: none !important;
     }
+
+    /* Mobile browsers ignore overflow-x on body alone, and the global 100vw body width can exceed the viewport */
+    html,
+    body {
+        overflow-x: hidden;
+        overflow-x: clip;
+    }
+
+    body {
+        width: 100%;
+    }
+
+    /* The global table display sizes main to its content, which can overflow narrow screens */
+    main {
+        display: block;
+        width: 100%;
+    }
 `;
 
 export const PageContainer = styled.div`
@@ -161,9 +178,6 @@ export const CardDescription = styled.span`
     font-size: 0.85rem;
     line-height: 1.35;
     color: var(--links-card-description-text);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 `;
 
 export const CardArrow = styled.span`
