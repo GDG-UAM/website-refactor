@@ -25,6 +25,14 @@ function getBestMatchingLanguage(acceptLanguageHeader: string | null): string {
 }
 
 export function middleware(request: NextRequest) {
+    // Some in-app browsers (Instagram, DuckDuckGo) don't upgrade to HTTPS on their own. On http:// the page's origin
+    // doesn't match the https:// backend URL, so every API call is blocked by CORS
+    const host = request.headers.get("x-forwarded-host") ?? request.headers.get("host");
+    if (process.env.NODE_ENV === "production" && request.headers.get("x-forwarded-proto") === "http" && host) {
+        const { pathname, search } = request.nextUrl;
+        return NextResponse.redirect(`https://${host.split(":")[0]}${pathname}${search}`, 308);
+    }
+
     const cookieLang = request.cookies.get("PARAGLIDE_LOCALE")?.value;
 
     // If cookie exists and is valid, use it
