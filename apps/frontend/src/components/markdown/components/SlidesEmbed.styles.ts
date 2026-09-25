@@ -5,7 +5,10 @@ const KEYBOARD = "@media (hover: hover) and (pointer: fine)";
 
 export const Container = styled.figure`
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     margin: 1.5em 0;
+    container-type: inline-size;
 `;
 
 /* Decks are laid out on a 1920×1080 stage that scales to fit */
@@ -49,6 +52,12 @@ export const Caption = styled.figcaption`
     padding: 8px 0 0 4px;
     font-size: 0.9rem;
     color: var(--markdown-base-text);
+
+    /* too narrow for the title next to the buttons: the buttons get the row */
+    @container (max-width: 420px) {
+        justify-content: flex-end;
+        padding-left: 0;
+    }
 `;
 
 export const Title = styled.span`
@@ -59,6 +68,10 @@ export const Title = styled.span`
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    @container (max-width: 420px) {
+        display: none;
+    }
 `;
 
 export const Actions = styled.div`
@@ -66,6 +79,9 @@ export const Actions = styled.div`
     align-items: center;
     gap: 4px;
     flex-shrink: 0;
+    min-width: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 `;
 
 export const Notice = styled.div`

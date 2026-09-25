@@ -16,9 +16,9 @@ export const deckPdfUrl = (name: string, { download = false } = {}) => `${SLIDES
 /**
  * Sandbox for the embed: no `allow-same-origin`, so the deck gets an opaque origin. It can't read this site's cookies
  * or storage, and its requests to gdguam.es are cross-site, so they carry none. Links in slides open in new tabs,
- * outside the sandbox.
+ * outside the sandbox. `allow-orientation-lock` lets full screen turn a phone's deck to landscape.
  */
-export const DECK_SANDBOX = "allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads";
+export const DECK_SANDBOX = "allow-scripts allow-popups allow-popups-to-escape-sandbox allow-downloads allow-orientation-lock";
 
 export type DeckInfo = {
     title: string;
