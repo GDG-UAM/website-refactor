@@ -630,7 +630,16 @@
   },
   "markdown": {
     "components": {
-      "seeMoreButton": "See more"
+      "seeMoreButton": "See more",
+      "slides": {
+        "frameTitle": "Presentation: {title}",
+        "download": "Download PDF",
+        "downloadSize": "Download PDF ({size})",
+        "previous": "Previous slide",
+        "next": "Next slide",
+        "notFound": "The presentation \"{name}\" isn't published.",
+        "invalid": "Invalid presentation name."
+      }
     }
   },
   "mentions": {

@@ -26,7 +26,7 @@ export const INLINE_SOURCES = {
 } as const;
 
 /** Custom tags stored in markdown and rendered as components. `mdimg` is written by the backend on save. */
-export const EMBED_TAGS = ["user", "audioplayer", "seemorebutton", "embedweb", "mdimg"] as const;
+export const EMBED_TAGS = ["user", "audioplayer", "seemorebutton", "embedweb", "slides", "mdimg"] as const;
 export type EmbedTag = (typeof EMBED_TAGS)[number];
 
 /** Self-closing (`<x />`), bare (`<x>`) or empty-paired (`<x></x>`) — the same forms the marked tokenizers accept. */

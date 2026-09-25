@@ -6,6 +6,7 @@ import UserMention from "#/components/markdown/components/UserMention";
 import AudioVisualizer from "#/components/markdown/components/AudioPlayerVisualizer";
 import IframeEmbed from "#/components/markdown/components/IframeEmbed";
 import MarkdownImage from "#/components/markdown/components/MarkdownImage";
+import SlidesEmbed from "#/components/markdown/components/SlidesEmbed";
 import { OpenLinkButton } from "#/components/Buttons";
 import { ExternalLinkIcon } from "#/components/ExternalLinkIcon";
 import parse, { type DOMNode, type Element, domToReact, HTMLReactParserOptions } from "html-react-parser";
@@ -85,6 +86,9 @@ export function RenderMarkdown({ markdown, html, className, style }: RenderMarkd
                     const showTitleBarStr = (node.attribs && node.attribs["data-show-title-bar"]) || "true";
                     const showTitleBar = showTitleBarStr !== "false";
                     return <IframeEmbed url={url} height={height} title={title} showTitleBar={showTitleBar} />;
+                }
+                if (isTag(node) && node.name === "slides") {
+                    return <SlidesEmbed deck={(node.attribs && node.attribs["data-deck"]) || ""} />;
                 }
                 if (isTag(node) && node.name === "mdimage") {
                     const src = (node.attribs && node.attribs["data-src"]) || "";

@@ -97,6 +97,11 @@ function renderIframeEmbed(url: string, height?: string, title?: string, showTit
     return ret;
 }
 
+// Helper to render a slides.gdguam.es presentation (by deck name only; SlidesEmbed validates it)
+function renderSlides(deck: string): string {
+    return `<slides data-deck="${escapeHtml(deck)}"></slides>`;
+}
+
 // Helper to render markdown image with BlurHash HTML
 function renderMarkdownImage(src: string, alt: string, title?: string, blur?: string, width?: string, height?: string): string {
     const safeSrc = escapeHtml(src);
@@ -263,6 +268,22 @@ marked.use({
             },
             renderer(token: Token & { url?: string; height?: string; title?: string; showTitleBar?: string }) {
                 return renderIframeEmbed(token.url || "", token.height, token.title, token.showTitleBar);
+            }
+        },
+        // block presentation embed: <slides deck="..." />
+        {
+            name: "slides_block",
+            level: "block",
+            start(src: string) {
+                return src.indexOf("<slides");
+            },
+            tokenizer(src: string) {
+                const cap = /^<slides\b([^>]*?)(?:\s*\/>|>(?:\s*<\/slides\s*>))(?:\s*\n)?/.exec(src);
+                if (!cap) return undefined;
+                return { type: "slides_block", raw: cap[0], deck: extractAttr(cap[1] || "", "deck") } as Token & { deck: string };
+            },
+            renderer(token: Token & { deck?: string }) {
+                return renderSlides(token.deck || "");
             }
         },
         // block mdimg (markdown image with BlurHash): <mdimg src="..." alt="..." blur="..." width="..." height="..." />
@@ -562,6 +583,8 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
         "seemorebutton",
         // custom iframe embed tag
         "embedweb",
+        // custom presentation embed tag
+        "slides",
         // custom markdown image with BlurHash tag
         "mdimage"
     ]),
@@ -590,6 +613,8 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
             "data-height",
             "data-title",
             "data-show-title-bar",
+            // allow data-deck for <slides />
+            "data-deck",
             // allow data-src, data-alt, data-blur, data-width, data-height for <mdimage />
             "data-src",
             "data-alt",

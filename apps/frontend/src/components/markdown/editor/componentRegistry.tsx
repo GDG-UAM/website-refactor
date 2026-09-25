@@ -87,6 +87,14 @@ export const COMPONENT_REGISTRY: ComponentConfig[] = [
         )
     },
     {
+        id: "slides",
+        label: "Slides",
+        color: "color-mix(in srgb, var(--google-yellow) 20%, transparent)",
+        insertable: true,
+        props: [{ name: "deck", label: "Deck name (slides.gdguam.es/<name>)", type: "text", required: true }],
+        render: (props) => <span style={{ color: "#a16207", fontWeight: 600 }}>🎞 Slides: {props.deck || "no deck"}</span>
+    },
+    {
         id: "mdimg",
         label: "Image",
         color: "color-mix(in srgb, var(--google-green) 16%, transparent)",

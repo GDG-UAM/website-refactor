@@ -630,7 +630,16 @@
     },
     "markdown": {
         "components": {
-            "seeMoreButton": "Ver más"
+            "seeMoreButton": "Ver más",
+            "slides": {
+                "frameTitle": "Presentación: {title}",
+                "download": "Descargar PDF",
+                "downloadSize": "Descargar PDF ({size})",
+                "previous": "Diapositiva anterior",
+                "next": "Siguiente diapositiva",
+                "notFound": "La presentación «{name}» no está publicada.",
+                "invalid": "Nombre de presentación no válido."
+            }
         }
     },
     "mentions": {

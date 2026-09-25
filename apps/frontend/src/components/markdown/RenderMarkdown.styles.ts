@@ -227,6 +227,12 @@ export const Wrapper = styled.div`
         margin: 1em 0;
     }
 
+    /* Presentation from slides.gdguam.es */
+    slides {
+        display: block;
+        margin: 1em 0;
+    }
+
     /* Markdown image with BlurHash */
     mdimage {
         display: block;
