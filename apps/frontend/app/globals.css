@@ -379,6 +379,9 @@ main {
     background: var(--color-gray-50);
     flex: 1;
     display: table;
+    /* fixed layout: the table takes the viewport width instead of growing to fit wide content (e.g. code blocks) */
+    table-layout: fixed;
+    width: 100%;
     height: max-content;
 }
 
