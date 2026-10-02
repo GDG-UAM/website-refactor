@@ -18,9 +18,11 @@ type RenderMarkdownProps = {
     html?: string;
     className?: string;
     style?: React.CSSProperties;
+    /** The content's language, when it isn't the site's (e.g. a translation being edited). Presentations follow it. */
+    lang?: string;
 };
 
-export function RenderMarkdown({ markdown, html, className, style }: RenderMarkdownProps) {
+export function RenderMarkdown({ markdown, html, className, style, lang }: RenderMarkdownProps) {
     const [resolvedHtml, setResolvedHtml] = React.useState<string>(html || "");
     const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -88,7 +90,7 @@ export function RenderMarkdown({ markdown, html, className, style }: RenderMarkd
                     return <IframeEmbed url={url} height={height} title={title} showTitleBar={showTitleBar} />;
                 }
                 if (isTag(node) && node.name === "slides") {
-                    return <SlidesEmbed deck={(node.attribs && node.attribs["data-deck"]) || ""} />;
+                    return <SlidesEmbed deck={(node.attribs && node.attribs["data-deck"]) || ""} lang={lang} />;
                 }
                 if (isTag(node) && node.name === "mdimage") {
                     const src = (node.attribs && node.attribs["data-src"]) || "";
@@ -130,7 +132,7 @@ export function RenderMarkdown({ markdown, html, className, style }: RenderMarkd
         };
 
         return parse(resolvedHtml, options);
-    }, [resolvedHtml]);
+    }, [resolvedHtml, lang]);
 
     return (
         <Wrapper ref={containerRef} className={className} style={style}>

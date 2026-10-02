@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { ChevronLeftButton, ChevronRightButton, DownloadButton } from "#/components/Buttons";
 import { DECK_SANDBOX, deckPdfUrl, deckUrl, getDeckInfo, isDeckName, type DeckInfo } from "#/lib/slides";
 import * as m from "#/paraglide/messages";
+import { getLocale } from "#/paraglide/runtime";
 import { activeDeckElement, navigateDeck, registerDeck, subscribeActive } from "./slidesKeys";
 import { Actions, Caption, Container, Frame, Notice, Title } from "./SlidesEmbed.styles";
 
@@ -17,8 +18,12 @@ const isEdges = (d: unknown): d is Edges & { type: "deck-state" } =>
     typeof (d as Edges).first === "boolean" &&
     typeof (d as Edges).last === "boolean";
 
-/** A presentation from slides.gdguam.es, by name, with its title, prev/next and PDF underneath. ← → drive it while it's in view. */
-export default function SlidesEmbed({ deck }: { deck: string }) {
+/**
+ * A presentation from slides.gdguam.es, by name, with its title, prev/next and PDF underneath. ← → drive it while it's in view.
+ * `lang` is the language the deck and its PDF are shown in: the site's, unless the content around it is in another one.
+ */
+export default function SlidesEmbed({ deck, lang }: { deck: string; lang?: string }) {
+    const locale = lang || getLocale();
     // undefined: not published; null: decks.json couldn't be read (the deck may still load, so it's shown anyway)
     const [info, setInfo] = useState<DeckInfo | undefined | null>(null);
     const [checked, setChecked] = useState(false);
@@ -39,7 +44,7 @@ export default function SlidesEmbed({ deck }: { deck: string }) {
         if (!valid) return;
         let cancelled = false;
         setChecked(false);
-        getDeckInfo(deck).then((result) => {
+        getDeckInfo(deck, locale).then((result) => {
             if (cancelled) return;
             setInfo(result);
             setChecked(true);
@@ -47,7 +52,7 @@ export default function SlidesEmbed({ deck }: { deck: string }) {
         return () => {
             cancelled = true;
         };
-    }, [deck, valid]);
+    }, [deck, valid, locale]);
 
     const shown = valid && !(checked && info === undefined);
     useEffect(() => {
@@ -80,7 +85,7 @@ export default function SlidesEmbed({ deck }: { deck: string }) {
             <Frame $active={active}>
                 <iframe
                     ref={frame}
-                    src={deckUrl(deck, { fullscreen: true })}
+                    src={deckUrl(deck, { fullscreen: true, lang: locale })}
                     title={m["markdown.components.slides.frameTitle"]({ title })}
                     sandbox={DECK_SANDBOX}
                     allow="fullscreen"
@@ -117,7 +122,7 @@ export default function SlidesEmbed({ deck }: { deck: string }) {
                         slim
                         onClick={() => {
                             // served as an attachment, so the browser saves it and the page stays
-                            window.location.href = deckPdfUrl(deck, { download: true });
+                            window.location.href = deckPdfUrl(deck, { download: true, lang: locale });
                         }}
                     >
                         PDF{size && ` · ${size}`}

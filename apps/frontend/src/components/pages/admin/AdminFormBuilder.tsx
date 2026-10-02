@@ -363,7 +363,7 @@ export function AdminFormBuilder<T extends Record<string, any>>({
                             {value && !isActuallyDisabled && (
                                 <PreviewContainer>
                                     <PreviewTitle>Preview ({getShortLanguageName(activeLocale)})</PreviewTitle>
-                                    <RenderMarkdown markdown={value} />
+                                    <RenderMarkdown markdown={value} lang={isLocalized ? activeLocale : undefined} />
                                 </PreviewContainer>
                             )}
                         </>

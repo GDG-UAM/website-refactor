@@ -1,5 +1,5 @@
-import { describe, expect, it } from "bun:test";
-import { deckPdfUrl, deckUrl, isDeckName } from "./slides";
+import { afterEach, describe, expect, it } from "bun:test";
+import { deckPdfUrl, deckUrl, getDeckInfo, isDeckName } from "./slides";
 import { renderMarkdown } from "./markdown";
 import { findEmbeds } from "./markdownSyntax";
 
@@ -20,6 +20,14 @@ describe("deck names", () => {
         expect(deckUrl("github", { fullscreen: true })).toBe("https://slides.gdguam.es/github/?fullscreen");
         expect(deckPdfUrl("github")).toBe("https://slides.gdguam.es/github/slides.pdf");
         expect(deckPdfUrl("github", { download: true })).toBe("https://slides.gdguam.es/github/slides.pdf?download=1");
+    });
+
+    it("asks for the language by its 2-letter code", () => {
+        expect(deckUrl("github", { lang: "en" })).toBe("https://slides.gdguam.es/github/?lang=en");
+        expect(deckUrl("github", { fullscreen: true, lang: "es" })).toBe("https://slides.gdguam.es/github/?fullscreen&lang=es");
+        expect(deckPdfUrl("github", { lang: "es" })).toBe("https://slides.gdguam.es/github/slides.pdf?lang=es");
+        expect(deckPdfUrl("github", { download: true, lang: "en-GB" })).toBe("https://slides.gdguam.es/github/slides.pdf?download=1&lang=en");
+        expect(deckUrl("github", { lang: "x&y" })).toBe("https://slides.gdguam.es/github/");
     });
 });
 
@@ -46,5 +54,27 @@ describe("<slides /> in markdown", () => {
         const [embed] = findEmbeds('text <slides deck="townhall-spotlight" /> text');
         expect(embed.tag).toBe("slides");
         expect(embed.attrs.deck).toBe("townhall-spotlight");
+    });
+});
+
+describe("deck info", () => {
+    const realFetch = globalThis.fetch;
+    afterEach(() => {
+        globalThis.fetch = realFetch;
+    });
+
+    it("reads decks.json in the requested language, once per language", async () => {
+        const urls: string[] = [];
+        globalThis.fetch = (async (url: string) => {
+            urls.push(url);
+            const lang = new URL(url).searchParams.get("lang") ?? "es";
+            return Response.json({ version: 1, decks: { github: { title: `t-${lang}`, description: "", lang, pdf: { bytes: 1 } } } });
+        }) as unknown as typeof fetch;
+
+        expect((await getDeckInfo("github", "en-GB"))?.title).toBe("t-en");
+        expect((await getDeckInfo("github", "en"))?.title).toBe("t-en");
+        expect((await getDeckInfo("github", "es"))?.lang).toBe("es");
+        expect(await getDeckInfo("missing", "en")).toBeUndefined();
+        expect(urls).toEqual(["https://slides.gdguam.es/decks.json?lang=en", "https://slides.gdguam.es/decks.json?lang=es"]);
     });
 });

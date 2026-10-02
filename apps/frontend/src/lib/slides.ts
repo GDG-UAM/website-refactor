@@ -7,11 +7,29 @@ export const SLIDES_ORIGIN = "https://slides.gdguam.es";
 /** A deck's folder name in the presentations repo, which is also its URL path. */
 export const isDeckName = (name: string | undefined): name is string => !!name && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(name) && name !== "core";
 
-/** The deck itself. `?fullscreen` shows its full-screen button (bottom right). */
-export const deckUrl = (name: string, { fullscreen = false } = {}) => `${SLIDES_ORIGIN}/${name}/${fullscreen ? "?fullscreen" : ""}`;
+/** A language's 2-letter code, or "" if it doesn't have one. slides.gdguam.es handles the fallbacks. */
+const langCode = (lang?: string) => {
+    const code = lang?.split("-")[0].toLowerCase();
+    return code && /^[a-z]{2}$/.test(code) ? code : "";
+};
 
-/** Every deck's PDF has this path. `download` saves it (as gdguam-<name>.pdf) instead of opening it. */
-export const deckPdfUrl = (name: string, { download = false } = {}) => `${SLIDES_ORIGIN}/${name}/slides.pdf${download ? "?download=1" : ""}`;
+/** A query string from bare flags plus `lang`, as its 2-letter code. */
+const query = (flags: string[], lang?: string) => {
+    const code = langCode(lang);
+    if (code) flags = [...flags, `lang=${code}`];
+    return flags.length ? `?${flags.join("&")}` : "";
+};
+
+/** The deck itself. `?fullscreen` shows its full-screen button (bottom right). */
+export const deckUrl = (name: string, { fullscreen = false, lang }: { fullscreen?: boolean; lang?: string } = {}) =>
+    `${SLIDES_ORIGIN}/${name}/${query(fullscreen ? ["fullscreen"] : [], lang)}`;
+
+/**
+ * Every deck's PDF has this path, with `lang` picking the translation. `download` saves it instead of opening it: as
+ * gdguam-<name>-<lang>.pdf when translated, or gdguam-<name>.pdf in the deck's own language.
+ */
+export const deckPdfUrl = (name: string, { download = false, lang }: { download?: boolean; lang?: string } = {}) =>
+    `${SLIDES_ORIGIN}/${name}/slides.pdf${query(download ? ["download=1"] : [], lang)}`;
 
 /**
  * Sandbox for the embed: no `allow-same-origin`, so the deck gets an opaque origin. It can't read this site's cookies
@@ -29,16 +47,25 @@ export type DeckInfo = {
 
 type Manifest = { decks: Record<string, DeckInfo> };
 
-let manifest: Promise<Manifest | null> | null = null;
+// one list per language code ("" for each deck's own language)
+const manifests = new Map<string, Promise<Manifest | null>>();
 
-/** What slides.gdguam.es/decks.json says about a deck: undefined if it isn't published, null if the list can't be read. */
-export async function getDeckInfo(name: string): Promise<DeckInfo | undefined | null> {
-    manifest ??= fetch(`${SLIDES_ORIGIN}/decks.json`, { credentials: "omit" })
-        .then((r) => (r.ok ? (r.json() as Promise<Manifest>) : null))
-        .catch(() => null);
+/**
+ * What slides.gdguam.es/decks.json says about a deck, in `lang` (the same one given to deckUrl/deckPdfUrl, so the
+ * title, description and PDF size match the embed): undefined if it isn't published, null if the list can't be read.
+ */
+export async function getDeckInfo(name: string, lang?: string): Promise<DeckInfo | undefined | null> {
+    const code = langCode(lang);
+    let manifest = manifests.get(code);
+    if (!manifest) {
+        manifest = fetch(`${SLIDES_ORIGIN}/decks.json${query([], code)}`, { credentials: "omit" })
+            .then((r) => (r.ok ? (r.json() as Promise<Manifest>) : null))
+            .catch(() => null);
+        manifests.set(code, manifest);
+    }
     const list = await manifest;
     if (!list) {
-        manifest = null; // try again next time
+        manifests.delete(code); // try again next time
         return null;
     }
     return Object.prototype.hasOwnProperty.call(list.decks, name) ? list.decks[name] : undefined;
