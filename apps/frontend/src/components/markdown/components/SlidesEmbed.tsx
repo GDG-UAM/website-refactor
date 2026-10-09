@@ -88,7 +88,8 @@ export default function SlidesEmbed({ deck, lang }: { deck: string; lang?: strin
                     src={deckUrl(deck, { fullscreen: true, lang: locale })}
                     title={m["markdown.components.slides.frameTitle"]({ title })}
                     sandbox={DECK_SANDBOX}
-                    allow="fullscreen"
+                    // clipboard-write: the Copy button of the decks' code blocks
+                    allow="fullscreen; clipboard-write"
                     allowFullScreen
                     loading="lazy"
                     referrerPolicy="strict-origin-when-cross-origin"
