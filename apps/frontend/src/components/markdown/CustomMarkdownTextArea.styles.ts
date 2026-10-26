@@ -147,6 +147,9 @@ export const HighlightLayer = styled.div<{ $disabled?: boolean }>`
         color: var(--google-green);
         -webkit-text-stroke: 0.35px currentColor;
     }
+    .math {
+        color: var(--markdown-inline-code-text);
+    }
     .embed {
         color: transparent;
         border-radius: 4px;

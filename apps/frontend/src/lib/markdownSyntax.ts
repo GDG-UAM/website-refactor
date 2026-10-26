@@ -22,8 +22,15 @@ export const INLINE_SOURCES = {
     sub: "~(?!~)(.+?)~",
     sup: "\\^(?!\\^)(.+?)\\^",
     mark: "==(.+?)==",
-    footnoteRef: "\\[\\^([^\\]]+)\\]"
+    footnoteRef: "\\[\\^([^\\]]+)\\]",
+    /** `$$…$$` or `\[…\]` within a line. Tried before `math`, which would read `$$` as an empty `$…$`. */
+    mathDisplay: String.raw`\$\$(.+?)\$\$|\\\[(.+?)\\\]`,
+    /** `$…$` (pandoc's rule: no space inside either dollar, no digit after the closing one, so `$5 and $10` stays prose) or `\(…\)`. */
+    math: String.raw`\$(?![\s$])((?:\\.|[^\\$\n])+?)(?<![\s\\])\$(?!\d)|\\\((.+?)\\\)`
 } as const;
+
+/** `$$` or `\[` starting a line, through the matching closer at the end of a (possibly later) line. Needs the `m` flag to find one mid-text. */
+export const MATH_BLOCK_SOURCE = String.raw`^(?:\$\$([\s\S]+?)\$\$|\\\[([\s\S]+?)\\\])[ \t]*$`;
 
 /** Custom tags stored in markdown and rendered as components. `mdimg` is written by the backend on save. */
 export const EMBED_TAGS = ["user", "audioplayer", "seemorebutton", "embedweb", "slides", "mdimg"] as const;
@@ -145,6 +152,8 @@ export type HighlightKind =
     | "footnote"
     /** `:::type` callout markers. */
     | "callout"
+    /** LaTeX between `$`, `$$`, `\(…\)` or `\[…\]`, including whole lines of a display block. */
+    | "math"
     /** A whole embed tag. Carries `embed`. */
     | "embed";
 
@@ -166,11 +175,12 @@ export interface HighlightSpan {
  * all — so code spans are never descended into, `~~strike~~` beats `~sub~`, and `**` beats `*`.
  * The custom extensions reuse `INLINE_SOURCES` with their capture groups turned non-capturing.
  */
-const nonCapturing = (source: string) => source.replace(/\((?!\?)/g, "(?:");
+const nonCapturing = (source: string) => source.replace(/\\.|\((?!\?)/g, (piece) => (piece === "(" ? "(?:" : piece));
 
 const INLINE_PATTERN = new RegExp(
     [
         "(`[^`\\n]+`)",
+        `(${nonCapturing(INLINE_SOURCES.mathDisplay)}|${nonCapturing(INLINE_SOURCES.math)})`,
         `(<(?<embedTag>${EMBED_TAGS.join("|")})\\b[^>]*?\\s*(?:\\/>|>(?:\\s*<\\/\\k<embedTag>\\s*>)?))`,
         `(${nonCapturing(INLINE_SOURCES.footnoteRef)})`,
         "(!\\[[^\\]\\n]*\\]\\([^)\\n]+\\))",
@@ -195,6 +205,7 @@ const CALLOUT_CLOSE = /^:::\s*$/;
 const FOOTNOTE_DEF = /^(\[\^[^\]]+\]:)/;
 const TABLE_SEPARATOR = /^\s*\|?\s*:?-+:?\s*(?:\|\s*:?-+:?\s*)+\|?\s*$/;
 const LINK_PARTS = /^(!?\[)([^\]]*)(\]\()([^)]+)(\))$/;
+const MATH_BLOCK = new RegExp(MATH_BLOCK_SOURCE, "my");
 
 /**
  * Split markdown source into spans to paint. `spans.map((s) => s.text).join("")` is always the input.
@@ -242,6 +253,8 @@ export function highlightSource(text: string): HighlightSpan[] {
     const token = (piece: string) => {
         const first = piece[0];
         if (first === "`") return wrapped(piece, 1, "code");
+        if (first === "\\" || piece.startsWith("$$")) return wrapped(piece, 2, "math");
+        if (first === "$") return wrapped(piece, 1, "math");
         if (first === "<") return push(piece, "embed", { tag: /^<(\w+)/.exec(piece)![1] as EmbedTag, start: at });
         if (piece.startsWith("[^")) return push(piece, "footnote");
         if (first === "[" || first === "!") {
@@ -273,10 +286,26 @@ export function highlightSource(text: string): HighlightSpan[] {
     };
 
     let fence: string | null = null;
+    /** The closer of the display-maths block we're inside: `$$` or `\]`. */
+    let math: string | null = null;
 
     text.split("\n").forEach((line, index) => {
         // The separator the split removed. Inside a fence it belongs to the block's background.
-        if (index > 0) push("\n", fence ? "code" : "text");
+        if (index > 0) push("\n", fence ? "code" : math ? "math" : "text");
+
+        if (math) {
+            // The block ends at the first line that ends with its closer, as MATH_BLOCK reads it.
+            const body = line.trimEnd();
+            if (body.endsWith(math)) {
+                push(body.slice(0, -math.length), "math");
+                push(math, "syntax");
+                push(line.slice(body.length), "text");
+                math = null;
+            } else {
+                push(line, "math");
+            }
+            return;
+        }
 
         const fenceMatch = FENCE.exec(line);
         if (fence) {
@@ -291,6 +320,16 @@ export function highlightSource(text: string): HighlightSpan[] {
         if (fenceMatch) {
             push(line, "syntax");
             fence = fenceMatch[1];
+            return;
+        }
+
+        // Only a closed block spanning lines; one on a single line is left to `inline`, which paints it the same.
+        MATH_BLOCK.lastIndex = at;
+        const block = MATH_BLOCK.exec(text);
+        if (block && block[0].includes("\n")) {
+            push(line.slice(0, 2), "syntax");
+            push(line.slice(2), "math");
+            math = block[1] === undefined ? "\\]" : "$$";
             return;
         }
         if (RULE.test(line) || CALLOUT_CLOSE.test(line)) return push(line, "syntax");

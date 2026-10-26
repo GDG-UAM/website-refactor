@@ -7,6 +7,7 @@ import AudioVisualizer from "#/components/markdown/components/AudioPlayerVisuali
 import IframeEmbed from "#/components/markdown/components/IframeEmbed";
 import MarkdownImage from "#/components/markdown/components/MarkdownImage";
 import SlidesEmbed from "#/components/markdown/components/SlidesEmbed";
+import MathFormula from "#/components/markdown/components/MathFormula";
 import { OpenLinkButton } from "#/components/Buttons";
 import { ExternalLinkIcon } from "#/components/ExternalLinkIcon";
 import parse, { type DOMNode, type Element, domToReact, HTMLReactParserOptions } from "html-react-parser";
@@ -91,6 +92,9 @@ export function RenderMarkdown({ markdown, html, className, style, lang }: Rende
                 }
                 if (isTag(node) && node.name === "slides") {
                     return <SlidesEmbed deck={(node.attribs && node.attribs["data-deck"]) || ""} lang={lang} />;
+                }
+                if (isTag(node) && node.name === "latex") {
+                    return <MathFormula tex={(node.attribs && node.attribs["data-tex"]) || ""} display={node.attribs?.["data-display"] === "true"} />;
                 }
                 if (isTag(node) && node.name === "mdimage") {
                     const src = (node.attribs && node.attribs["data-src"]) || "";

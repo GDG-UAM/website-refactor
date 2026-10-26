@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { buildEmbedTag, detectTrigger, findEmbeds, highlightSource, protectEmbeds, type HighlightKind, type HighlightSpan } from "./markdownSyntax";
+import { renderMarkdown } from "./markdown";
 
 /* The editor's highlight layer is a second copy of the field, laid out under a transparent textarea.
  * A span list that doesn't reassemble into the input is a highlight that has slid off the text. */
@@ -10,7 +11,26 @@ const textOf = (spans: HighlightSpan[], kind: HighlightKind) => spans.filter((sp
 const USER = '<user data-id="68a1f2c3d4e5f60718293a4b" />';
 const MDIMG = '<mdimg src="https://cdn.example.com/a.webp" alt="A photo" blur="LEHV6nWB2yk8pyo0adR*.7kCMdnj" width="1200" height="800">';
 
+const MATH = String.raw`- \(\lambda = 0.33\): penalización por cada respuesta incorrecta.
+- \(p = 2\): la precisión por clase se eleva al cuadrado.
+
+El factor de velocidad se expresa como \(n_k^\alpha\), y $a_1$ cuesta $5 y $10.
+
+\[
+\boxed{
+\text{Score} =
+\left(\prod_{k=0}^{7} T_k\right)^{1/8}
+}
+\]
+
+$$
+x^2
+$$`;
+
 const SAMPLES = [
+    MATH,
+    "$$\nunclosed display\n",
+    "| $a|b$ | c |",
     "",
     "\n",
     "\n\n\n",
@@ -114,6 +134,63 @@ describe("highlightSource", () => {
     it("dims table pipes", () => {
         const spans = highlightSource("| a | b |");
         expect(textOf(spans, "syntax")).toEqual(["|", "|", "|"]);
+    });
+
+    it("paints LaTeX in every delimiter, but not prices", () => {
+        const spans = highlightSource(MATH);
+        expect(textOf(spans, "math")).toEqual([
+            String.raw`\lambda = 0.33`,
+            "p = 2",
+            String.raw`n_k^\alpha`,
+            "a_1",
+            String.raw`
+\boxed{
+\text{Score} =
+\left(\prod_{k=0}^{7} T_k\right)^{1/8}
+}
+`,
+            "\nx^2\n"
+        ]);
+        expect(textOf(spans, "script")).toEqual([]);
+        expect(textOf(spans, "emphasis")).toEqual([]);
+    });
+
+    it("leaves an unclosed display block alone, as the renderer does", () => {
+        expect(textOf(highlightSource("$$\nnot maths\n"), "math")).toEqual([]);
+    });
+
+    it("never reads maths inside code", () => {
+        expect(textOf(highlightSource("`$x$`\n```\n$$\ny\n$$\n```"), "math")).toEqual([]);
+    });
+});
+
+describe("LaTeX in rendered markdown", () => {
+    const tex = (html: string) => [...html.matchAll(/<latex data-tex="([^"]*)"( data-display="true")?><\/latex>/g)].map((m) => [m[1], !!m[2]]);
+
+    it("renders every delimiter to a placeholder, display or not", async () => {
+        const { html } = await renderMarkdown(MATH);
+        expect(tex(html)).toEqual([
+            [String.raw`\lambda = 0.33`, false],
+            ["p = 2", false],
+            [String.raw`n_k^\alpha`, false],
+            ["a_1", false],
+            [
+                String.raw`\boxed{
+\text{Score} =
+\left(\prod_{k=0}^{7} T_k\right)^{1/8}
+}`,
+                true
+            ],
+            ["x^2", true]
+        ]);
+        expect(html).toContain("cuesta $5 y $10.");
+        expect(html).not.toContain("<p><latex");
+    });
+
+    it("lets a display block interrupt a paragraph, and keeps escaped dollars", async () => {
+        const { html } = await renderMarkdown("La puntuación es:\n$$\na & b < c\n$$\n\\$1 y $$x$$ en línea");
+        expect(html).toContain('<p>La puntuación es:</p>\n<latex data-tex="a &amp; b &lt; c" data-display="true"></latex>');
+        expect(html).toContain('$1 y <latex data-tex="x" data-display="true"></latex> en línea');
     });
 });
 

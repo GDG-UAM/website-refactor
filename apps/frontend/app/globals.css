@@ -305,6 +305,8 @@
     /* Inline code */
     --markdown-inline-code-bg: #f6f8fa;
     --markdown-inline-code-border: #e6e8eb;
+    /* Google Red 700: --google-red is ~3.7:1 on the code background, below AA */
+    --markdown-inline-code-text: #c5221f;
 
     /* Code blocks */
     --markdown-code-bg: #0f172a;
@@ -446,7 +448,7 @@ blockquote {
 code {
     background-color: var(--markdown-inline-code-bg, var(--color-gray-100));
     border: 1px solid var(--markdown-inline-code-border, var(--color-gray-200));
-    color: var(--google-red);
+    color: var(--markdown-inline-code-text, var(--google-red));
     padding: 0.2em 0.4em;
     border-radius: 4px;
     width: fit-content;

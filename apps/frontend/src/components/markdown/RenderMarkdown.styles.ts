@@ -238,4 +238,11 @@ export const Wrapper = styled.div`
         display: block;
         margin: 1em 0;
     }
+
+    /* LaTeX: a wide display formula scrolls on its own instead of widening the page */
+    .katex-display {
+        overflow-x: auto;
+        overflow-y: hidden;
+        padding: 0.25em 0;
+    }
 `;

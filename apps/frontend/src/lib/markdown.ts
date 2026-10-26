@@ -2,7 +2,7 @@ import sanitizeHtml from "sanitize-html";
 import { marked, MarkedExtension, type Token } from "marked";
 import hljs from "highlight.js";
 import { markedHighlight } from "marked-highlight";
-import { INLINE_SOURCES } from "./markdownSyntax";
+import { INLINE_SOURCES, MATH_BLOCK_SOURCE } from "./markdownSyntax";
 
 // Configure marked for GitHub-flavored markdown features
 marked.setOptions({
@@ -518,6 +518,57 @@ marked.use({
     ]
 });
 
+// --- LaTeX: $…$ and \(…\) inline, $$…$$ and \[…\] display. Rendered by <MathFormula /> from a <latex> placeholder ---
+type MathToken = { type: string; raw: string; tex: string };
+
+function renderMath(tex: string, display: boolean): string {
+    return `<latex data-tex="${escapeHtml(tex.trim())}"${display ? ' data-display="true"' : ""}></latex>`;
+}
+
+const MATH_DISPLAY_INLINE = new RegExp(`^(?:${INLINE_SOURCES.mathDisplay})`);
+const MATH_INLINE = new RegExp(`^(?:${INLINE_SOURCES.math})`);
+const MATH_BLOCK_AT_START = new RegExp(MATH_BLOCK_SOURCE, "my");
+const MATH_BLOCK_ANYWHERE = new RegExp(MATH_BLOCK_SOURCE, "m");
+
+marked.use({
+    extensions: [
+        // display block on its own lines; may span blank lines
+        {
+            name: "math_block",
+            level: "block",
+            start(src: string) {
+                return src.search(MATH_BLOCK_ANYWHERE);
+            },
+            tokenizer(src: string) {
+                MATH_BLOCK_AT_START.lastIndex = 0;
+                const cap = MATH_BLOCK_AT_START.exec(src);
+                if (!cap) return undefined;
+                return { type: "math_block", raw: cap[0], tex: cap[1] ?? cap[2] } as MathToken;
+            },
+            renderer(token: Token & Partial<MathToken>) {
+                return renderMath(token.tex || "", true) + "\n";
+            }
+        },
+        {
+            name: "math_inline",
+            level: "inline",
+            start(src: string) {
+                return src.search(/\$|\\[([]/);
+            },
+            tokenizer(src: string) {
+                const display = MATH_DISPLAY_INLINE.exec(src);
+                if (display) return { type: "math_inline", raw: display[0], tex: display[1] ?? display[2], display: true } as MathToken;
+                const cap = MATH_INLINE.exec(src);
+                if (cap) return { type: "math_inline", raw: cap[0], tex: cap[1] ?? cap[2] } as MathToken;
+                return undefined;
+            },
+            renderer(token: Token & Partial<MathToken> & { display?: boolean }) {
+                return renderMath(token.tex || "", !!token.display);
+            }
+        }
+    ]
+});
+
 // Extract footnote definitions of the form:
 // [^id]: text\n  continued lines (indented)
 function extractFootnotes(markdown: string): { cleaned: string; defs: Map<string, string> } {
@@ -586,7 +637,9 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
         // custom presentation embed tag
         "slides",
         // custom markdown image with BlurHash tag
-        "mdimage"
+        "mdimage",
+        // LaTeX placeholder, rendered by <MathFormula />
+        "latex"
     ]),
     allowedAttributes: {
         a: ["href", "name", "target", "rel"],
@@ -620,7 +673,10 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
             "data-alt",
             "data-blur",
             "data-width",
-            "data-height"
+            "data-height",
+            // allow data-tex and data-display for <latex />
+            "data-tex",
+            "data-display"
         ]
     },
     allowedSchemes: ["http", "https", "mailto", "tel"],
