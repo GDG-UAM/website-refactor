@@ -57,6 +57,7 @@ const COMMUNITY_LINKS: LinkItem[] = [
     { key: "whatsapp", href: "/l/whatsapp", external: true, accent: "var(--button-whatsapp-hover-text)", icon: socialIcon("whatsapp") },
     { key: "instagram", href: "/l/instagram", external: true, accent: "var(--button-instagram-hover-text)", icon: socialIcon("instagram") },
     { key: "linkedin", href: "/l/linkedin", external: true, accent: "var(--button-linkedin-hover-text)", icon: socialIcon("linkedinCompany") },
+    { key: "youtube", href: "/l/youtube", external: true, accent: "var(--button-youtube-hover-text)", icon: socialIcon("youtube") },
     { key: "email", href: "mailto:gdguam@gmail.com", external: true, accent: "var(--button-email-hover-text)", icon: socialIcon("email") }
 ];
 

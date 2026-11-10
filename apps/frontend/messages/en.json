@@ -63,6 +63,7 @@
     "social": {
       "openInstagram": "Open Instagram",
       "openLinkedin": "Open Linkedin",
+      "openYoutube": "Open YouTube",
       "openGithub": "Open Github",
       "openX": "Open X",
       "openWebsite": "Open Website",
@@ -440,6 +441,10 @@
       "linkedin": {
         "title": "LinkedIn",
         "description": "News, collaborations and opportunities"
+      },
+      "youtube": {
+        "title": "YouTube",
+        "description": "Talks, workshops and event recordings"
       },
       "email": {
         "title": "Email us",

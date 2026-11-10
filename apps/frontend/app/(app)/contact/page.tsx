@@ -43,6 +43,7 @@ export default function Page() {
                             {m["contact.title"]()}
                             <div style={{ display: "flex", gap: "8px" }}>
                                 <OpenSocialButton network="instagram" user="https://gdguam.es/l/instagram" ignoreStart iconSize={18} dontUseContext />
+                                <OpenSocialButton network="youtube" user="https://gdguam.es/l/youtube" ignoreStart iconSize={18} dontUseContext />
                                 <OpenSocialButton network="whatsapp" user="https://gdguam.es/l/whatsapp" ignoreStart iconSize={18} dontUseContext />
                                 <OpenSocialButton network="email" user="gdguam@gmail.com" iconSize={18} dontUseContext />
                                 <OpenSocialButton network="gdgCommunity" user="https://gdguam.es/l/gdg-community" ignoreStart iconSize={18} dontUseContext />
