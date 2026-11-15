@@ -1,5 +1,6 @@
 import DefaultCertificate from "./DefaultCertificate";
 import CEUAMCertificate from "./CEUAMCertificate";
+import MLContestCertificate from "./MLContestCertificate";
 import * as m from "#/paraglide/messages";
 
 export const CERTIFICATE_DESIGNS = [
@@ -14,6 +15,11 @@ export const CERTIFICATE_DESIGNS = [
         name: "CEUAM Design",
         component: CEUAMCertificate,
         previewImage: "/images/certificates/ceuam-preview.png"
+    },
+    {
+        id: 2,
+        name: "ML Contest 2026",
+        component: MLContestCertificate
     }
 ];
 

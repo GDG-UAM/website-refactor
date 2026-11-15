@@ -250,10 +250,8 @@ export function TeamCertificateTemplateFormPage({ hackathonId, teamId, templateI
                 }
             });
 
-            // For EVENT_ACHIEVEMENT, always set group to team name
-            if (formData.type === "EVENT_ACHIEVEMENT") {
-                metadata.group = team.name;
-            }
+            // Every type carries the team name (the ML Contest designs show it on participation too)
+            metadata.group = team.name;
 
             const payload = {
                 type: formData.type as CertificateType,
