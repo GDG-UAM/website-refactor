@@ -7,7 +7,6 @@ export const CertificateWrapper = styled.div`
     --muted: #5a6680;
     --body: #2c3954;
     --blue: #1a73e8;
-    --grid: #e9eef7;
     /* next/font variables on screen; the print iframe falls back to the Google Fonts names */
     --display: var(--ml-font-display, "Space Grotesk"), system-ui, -apple-system, "Segoe UI", sans-serif;
     --mono: var(--ml-font-mono, "JetBrains Mono"), ui-monospace, Consolas, monospace;
@@ -28,38 +27,16 @@ export const CertificateWrapper = styled.div`
     }
 `;
 
-export const GridPaper = styled.div`
+/**
+ * The frame's border, its grid and its ruler, one SVG (drawn in MLContestCertificate.tsx). As a CSS border and
+ * background they snapped to whole pixels and the ticks didn't, so scaled down they missed the border or sat beside
+ * the grid's lines, and 1px gradient stops vanished between pixels.
+ */
+export const Frame = styled.svg`
     position: absolute;
-    inset: 25px;
-    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 28px 28px;
-    -webkit-mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.3) 52%, #000 72%);
-    mask-image: linear-gradient(90deg, rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.3) 52%, #000 72%);
-`;
-
-/** Outer frame with ruler ticks along the top and bottom edges */
-export const Frame = styled.div`
-    position: absolute;
-    inset: 24px;
-    border: 1.5px solid var(--ink);
-
-    &::before,
-    &::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        height: 7px;
-        background: repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 28px);
-    }
-
-    &::before {
-        top: 0;
-    }
-
-    &::after {
-        bottom: 0;
-    }
+    top: 24px;
+    left: 24px;
+    display: block;
 `;
 
 // Header
