@@ -598,6 +598,9 @@ function extractFootnotes(markdown: string): { cleaned: string; defs: Map<string
     return { cleaned: keep.join("\n"), defs };
 }
 
+// A "(" is only accepted right after one of these function names, so url( or expression( can't appear
+const SAFE_CSS_VALUE = /^(?:[-\w\s.,%#/*+]|(?:calc|min|max|clamp|rgba?|hsla?|hwb|lab|lch|oklab|oklch|color-mix)\(|\))+$/;
+
 // A safe baseline policy for HTML produced from Markdown
 const sanitizeOptions: sanitizeHtml.IOptions = {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat([
@@ -645,6 +648,8 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
         a: ["href", "name", "target", "rel"],
         img: ["src", "alt", "title", "width", "height"],
         code: ["class"],
+        // layout wrappers, e.g. <div style="display: flex; gap: 20px">; properties are whitelisted in allowedStyles
+        div: ["style"],
         "*": [
             "id",
             "class",
@@ -678,6 +683,35 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
             "data-tex",
             "data-display"
         ]
+    },
+    // Plain values plus whitelisted functions only: url(), expression(), var() etc. never match
+    allowedStyles: {
+        div: Object.fromEntries(
+            [
+                "display",
+                "gap",
+                "flex",
+                "flex-direction",
+                "flex-wrap",
+                "justify-content",
+                "align-items",
+                "text-align",
+                "width",
+                "max-width",
+                "min-width",
+                "margin",
+                "margin-top",
+                "margin-bottom",
+                "margin-left",
+                "margin-right",
+                "padding",
+                "color",
+                "background-color",
+                "border",
+                "border-color",
+                "border-radius"
+            ].map((prop) => [prop, [SAFE_CSS_VALUE]])
+        )
     },
     allowedSchemes: ["http", "https", "mailto", "tel"],
     transformTags: {

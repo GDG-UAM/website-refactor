@@ -57,6 +57,28 @@ describe("<slides /> in markdown", () => {
     });
 });
 
+describe("<div style> in markdown", () => {
+    it("keeps whitelisted layout styles and drops the rest", async () => {
+        const { html } = await renderMarkdown(
+            '<div style="display: flex; gap: 20px; max-width: 400px; margin: 0 auto; position: fixed; background: url(https://evil.example)">\n\nhi\n\n</div>'
+        );
+        expect(html).toContain('style="display:flex;gap:20px;max-width:400px;margin:0 auto"');
+        expect(html).not.toContain("fixed");
+        expect(html).not.toContain("evil");
+    });
+
+    it("accepts calc and color functions but no other function", async () => {
+        const { html } = await renderMarkdown(
+            '<div style="max-width: calc(100% - 2rem); color: rgb(10 20 30 / 50%); background-color: hsla(0, 0%, 0%, .1); border-color: url(x); margin: var(--x)">\n\nhi\n\n</div>'
+        );
+        expect(html).toContain("max-width:calc(100% - 2rem)");
+        expect(html).toContain("color:rgb(10 20 30 / 50%)");
+        expect(html).toContain("background-color:hsla(0, 0%, 0%, .1)");
+        expect(html).not.toContain("url(");
+        expect(html).not.toContain("var(");
+    });
+});
+
 describe("deck info", () => {
     const realFetch = globalThis.fetch;
     afterEach(() => {
