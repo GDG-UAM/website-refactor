@@ -601,6 +601,72 @@ function extractFootnotes(markdown: string): { cleaned: string; defs: Map<string
 // A "(" is only accepted right after one of these function names, so url( or expression( can't appear
 const SAFE_CSS_VALUE = /^(?:[-\w\s.,%#/*+]|(?:calc|min|max|clamp|rgba?|hsla?|hwb|lab|lch|oklab|oklch|color-mix)\(|\))+$/;
 
+const COMMON_STYLES = [
+    "display",
+    "width",
+    "max-width",
+    "min-width",
+    "height",
+    "max-height",
+    "min-height",
+    "margin",
+    "margin-top",
+    "margin-bottom",
+    "margin-left",
+    "margin-right",
+    "padding",
+    "color",
+    "background-color",
+    "border",
+    "border-color",
+    "border-radius",
+    "opacity",
+    "visibility",
+    "overflow",
+    "box-sizing"
+];
+
+const FLEX_STYLES = [
+    "gap",
+    "flex",
+    "flex-direction",
+    "flex-wrap",
+    "flex-grow",
+    "flex-shrink",
+    "flex-basis",
+    "justify-content",
+    "align-items",
+    "align-content",
+    "align-self"
+];
+
+const TEXT_STYLES = [
+    "font-size",
+    "font-weight",
+    "font-family",
+    "font-style",
+    "text-align",
+    "text-decoration",
+    "text-transform",
+    "text-overflow",
+    "text-shadow",
+    "line-height",
+    "letter-spacing",
+    "word-spacing",
+    "white-space",
+    "word-break",
+    "overflow-wrap",
+    "vertical-align"
+];
+
+const POSITION_STYLES = ["position", "top", "right", "bottom", "left", "z-index"];
+
+const IMAGE_STYLES = ["object-fit", "object-position", "aspect-ratio"];
+
+function createStyles(...groups: string[][]): Record<string, RegExp[]> {
+    return Object.fromEntries([...new Set(groups.flat())].map((prop) => [prop, [SAFE_CSS_VALUE]]));
+}
+
 // A safe baseline policy for HTML produced from Markdown
 const sanitizeOptions: sanitizeHtml.IOptions = {
     allowedTags: sanitizeHtml.defaults.allowedTags.concat([
@@ -642,17 +708,25 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
         // custom markdown image with BlurHash tag
         "mdimage",
         // LaTeX placeholder, rendered by <MathFormula />
-        "latex"
+        "latex",
+        "article",
+        "header",
+        "footer",
+        "main",
+        "button",
+        "input",
+        "label",
+        "svg"
     ]),
     allowedAttributes: {
         a: ["href", "name", "target", "rel"],
         img: ["src", "alt", "title", "width", "height"],
         code: ["class"],
         // layout wrappers, e.g. <div style="display: flex; gap: 20px">; properties are whitelisted in allowedStyles
-        div: ["style"],
         "*": [
             "id",
             "class",
+            "style",
             "title",
             "aria-label",
             "aria-description",
@@ -686,35 +760,46 @@ const sanitizeOptions: sanitizeHtml.IOptions = {
     },
     // Plain values plus whitelisted functions only: url(), expression(), var() etc. never match
     allowedStyles: {
-        div: Object.fromEntries(
-            [
-                "display",
-                "gap",
-                "flex",
-                "flex-direction",
-                "flex-wrap",
-                "justify-content",
-                "align-items",
-                "text-align",
-                "width",
-                "max-width",
-                "min-width",
-                "height",
-                "max-height",
-                "min-height",
-                "margin",
-                "margin-top",
-                "margin-bottom",
-                "margin-left",
-                "margin-right",
-                "padding",
-                "color",
-                "background-color",
-                "border",
-                "border-color",
-                "border-radius"
-            ].map((prop) => [prop, [SAFE_CSS_VALUE]])
-        )
+        "*": createStyles(COMMON_STYLES),
+
+        div: createStyles(COMMON_STYLES, FLEX_STYLES, TEXT_STYLES, POSITION_STYLES),
+
+        span: createStyles(COMMON_STYLES, TEXT_STYLES),
+
+        p: createStyles(COMMON_STYLES, TEXT_STYLES),
+
+        h1: createStyles(COMMON_STYLES, TEXT_STYLES),
+        h2: createStyles(COMMON_STYLES, TEXT_STYLES),
+        h3: createStyles(COMMON_STYLES, TEXT_STYLES),
+        h4: createStyles(COMMON_STYLES, TEXT_STYLES),
+        h5: createStyles(COMMON_STYLES, TEXT_STYLES),
+        h6: createStyles(COMMON_STYLES, TEXT_STYLES),
+
+        img: createStyles(COMMON_STYLES, IMAGE_STYLES),
+
+        section: createStyles(COMMON_STYLES, FLEX_STYLES, POSITION_STYLES),
+
+        article: createStyles(COMMON_STYLES, FLEX_STYLES, TEXT_STYLES),
+
+        header: createStyles(COMMON_STYLES, FLEX_STYLES, POSITION_STYLES),
+
+        footer: createStyles(COMMON_STYLES, FLEX_STYLES, POSITION_STYLES),
+
+        main: createStyles(COMMON_STYLES, FLEX_STYLES, POSITION_STYLES),
+
+        button: createStyles(COMMON_STYLES, TEXT_STYLES),
+
+        a: createStyles(COMMON_STYLES, TEXT_STYLES),
+
+        ul: createStyles(COMMON_STYLES),
+        ol: createStyles(COMMON_STYLES),
+        li: createStyles(COMMON_STYLES, TEXT_STYLES),
+
+        input: createStyles(COMMON_STYLES, TEXT_STYLES),
+
+        label: createStyles(COMMON_STYLES, TEXT_STYLES),
+
+        svg: createStyles(COMMON_STYLES, IMAGE_STYLES)
     },
     allowedSchemes: ["http", "https", "mailto", "tel"],
     transformTags: {
