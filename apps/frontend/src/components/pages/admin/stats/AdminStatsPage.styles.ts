@@ -1,153 +1,121 @@
 import styled from "styled-components";
 
-// Validated categorical pair (CVD-safe); single-series lists reuse their entity's color.
-export const COLORS = {
-    blog: "#1a73e8",
-    newsletter: "#e37400",
-    links: "#188038",
-    authors: "var(--color-gray-500)"
-};
-
-export const Controls = styled.div`
+export const Toolbar = styled.div`
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 24px;
-`;
-
-export const Tiles = styled.div`
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-`;
-
-export const Tile = styled.div`
-    border: 1px solid var(--color-gray-200);
-    border-radius: 12px;
-    padding: 16px 20px;
-`;
-
-export const TileLabel = styled.div`
-    font-size: 0.875rem;
-    color: var(--color-gray-500);
-`;
-
-export const TileValue = styled.div`
-    font-family: var(--font-title);
-    font-size: 2rem;
-    font-weight: 600;
-    line-height: 1.2;
-    margin: 4px 0;
-    font-variant-numeric: tabular-nums;
-`;
-
-export const TileSub = styled.div`
-    font-size: 0.8rem;
-    color: var(--color-gray-500);
-`;
-
-export const Section = styled.section`
-    border: 1px solid var(--color-gray-200);
-    border-radius: 12px;
-    padding: 16px 20px;
-    margin-bottom: 24px;
-`;
-
-export const SectionTitle = styled.h2`
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin: 0 0 12px 0;
-`;
-
-export const Note = styled.p`
-    font-size: 0.8rem;
-    color: var(--color-gray-500);
-    margin: -8px 0 12px 0;
-`;
-
-export const ShareBar = styled.div`
-    display: flex;
-    gap: 2px;
-    height: 16px;
-    border-radius: 4px;
-    overflow: hidden;
-    background: var(--color-gray-100);
-`;
-
-export const Legend = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-top: 8px;
-    font-size: 0.875rem;
-`;
-
-export const Swatch = styled.span<{ $color: string }>`
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    margin-right: 6px;
-    background: ${(p) => p.$color};
-`;
-
-export const Rows = styled.ul`
-    list-style: none;
-    margin: 0;
-    padding: 0;
-`;
-
-export const Row = styled.li<{ $dim: boolean }>`
-    display: grid;
-    grid-template-columns: auto minmax(0, 1.2fr) minmax(80px, 1fr) 72px;
     align-items: center;
     gap: 12px;
-    padding: 4px 0;
-    opacity: ${(p) => (p.$dim ? 0.45 : 1)};
+    padding: 0 12px;
+    margin-bottom: 12px;
+`;
 
-    &:hover {
-        background: var(--color-gray-50);
+export const Tabs = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+`;
+
+export const ToolbarEnd = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+`;
+
+/* Same card as AdminTable, aligned with it (AdminTable pads itself by 12px) */
+export const Overview = styled.section`
+    margin: 0 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+`;
+
+/* 1px gaps over a grey background draw the dividers, whatever the wrapping */
+export const Kpis = styled.dl`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1px;
+    margin: 0;
+    background: #f3f4f6;
+    border-bottom: 1px solid #f3f4f6;
+
+    dt {
+        font-size: 0.8125rem;
+        color: var(--color-gray-500);
     }
 `;
 
-export const RowTitle = styled.div`
+export const Kpi = styled.div`
     min-width: 0;
-
-    a {
-        color: inherit;
-        font-weight: 500;
-        text-decoration: none;
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    a:hover {
-        text-decoration: underline;
-    }
+    padding: 16px 20px;
+    background: #ffffff;
 `;
 
-export const RowMeta = styled.div`
-    font-size: 0.75rem;
+export const KpiValue = styled.dd`
+    margin: 2px 0 0;
+    font-family: var(--font-title);
+    font-size: 1.75rem;
+    font-weight: 600;
+    line-height: 1.25;
+    font-variant-numeric: tabular-nums;
+`;
+
+export const KpiTitle = styled.dd`
+    margin: 6px 0 0;
+    font-weight: 600;
+    line-height: 1.35;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`;
+
+export const KpiSub = styled.dd`
+    margin: 2px 0 0;
+    font-size: 0.8125rem;
+    color: var(--color-gray-500);
+    font-variant-numeric: tabular-nums;
+`;
+
+export const ChartArea = styled.div`
+    padding: 16px 20px 8px;
+`;
+
+export const ChartHeader = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 12px;
+    row-gap: 2px;
+    margin-bottom: 4px;
+`;
+
+export const ChartTitle = styled.h2`
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+`;
+
+export const ChartHint = styled.p`
+    margin: 0;
+    font-size: 0.8125rem;
     color: var(--color-gray-500);
 `;
 
-export const Track = styled.div`
-    height: 12px;
+export const Empty = styled.div`
+    padding: 40px;
+    text-align: center;
+    color: #666;
 `;
 
-export const Bar = styled.div<{ $color: string }>`
-    height: 100%;
-    min-width: 2px;
-    background: ${(p) => p.$color};
-    border-radius: 0 4px 4px 0;
+export const Slug = styled.span`
+    font-size: 0.8125rem;
+    color: var(--color-gray-500);
 `;
 
-export const Value = styled.div`
-    text-align: right;
+export const Num = styled.span<{ $muted?: boolean }>`
     font-variant-numeric: tabular-nums;
-    font-weight: 600;
+    white-space: nowrap;
+    color: ${(p) => (p.$muted ? "var(--color-gray-500)" : "inherit")};
 `;

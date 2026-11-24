@@ -22,6 +22,7 @@ const StatsResponseSchema = t.Object({
             _id: t.String(),
             title: t.String(),
             slug: t.String(),
+            destination: t.String(),
             clicks: t.Number(),
             date: t.Date(),
             excluded: t.Boolean()
@@ -62,6 +63,7 @@ export const adminStatsRoutes = new Elysia({ prefix: "/stats" })
                     _id: l._id.toString(),
                     title: l.title,
                     slug: l.slug,
+                    destination: l.destination,
                     clicks: l.clicks ?? 0,
                     date: l.createdAt,
                     excluded: !!l.excludeFromStats

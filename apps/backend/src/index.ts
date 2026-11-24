@@ -4,6 +4,7 @@ import { swagger } from "@elysiajs/swagger";
 import { csrfPlugin } from "./plugins/csrf";
 import { permissionsPlugin } from "./plugins/permissions";
 import { auth } from "./lib/auth";
+import { devSessionEmail, getSession } from "./lib/devSession";
 import "./lib/redis"; // Initialize redis connection
 import {
     adminRoutes,
@@ -29,6 +30,9 @@ initSentry();
 
 const betterAuthView = (context: Context) => {
     const BETTER_AUTH_ACCEPT_METHODS = ["POST", "GET"];
+    if (devSessionEmail && new URL(context.request.url).pathname.endsWith("/auth/get-session")) {
+        return getSession(context.request.headers);
+    }
     if (BETTER_AUTH_ACCEPT_METHODS.includes(context.request.method)) {
         return auth.handler(context.request);
     } else {

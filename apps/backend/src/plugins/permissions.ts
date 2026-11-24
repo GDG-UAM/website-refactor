@@ -1,13 +1,11 @@
 import { Elysia } from "elysia";
-import { auth } from "../lib/auth";
+import { getSession } from "../lib/devSession";
 import { defineAbilitiesFor } from "../lib/permissions";
 import type { SerializablePermission } from "../repositories";
 
 export const permissionsPlugin = (app: Elysia) =>
     app.derive(async ({ request }) => {
-        const session = await auth.api.getSession({
-            headers: request.headers
-        });
+        const session = await getSession(request.headers);
 
         const betterAuthUser = session?.user;
 

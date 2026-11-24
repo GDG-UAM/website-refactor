@@ -1,11 +1,11 @@
 import { Elysia, t } from "elysia";
 import db from "../lib/db";
 import { EvaluationSchema } from "../repositories/types";
-import { auth } from "../lib/auth";
+import { getSession } from "../lib/devSession";
 
 export const evaluationsRoutes = new Elysia({ prefix: "/evaluations" })
     .derive(async ({ request }) => {
-        const session = await auth.api.getSession({ headers: request.headers });
+        const session = await getSession(request.headers);
         return { user: session?.user };
     })
     .onBeforeHandle(({ user, set }) => {
