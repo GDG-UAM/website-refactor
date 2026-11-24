@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Open_Sans, Poppins, Roboto, Lexend } from "next/font/google";
+import localFont from "next/font/local";
 import Script from "next/script";
 import "./globals.css";
 import { cookies } from "next/headers";
@@ -21,26 +21,16 @@ import { getServerSession } from "#/lib/auth-server";
 import { AccessibilityAttributes, accessibilityScript } from "#/components/AccessibilityAttributes";
 import { ImpersonationPill } from "#/components/ImpersonationPill";
 
-const openSans = Open_Sans({
-    subsets: ["latin"],
-    weight: ["400", "600"],
-    display: "swap"
+// Self-hosted (latin subset) so builds never depend on Google Fonts (see vercel/next.js#99114)
+const openSans = localFont({ src: "../src/fonts/open-sans-400-600.woff2", weight: "400 600" });
+const poppins = localFont({
+    src: [
+        { path: "../src/fonts/poppins-600.woff2", weight: "600" },
+        { path: "../src/fonts/poppins-700.woff2", weight: "700" }
+    ]
 });
-const poppins = Poppins({
-    subsets: ["latin"],
-    weight: ["600", "700"],
-    display: "swap"
-});
-const roboto = Roboto({
-    subsets: ["latin"],
-    weight: ["400", "500"],
-    display: "swap"
-});
-const lexend = Lexend({
-    subsets: ["latin"],
-    weight: ["400", "500"],
-    display: "swap"
-});
+const roboto = localFont({ src: "../src/fonts/roboto-400-500.woff2", weight: "400 500" });
+const lexend = localFont({ src: "../src/fonts/lexend-400-500.woff2", weight: "400 500" });
 
 export async function generateMetadata(): Promise<Metadata> {
     return {

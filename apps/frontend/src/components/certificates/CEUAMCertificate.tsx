@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Montserrat } from "next/font/google";
+import localFont from "next/font/local";
 import {
     CertificateWrapper,
     BorderFrame,
@@ -30,11 +30,7 @@ import * as m from "#/paraglide/messages";
 // Fonts
 
 /** Montserrat font for certificate typography */
-const montserrat = Montserrat({
-    subsets: ["latin"],
-    weight: ["400", "600", "700", "800", "900"],
-    display: "swap"
-});
+const montserrat = localFont({ src: "../../fonts/montserrat-400-900.woff2", weight: "400 900" });
 
 // Types
 

@@ -1,13 +1,13 @@
 "use client";
 
-import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import { useId } from "react";
 import * as S from "./MLContestCertificate.styles";
 import { buildHeatmap } from "./mlContestHeatmap";
 import { CertificateData } from "./types";
 
-const display = Space_Grotesk({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--ml-font-display", display: "swap" });
-const mono = JetBrains_Mono({ subsets: ["latin"], weight: ["400", "600"], variable: "--ml-font-mono", display: "swap" });
+const display = localFont({ src: "../../fonts/space-grotesk-400-700.woff2", weight: "400 700", variable: "--ml-font-display" });
+const mono = localFont({ src: "../../fonts/jetbrains-mono-400-600.woff2", weight: "400 600", variable: "--ml-font-mono" });
 
 const GOOGLE_COLORS = ["#4285F4", "#EA4335", "#FBBC05", "#34A853"];
 const CELL = 11;
