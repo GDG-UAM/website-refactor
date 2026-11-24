@@ -27,6 +27,12 @@ export default async function AdminPage() {
                             type: "permissions",
                             href: "/admin/permissions",
                             disabled: !(await hasSectionAccess("admin.permissions")) || (await hasSectionAccess("adminSectionDenies.permissions"))
+                        },
+                        {
+                            label: m["admin.navigation.stats"](),
+                            type: "stats",
+                            href: "/admin/stats",
+                            disabled: !(await hasSectionAccess("admin.stats")) || (await hasSectionAccess("adminSectionDenies.stats"))
                         }
                     ]
                 },

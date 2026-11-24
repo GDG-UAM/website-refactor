@@ -785,6 +785,31 @@
     },
     "pageDescription": "Manage events, articles, permissions, feature flags, and giveaways in the admin dashboard. Ensure smooth operations and community engagement.",
     "title": "Admin",
+    "stats": {
+      "title": "Statistics",
+      "includeDrafts": "Include drafts",
+      "sortBy": "Sort by",
+      "sortTotal": "Total",
+      "sortDate": "Date",
+      "blogReads": "Blog reads",
+      "newsletterReads": "Newsletter reads",
+      "articleReads": "Total article reads",
+      "linkClicks": "Link clicks",
+      "summary": "{count} counted · {average} avg",
+      "share": "Reads by section",
+      "blog": "Blog",
+      "newsletter": "Newsletter",
+      "links": "Links",
+      "authors": "Reads by author",
+      "authorsNote": "Articles with several authors count fully for each of them.",
+      "countInStats": "Count in statistics",
+      "excluded": "Excluded",
+      "draft": "Draft",
+      "urlOnly": "URL only",
+      "empty": "Nothing to show",
+      "loadError": "Failed to load statistics",
+      "updateError": "Failed to update the item"
+    },
     "links": {
       "title": "Links",
       "page": {
@@ -1430,7 +1455,8 @@
       "links": "Links",
       "permissions": "Permissions",
       "certificates": "Certificates",
-      "hackathons": "Hackathons"
+      "hackathons": "Hackathons",
+      "stats": "Statistics"
     },
     "navigation": {
       "blog": "Blog",
@@ -1448,6 +1474,7 @@
       "permissions": "Permissions",
       "featureFlags": "Feature Flags",
       "certificates": "Certificates",
+      "stats": "Statistics",
       "hackathon-tracks": "Tracks",
       "hackathon-track-selection": "Track Selection",
       "hackathon-teams": "Teams",

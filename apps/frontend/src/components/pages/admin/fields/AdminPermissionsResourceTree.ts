@@ -30,6 +30,7 @@ export const RESOURCE_TREE: Record<string, ResourceNode> = {
         path: "admin",
         children: {
             "*": "wildcard",
+            stats: { label: "Statistics", path: "admin.stats" },
             users: {
                 label: "Users",
                 path: "admin.users",
@@ -230,6 +231,7 @@ export const RESOURCE_TREE: Record<string, ResourceNode> = {
         label: "Admin Denies",
         path: "adminSectionDenies",
         children: {
+            stats: { label: "Statistics", path: "adminSectionDenies.stats" },
             users: {
                 label: "Users",
                 path: "adminSectionDenies.users",

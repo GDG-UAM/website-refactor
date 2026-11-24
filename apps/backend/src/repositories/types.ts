@@ -106,6 +106,7 @@ export interface Article {
     status: ArticleStatus;
     authors: string[]; // User IDs as strings
     views: number;
+    excludeFromStats?: boolean;
     publishedAt?: Date | null;
     isActive: boolean; // Soft delete
     createdBy: string; // User ID as string
@@ -190,6 +191,7 @@ export interface Link {
     description?: string;
     isActive: boolean;
     clicks: number;
+    excludeFromStats?: boolean;
     order?: number;
     createdBy: string;
     createdAt: Date;

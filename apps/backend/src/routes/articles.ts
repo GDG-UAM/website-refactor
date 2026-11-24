@@ -4,6 +4,7 @@ import { localePlugin } from "../plugins/locale";
 import type { ArticleType } from "../repositories/types";
 import type { ArticleSortTypes } from "../repositories/ArticleRepository";
 import { permissionsPlugin } from "../plugins/permissions";
+import { trackView } from "../lib/views";
 
 const LocalizedArticleSchema = t.Object({
     _id: t.String(),
@@ -87,14 +88,16 @@ export const articlesRoutes = new Elysia({ prefix: "/articles" })
     .use(permissionsPlugin)
     .get(
         "/:slug",
-        async ({ params: { slug }, query: { type }, locale, set }) => {
+        async ({ params: { slug }, query: { type }, locale, set, request }) => {
             const { articleRepository } = db.getRepositories();
-            const article = await articleRepository.findBySlug(slug, type as ArticleType, { incrementView: true });
+            const article = await articleRepository.findBySlug(slug, type as ArticleType);
 
             if (!article || article.status === "draft" || (article.publishedAt && article.publishedAt > new Date())) {
                 set.status = 404;
                 return { error: "Not found" };
             }
+
+            trackView(request.headers, `article:${article._id}`, () => articleRepository.incrementViews(article._id));
 
             const l = locale;
             return {

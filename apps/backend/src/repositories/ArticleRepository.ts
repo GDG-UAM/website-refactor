@@ -116,15 +116,10 @@ export class ArticleRepository {
         return result.modifiedCount > 0;
     }
 
-    async findById(id: string, options?: { includeInactive?: boolean; incrementView?: boolean }): Promise<Article | null> {
+    async findById(id: string, options?: { includeInactive?: boolean }): Promise<Article | null> {
         const query: Filter<Article> = { _id: new ObjectId(id) };
         if (!options?.includeInactive) {
             query.isActive = true;
-        }
-
-        if (options?.incrementView) {
-            const result = await this.collection.findOneAndUpdate(query, { $inc: { views: 1 } }, { returnDocument: "after" });
-            return result;
         }
 
         return await this.collection.findOne(query);
@@ -147,19 +142,27 @@ export class ArticleRepository {
         };
     }
 
-    async findBySlug(slug: string, type?: ArticleType | null, options?: { includeInactive?: boolean; incrementView?: boolean }): Promise<Article | null> {
+    async findBySlug(slug: string, type?: ArticleType | null, options?: { includeInactive?: boolean }): Promise<Article | null> {
         const query: Filter<Article> = { slug };
         if (type) query.type = type;
         if (!options?.includeInactive) {
             query.isActive = true;
         }
 
-        if (options?.incrementView) {
-            const result = await this.collection.findOneAndUpdate(query, { $inc: { views: 1 } }, { returnDocument: "after" });
-            return result;
-        }
-
         return await this.collection.findOne(query);
+    }
+
+    async incrementViews(id: ObjectId): Promise<void> {
+        await this.collection.updateOne({ _id: id }, { $inc: { views: 1 } });
+    }
+
+    async findForStats(): Promise<Omit<Article, "content" | "excerpt">[]> {
+        return await this.collection.find({ isActive: true }, { projection: { content: 0, excerpt: 0 } }).toArray();
+    }
+
+    async setExcludeFromStats(id: string, excluded: boolean): Promise<boolean> {
+        const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { excludeFromStats: excluded } });
+        return result.matchedCount > 0;
     }
 
     async list(params: {

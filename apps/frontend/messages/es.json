@@ -785,6 +785,31 @@
         },
         "pageDescription": "Gestiona eventos, artículos, permisos, feature flags y sorteos en el panel de administración. Asegura operaciones fluidas y participación de la comunidad.",
         "title": "Administración",
+        "stats": {
+            "title": "Estadísticas",
+            "includeDrafts": "Incluir borradores",
+            "sortBy": "Ordenar por",
+            "sortTotal": "Total",
+            "sortDate": "Fecha",
+            "blogReads": "Lecturas del blog",
+            "newsletterReads": "Lecturas de la newsletter",
+            "articleReads": "Lecturas totales de artículos",
+            "linkClicks": "Clics en enlaces",
+            "summary": "{count} contabilizados · {average} de media",
+            "share": "Lecturas por sección",
+            "blog": "Blog",
+            "newsletter": "Newsletter",
+            "links": "Enlaces",
+            "authors": "Lecturas por autor",
+            "authorsNote": "Los artículos con varios autores cuentan por completo para cada uno.",
+            "countInStats": "Contabilizar en las estadísticas",
+            "excluded": "Excluido",
+            "draft": "Borrador",
+            "urlOnly": "Solo URL",
+            "empty": "No hay nada que mostrar",
+            "loadError": "Error al cargar las estadísticas",
+            "updateError": "Error al actualizar el elemento"
+        },
         "links": {
             "title": "Enlaces",
             "page": {
@@ -1430,7 +1455,8 @@
             "links": "Enlaces",
             "permissions": "Permisos",
             "certificates": "Certificados",
-            "hackathons": "Hackathons"
+            "hackathons": "Hackathons",
+            "stats": "Estadísticas"
         },
         "navigation": {
             "blog": "Blog",
@@ -1448,6 +1474,7 @@
             "permissions": "Permisos",
             "featureFlags": "Feature Flags",
             "certificates": "Certificados",
+            "stats": "Estadísticas",
             "hackathon-tracks": "Tracks",
             "hackathon-track-selection": "Selección de tracks",
             "hackathon-teams": "Equipos",

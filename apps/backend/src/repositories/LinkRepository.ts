@@ -75,6 +75,15 @@ export class LinkRepository {
         await this.collection.updateOne({ _id: new ObjectId(id) }, { $inc: { clicks: 1 } });
     }
 
+    async findForStats(): Promise<Link[]> {
+        return await this.collection.find({ isActive: true }).toArray();
+    }
+
+    async setExcludeFromStats(id: string, excluded: boolean): Promise<boolean> {
+        const result = await this.collection.updateOne({ _id: new ObjectId(id) }, { $set: { excludeFromStats: excluded } });
+        return result.matchedCount > 0;
+    }
+
     async list(params: {
         search?: string;
         page?: number;
